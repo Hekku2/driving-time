@@ -1,6 +1,6 @@
 # Helsinki driving game: expandable Codex plan
 
-Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-03 · Status: P02 minimal scene implemented; awaiting visual acceptance
+Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-03 · Status: P03 flat driving slice implemented; P02/P03 manual acceptance pending
 
 ## Goal
 
@@ -22,6 +22,8 @@ Selected language requirement and initial assumptions, to confirm in P01:
 C# for both game and pipeline is fixed by the current user instruction. The WSL-development/Windows-runtime workflow is also fixed by the 2026-10-03 user instruction. Other defaults can evolve as evidence changes. Pin actual tool versions after verifying compatibility; do not assume the newest engine and newest .NET SDK are compatible. Aim for one installed .NET SDK that supports both projects, and verify target-framework compatibility rather than forcing identical target frameworks. Test export early. A web target requires a fresh engine/export-support decision while preserving the C# requirement unless the user changes it.
 
 ## How to use this file with Codex
+
+User-selected follow-up P02a (2026-10-03): [Script the current Windows export and transfer](docs/tasks/P02a-windows-export-script.md). Status: done. This narrow helper builds/imports/exports the existing game in WSL and copies verified runtime files to W:\projektit\driving-time. It does not execute P25 or close P02/P03 manual acceptance. Dependencies and acceptance evidence are in the task card and ledger.
 
 1. Put this file in the root of a new repository as `HELSINKI_DRIVING_PLAN.md`.
 2. Run **P00** by pasting its prompt into Codex. This creates the working instructions and task ledger; it does not build the game.

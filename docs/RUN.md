@@ -1,4 +1,4 @@
-# Run the P02 scene
+# Run the P03 flat driving loop
 
 Develop, import, build and export in WSL2. Windows receives only the exported runtime folder. Prerequisites and portable editor installation: [SETUP.md](SETUP.md). These commands use Linux SDK 10.0.112, Godot 4.5.2 .NET and its matching .NET export templates.
 
@@ -16,7 +16,7 @@ dotnet build DrivingTime.sln
 "$GODOT4" --headless --path game --quit-after 10
 ```
 
-Expected: SDK 10.0.112, Godot 4.5.2.stable.mono, successful build and `P02: main 3D scene ready (C#).` without errors. Initial restore needs NuGet network access. The game targets net8.0 with Godot.NET.Sdk/4.5.2; SDK version and game target differ intentionally. Keep the editor's complete GodotSharp directory. The root solution is selected by `dotnet/project/solution_directory=".."` in project.godot. Its configurations are Debug and ExportRelease (Godot SDK names); an optional compiled release check is `dotnet build DrivingTime.sln -c ExportRelease --no-restore`. Godot's export performs the Windows publish.
+Expected: SDK 10.0.112, Godot 4.5.2.stable.mono, successful build and `P03: flat driving loop ready (C#), physics=60` without errors. Initial restore needs NuGet network access. The game targets net8.0 with Godot.NET.Sdk/4.5.2; SDK version and game target differ intentionally. Keep the editor's complete GodotSharp directory. The root solution is selected by `dotnet/project/solution_directory=".."` in project.godot. Its configurations are Debug and ExportRelease (Godot SDK names); an optional compiled release check is `dotnet build DrivingTime.sln -c ExportRelease --no-restore`. Godot's export performs the Windows publish.
 
 For the manual WSLg check:
 
@@ -24,38 +24,53 @@ For the manual WSLg check:
 "$GODOT4" --path game --editor
 ```
 
-Open Main.tscn and press F6 (this scene) or F5 (main project). Expect an orange 2 m cube resting on a blue-gray 20 m square floor, illuminated by a directional light, viewed from above at an angle. Check the Output/Debugger for startup errors, then stop with F8. A direct game launch is `"$GODOT4" --path game`. Close its window to exit. There are no driving controls, vehicle, map data or collision behavior in P02.
+Open Main.tscn and press F6 (this scene) or F5 (main project). Expect an orange box car at the white starting stripe, a flat dark square loop on blue-gray ground, a fixed overview camera and a km/h readout. The car/loop/HUD primitives are created by C# when running; the static editor view contains the floor, light, camera and car node. Check the Output/Debugger for errors, then stop with F8. A direct game launch is `"$GODOT4" --path game`. Close its window to exit.
 
-Export the release in WSL:
+| Key | Control |
+|---|---|
+| W / Up | Accelerate forward; brake first if reversing |
+| S / Down | Brake forward motion to zero, then reverse while held |
+| A D / Left Right | Steer; steering direction reverses when backing |
+| Space | Brake to zero in either direction; overrides throttle |
+| Release pedals | Coast down gradually |
+
+Physical key positions are used. Opposing acceleration keys cancel each other; opposing steering keys cancel each other. Bright headlights mark the nose (-Z); red lights mark the tail. Steering has no effect when stopped.
+
+Manual test (two minutes): accelerate along the start straight, slow before each corner and steer around the loop. Space should stop the car and keep it stopped while held. Hold S to reverse; check the positive speed reading and REV indicator. Release pedals to coast, and steer in both directions while moving. Expect responsive movement, a stable upright car and no obstacles in the lane. Corners need roughly 10–20 km/h. The limits are 43.2 km/h forward and 14.4 km/h reverse. Stay on the 60 m ground; restart the game if you leave it (recovery belongs to P05). Camera follow belongs to P04.
+
+After building, select Car in Main.tscn to tune exported properties: Acceleration 6, Braking 12 and CoastDeceleration 2 (m/s²); ForwardLimit 12 and ReverseLimit 4 (m/s); SteeringDegrees 75 (degrees/s at 4 m/s or faster, scaled toward zero at rest). These are arcade settings, not tire/suspension parameters. Save scene overrides to retain tuning; integration checks expect the default values.
+
+For manual frame-rate comparison, run `"$GODOT4" --path game --max-fps 30 --disable-vsync --audio-driver Dummy`, then repeat with 60 and 144. Use the same controls; compare stopping/steering and whether movement changes noticeably. A cap does not guarantee achieved FPS. Prefer native Windows comparisons if WSLg software rendering is slow. Report the platform, caps and observed feel. Automated checks are documented in [TESTING.md](TESTING.md#p03--flat-driving-loop).
+
+Build, import, export and transfer the current release from WSL with one command:
 
 ```bash
-mkdir -p artifacts/windows
-"$GODOT4" --headless --path game --export-release "Windows Desktop" ../artifacts/windows/DrivingTime.exe
+dotnet run --file scripts/export-windows.cs
 ```
 
-The output path is relative to game/project.godot. Inspect output and logs: an exit code alone is insufficient, because a failed .NET export can leave an incomplete executable/PCK. Expect a successful .NET publish and a `data_DrivingTime_windows_x86_64` runtime directory alongside DrivingTime.exe and DrivingTime.pck. The preset disables code signing and executable resource modification, requires no credentials, and keeps the PCK and .NET output separate. Build output, imports and exports are ignored by Git.
+The C# script uses the pinned SDK and `GODOT4` (defaulting to the installed Godot 4.5.2 .NET editor). It builds ExportRelease, imports headlessly, then exports the Windows Desktop preset to a fresh `artifacts/windows/<UTC timestamp>-<unique suffix>/runtime` folder. It rejects command failures and reported Godot errors, checks EXE/PCK and essential .NET runtime files, copies every runtime file to `W:\projektit\driving-time`, and checks SHA-256 hashes. Build/import/export logs stay beside the runtime folder in WSL. Generated output is ignored by Git. The preset disables signing and resource modification and needs no credentials.
 
-Copy the entire output folder after a successful export, preserving its contents:
+Close any running Windows game before rerunning. W: must be mounted in WSL (normally `/mnt/w`). To override the destination or show help:
 
 ```bash
-mkdir -p /mnt/c/TEMP/driving-time-P02
-cp -a artifacts/windows/. /mnt/c/TEMP/driving-time-P02/
+dotnet run --file scripts/export-windows.cs -- --destination 'W:\projektit\driving-time'
+dotnet run --file scripts/export-windows.cs -- --help
 ```
 
 Keep the source checkout, editor, SDK and caches in WSL. In Windows PowerShell, run:
 
 ```powershell
-Set-Location C:\TEMP\driving-time-P02
+Set-Location W:\projektit\driving-time
 .\DrivingTime.exe
 ```
 
-Expect the same floor and cube. Close the window, then check the startup log if needed:
+Expect the same car, loop and controls. Perform the two-minute drive. For native rendering comparisons, use `.\DrivingTime.exe --max-fps 30 --disable-vsync`, repeating at 60 and 144. Close the window, then check the startup log if needed:
 
 ```powershell
-.\DrivingTime.exe --headless --quit-after 10 --log-file C:/TEMP/driving-time-P02/startup.log
+.\DrivingTime.exe --headless --quit-after 10 --log-file W:/projektit/driving-time/startup.log
 Get-Content .\startup.log
 ```
 
-Report the WSLg scene and native Windows visual checks separately, including any errors. Passing command smoke checks does not complete appearance acceptance. Actual session results and environment limitations are recorded in [TESTING.md](TESTING.md).
+P02a exported and transferred the current P03 scene on 2026-10-03; native Windows startup and drive for this artifact remain unverified. Copy overwrites matching files but preserves unrelated/stale files; it is not atomic. If interrupted or a file is locked, close the game and rerun before playing. Fresh local exports and logs are retained and not pruned automatically. Report the WSLg scene and native Windows drive separately, including any errors. Passing command checks does not complete appearance/feel acceptance. The old P02 export at C:\TEMP\driving-time-P02 remains available for its original floor/cube visual check; P03 does not close it automatically. Actual session results and environment limitations are recorded in [TESTING.md](TESTING.md).
 
 Official references checked 2026-10-03: [C# prerequisites and desktop support](https://docs.godotengine.org/en/4.5/tutorials/scripting/c_sharp/c_sharp_basics.html), [command-line import/export](https://docs.godotengine.org/en/4.5/tutorials/editor/command_line_tutorial.html), [Windows export](https://docs.godotengine.org/en/4.5/tutorials/export/exporting_for_windows.html), and [solution directory setting](https://docs.godotengine.org/en/4.5/classes/class_projectsettings.html#class-projectsettings-property-dotnet-project-solution-directory). These explain configuration; local execution evidence is separate.

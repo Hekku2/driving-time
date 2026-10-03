@@ -1,6 +1,7 @@
 [gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://Main.cs" id="1_main"]
+[ext_resource type="Script" path="res://Car.cs" id="2_car"]
 
 [sub_resource type="StandardMaterial3D" id="FloorMaterial"]
 albedo_color = Color(0.3, 0.42, 0.46, 1)
@@ -8,15 +9,10 @@ roughness = 0.9
 
 [sub_resource type="PlaneMesh" id="FloorMesh"]
 material = SubResource("FloorMaterial")
-size = Vector2(20, 20)
+size = Vector2(60, 60)
 
-[sub_resource type="StandardMaterial3D" id="CubeMaterial"]
-albedo_color = Color(0.95, 0.42, 0.12, 1)
-roughness = 0.7
-
-[sub_resource type="BoxMesh" id="CubeMesh"]
-material = SubResource("CubeMaterial")
-size = Vector3(2, 2, 2)
+[sub_resource type="BoxShape3D" id="GroundShape"]
+size = Vector3(60, 0.2, 60)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
@@ -24,9 +20,15 @@ script = ExtResource("1_main")
 [node name="Floor" type="MeshInstance3D" parent="."]
 mesh = SubResource("FloorMesh")
 
-[node name="ReferenceCube" type="MeshInstance3D" parent="."]
-position = Vector3(0, 1, 0)
-mesh = SubResource("CubeMesh")
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+position = Vector3(0, -0.1, 0)
+shape = SubResource("GroundShape")
+
+[node name="Car" type="CharacterBody3D" parent="."]
+position = Vector3(14, 0, 8)
+script = ExtResource("2_car")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 rotation_degrees = Vector3(-55, -30, 0)
@@ -34,6 +36,8 @@ light_energy = 1.2
 shadow_enabled = true
 
 [node name="Camera" type="Camera3D" parent="."]
-position = Vector3(8, 7, 10)
-rotation_degrees = Vector3(-25, 38.66, 0)
+position = Vector3(0, 48, 32)
+rotation_degrees = Vector3(-56.31, 0, 0)
+projection = 1
+size = 54.0
 current = true

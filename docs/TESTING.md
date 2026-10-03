@@ -113,3 +113,67 @@ Sources checked 2026-10-03: [Godot 4.5 C# basics](https://docs.godotengine.org/e
 Manual evidence: **unverified**. No floor/cube visual confirmation was performed by the agent or reported by the user. Follow [RUN.md](RUN.md): open/run Main.tscn through the Linux editor, then launch C:\TEMP\driving-time-P02\DrivingTime.exe in Windows. Expected: lit orange cube resting on blue-gray floor, visible from the angled camera, with no startup errors. Record editor and native Windows appearance separately. P02 is awaiting-manual-test; G0 open. No driving/performance test claimed. WSL software rendering and missing audio libraries are known environment limits; Windows graphical startup succeeded without those warnings.
 
 Final verification: `dotnet build DrivingTime.sln --no-restore` and `dotnet build DrivingTime.sln -c ExportRelease --no-restore` both exited 0 with 0 warnings/errors after solution configuration cleanup. `git diff --check` passed; `git check-ignore` confirmed Godot cache, Windows export and export credentials exclusion. New source/guide/solution whitespace checks also passed. No commits, pushes or publication performed. Recommended next task: P03 after P02 manual visual acceptance.
+
+## P03 — Flat driving loop
+
+Checked 2026-10-03 in WSL2, with the same installed SDK/editor/templates as P02. User explicitly selected P03 while P02 visual acceptance remained open. P03 is `awaiting-manual-test`; P02 and gates are not closed by these checks. No tools/packages/datasets installed or downloaded.
+
+`GODOT4` denotes `/home/hekku2/.local/share/driving-time/godot-4.5.2/Godot_v4.5.2-stable_mono_linux.x86_64`; Godot commands used `DOTNET_ROOT=/usr/lib/dotnet`.
+
+| Actual command/check | Outcome |
+|---|---|
+| `dotnet --version` | 10.0.112 |
+| `dotnet build DrivingTime.sln --no-restore` | Passed, 0 warnings/errors |
+| `dotnet build DrivingTime.sln -c ExportRelease --no-restore` | Passed, 0 warnings/errors |
+| `"$GODOT4" --headless --path game --editor --import` | Sandbox attempt exited 0 with denied sockets/settings; invalid evidence. Escalated retry exited 0 without errors |
+| Initial sandbox integration startup | User log access denied, Godot crashed (signal 11); retried outside sandbox |
+| First escalated integration check | Failed at tick 5: collision bottom was 0.2 m above the car origin, causing a small drop. Moved collision center down to 0.35 m; subsequent checks below pass |
+| `"$GODOT4" --headless --path game res://Checks/DrivingChecks.tscn --max-fps 30 --disable-vsync` | Passed: 720 physics ticks, 358 frame callbacks |
+| Same command, `--max-fps 60` | Passed: 720 physics ticks, 713 frame callbacks |
+| Same command, `--max-fps 144` | Passed: 720 physics ticks, 1709 frame callbacks |
+| `"$GODOT4" --path game res://Checks/DrivingChecks.tscn --max-fps 30 --disable-vsync --audio-driver Dummy` | Rendered WSLg run passed: 720 physics ticks, 281 frame callbacks |
+| Same rendered command, `--max-fps 60` | Passed: 720 physics ticks, 308 frame callbacks |
+| `mkdir -p artifacts/windows-p03`; `"$GODOT4" --headless --path game --export-release 'Windows Desktop' ../artifacts/windows-p03/DrivingTime.exe` | Exit 0, .NET publish and packing completed without reported errors |
+| `du -sh artifacts/windows-p03`; file inventory | 169 MiB, 188 files; EXE, PCK and data_DrivingTime_windows_x86_64 directory present |
+| `git diff --check` | Passed |
+
+The integration scene is C# running inside Godot and uses the playable Main.tscn, real input actions, `_PhysicsProcess` and floor collision. It tests forward/reverse limits, km/h conversion, forward displacement, brake priority, stopping in both directions, reversed steering when backing, both forward steering directions, no turning at rest, opposite pedal braking before reverse, coasting and stable floor height. It exits 1 on failure and prints PASS plus 12 checkpoints on success. It needs no added test framework or runtime; explicitly launch the Checks scene. It does not run in the playable main scene. Scene Inspector tuning overrides must remain at defaults for this check.
+
+All 12 checkpoint traces match to four decimal places across all five passing runs. Selected samples:
+
+| Physics tick | Position X,Y,Z (m) | Signed speed (m/s) | Yaw (rad) |
+|---|---|---|---|
+| 120 | 14.0000, 0.0009, -4.1000 | 12.0000 | 0.0000 |
+| 180 | 14.0000, 0.0009, -10.0000 | 0.0000 | 0.0000 |
+| 240 | 15.0866, 0.0009, -7.6918 | -4.0000 | 0.8618 |
+| 360 | 15.6091, 0.0009, -7.3356 | 0.0000 | 1.0690 |
+| 720 | 7.1697, 0.0009, -15.1232 | 0.0000 | 1.0690 |
+
+Physics is fixed at 60 Hz. Headless comparisons vary frame callback frequency and show deterministic sampled movement for the same physics-timed inputs. Rendered WSLg runs report llvmpipe software OpenGL, plus a warning that the driver cannot change V-Sync. Their frame counts do not establish sustained 30/60 FPS; native Windows rendering-cap/feel comparisons remain unverified. Dummy audio used for graphical checks. No FPS performance claim, visual inspection or human driving test is inferred from these commands.
+
+P03 export has not been transferred or run natively. The P02 Windows folder is unchanged. Manual two-minute appearance/drive and native comparisons: **unverified**; exact controls, tuning, export/copy and test steps are in [RUN.md](RUN.md). No wall impacts, slope tests, recovery, chase camera, tires/suspension or traffic implemented. Synthetic primitives are authored here with meter-scale coordinates; geographic CRS, datum and external data provenance do not apply.
+
+Official Godot 4.5 sources checked 2026-10-03: [physics processing](https://docs.godotengine.org/en/4.5/tutorials/scripting/idle_and_physics_processing.html) describes fixed-step callbacks; [CharacterBody3D](https://docs.godotengine.org/en/4.5/classes/class_characterbody3d.html) documents velocity and MoveAndSlide integration; [Input](https://docs.godotengine.org/en/4.5/classes/class_input.html) documents action axes and action injection used by the check. These support API use; behavior evidence comes from the actual runs above. Recommended next task: P04 after P03 manual acceptance.
+
+## P02a — Windows export and transfer script
+
+Checked 2026-10-03. User selected a narrow C# helper for the current game, independent of P25's future cached-source build. Existing P03 working changes were preserved. Linux SDK 10.0.112 and Godot 4.5.2 .NET used in WSL2.
+
+| Command / check | Actual result |
+|---|---|
+| `dotnet run --help` | Installed SDK supports `--file` |
+| `dotnet run --file scripts/export-windows.cs -- --help` (sandbox) | Failed before compilation: read-only SDK cache at ~/.local/share/dotnet/runfile |
+| Same help command outside sandbox after approval | Exit 0; C# compiled and usage/default destination printed |
+| `dotnet run --file scripts/export-windows.cs -- --unknown` (approved) | Exit 1 with actionable argument error; no build/export/copy |
+| `dotnet run --file scripts/export-windows.cs` (approved for SDK cache, Godot and Windows destination writes) | Exit 0; Windows destination resolved through wslpath to /mnt/w/projektit/driving-time |
+| Script's `dotnet build DrivingTime.sln -c ExportRelease` | Passed, 0 warnings/errors |
+| Script's headless editor import | Exit 0, no reported errors |
+| Script's Windows Desktop release export | Exit 0; .NET publish and packing completed, no reported errors; required EXE/PCK/game DLL/runtimeconfig/coreclr/hostfxr present and nonempty |
+| Runtime copy and SHA-256 verification | All 188 files, 168.1 MiB, copied to W:\projektit\driving-time; every source/destination hash matched |
+| `git diff --check` | Passed |
+
+Fresh artifact: `artifacts/windows/20261003-155717-ba7ee883/runtime`. Build/import/export logs remain in its parent, outside the transferred runtime folder. No checkout/editor/SDK files copied. Native Windows startup, appearance and manual drive for this artifact: **unverified**. The historical P03 no-transfer entry above describes its original session and is superseded only for transfer by this evidence. P02/P03 acceptance and G0/G1 remain open.
+
+Manual check: launch `W:\projektit\driving-time\DrivingTime.exe`, expect orange car, square loop and speed HUD. Drive with W/A/S/D, stop with Space, hold S to reverse. Record feedback against artifact `20261003-155717-ba7ee883`. Copy is not atomic, overwrites matching files, preserves unrelated/stale destination files, and retains prior WSL artifacts. Close the game before rerunning; rerun after an interrupted copy. No datasets, public packaging or publishing added. Recommended next task: P04 after P03 manual acceptance.
+
+Official sources checked 2026-10-03: [Godot 4.5 command-line import/export](https://docs.godotengine.org/en/4.5/tutorials/editor/command_line_tutorial.html) for headless import, preset name, absolute export path and existing output directory; [Microsoft .NET file-based apps](https://learn.microsoft.com/en-us/dotnet/core/sdk/file-based-apps) for single-file C# execution with .NET 10. Local execution above verifies compatibility with the pinned installed SDK. No extra project or language runtime added.
