@@ -427,3 +427,7 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Godot import/editor caches and local export credentials
+.godot/
+export_credentials.cfg

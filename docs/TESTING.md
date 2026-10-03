@@ -80,3 +80,36 @@ User approved .NET 10. Updated global.json to 10.0.112, setup, README, plan, dec
 Actual checks: `dotnet --info` reconfirmed installed Linux SDK 10.0.112 and runtime 10.0.12; after the pin change, `dotnet --version` returned 10.0.112 and `dotnet --list-sdks` listed 10.0.112 at /usr/lib/dotnet/sdk. `git diff --check` passed. Official Godot 4.5 C# and Microsoft SDK/version-selection/global.json/support pages rechecked; see SETUP.md and D013. No tool installation, project creation, restore, build, export or editor launch performed.
 
 Manual check: run `dotnet --version` from the WSL repository root and read SETUP.md; expect 10.0.112, no .NET 8 SDK download requirement, and separate Godot runtime/export verification in P02. User execution: not run. Game compatibility and visual checks remain unverified; G0 remains open.
+
+## P02 — minimal scene build, export and native startup
+
+Checked 2026-10-03 in the WSL2 repository. Selected task only; no vehicle/map/pipeline added. `GODOT4` below denotes `/home/hekku2/.local/share/driving-time/godot-4.5.2/Godot_v4.5.2-stable_mono_linux.x86_64`; Godot commands used `DOTNET_ROOT=/usr/lib/dotnet`. Tools were already installed when inspected; P02 did not download or install Godot.
+
+| Actual command / check | Outcome |
+|---|---|
+| `git status --short`; repository/task/plan/state/decisions reads | Clean starting tracked tree; existing Git-ignored local setup helpers preserved |
+| `dotnet --info`; `uname -a`; display variables; installed editor/template inventory | Linux SDK 10.0.112/runtime 10.0.12, WSL2 x64; DISPLAY=:0/WAYLAND_DISPLAY=wayland-0; editor/templates now present |
+| `"$GODOT4" --headless --version` | `4.5.2.stable.mono.official.6ce3de25a` |
+| Initial sandbox `dotnet new sln --name DrivingTime --format sln` | Failed: read-only user first-use sentinel; rerun with escalation succeeded |
+| `dotnet new sln --name DrivingTime --format sln`; `dotnet sln DrivingTime.sln add game/DrivingTime.csproj`; `dotnet build DrivingTime.sln` (escalated) | Root solution created; restore/build passed, 0 warnings/errors, Debug assembly in game/.godot/mono/temp/bin/Debug |
+| Initial sandbox `"$GODOT4" --headless --path game --editor --import` | Exit 0 with denied user cache/data/config writes and editor socket errors; not a valid successful import check |
+| Same import command, escalated retry | Exit 0, completed initialization/editor load without reported errors |
+| `"$GODOT4" --headless --path game --quit-after 10` (escalated) | Exit 0; `P02: main 3D scene ready (C#).`, no startup errors |
+| First `"$GODOT4" --headless --path game --export-release 'Windows Desktop' ../artifacts/windows/DrivingTime.exe` (escalated) | Exit 0 but .NET export errors: game/DrivingTime.sln absent. Incomplete EXE/PCK were not treated as success or transferred |
+| Same export after adding project/solution_directory=".." | Exit 0; .NET publish and packing completed without reported warnings/errors |
+| Export inventory / runtimeconfig | 188 files, about 169 MiB: 96,723,968-byte DrivingTime.exe, 5,776-byte DrivingTime.pck and 186 files in data_DrivingTime_windows_x86_64, including DrivingTime.dll, GodotSharp.dll, hostfxr.dll, hostpolicy.dll, coreclr.dll and framework DLLs. Runtimeconfig: net8.0, included Microsoft.NETCore.App 8.0.31 |
+| `"$GODOT4" --path game --editor --rendering-method gl_compatibility --quit-after 120` (escalated) | Editor launched through WSLg, exited 0. OpenGL 4.5 Mesa 25.2.8, llvmpipe software renderer; V-Sync unsupported warning, absent libasound/libpulse, dummy-audio fallback |
+| `mkdir -p /mnt/c/TEMP/driving-time-P02`; `cp -a artifacts/windows/. /mnt/c/TEMP/driving-time-P02/` (escalated) | Complete exported runtime copied; no source/editor/SDK copied |
+| `/mnt/c/TEMP/driving-time-P02/DrivingTime.exe --headless --quit-after 10 --log-file C:/TEMP/driving-time-P02/startup.log` (escalated) | Native Windows exit 0, startup marker, no startup errors; log read back |
+| `/mnt/c/TEMP/driving-time-P02/DrivingTime.exe --quit-after 120 --log-file C:/TEMP/driving-time-P02/graphical-startup.log` (escalated) | Native Windows graphical startup, exit 0; OpenGL 3.3.0 NVIDIA 591.86, NVIDIA GeForce RTX 3060, C# marker; log read back, no startup errors |
+| `"$GODOT4" --path game --audio-driver Dummy --quit-after 60` (escalated) | WSLg graphical game exit 0, C# marker, llvmpipe and V-Sync warning; audio warning avoided for this launch |
+
+The solution initially generated generic Release mappings to Debug; it was reduced to Any CPU with Debug/ExportRelease matching installed Godot.NET.Sdk configurations. Final build/configuration and whitespace results are recorded below. No artificial unit tests added for static scene declarations; useful evidence is real build/import/runtime/export plus manual appearance checks.
+
+Installed archive provenance evidence: existing cache download-record.txt says retrieved `2026-10-03T11:53:18Z` from `https://github.com/godotengine/godot-builds/releases/download/4.5.2-stable`. SHA256SUMS.local identifies editor ZIP `9197371d3c4ceebb3ce750f8f4274a1b6f3eb75f25f17eb94fea9c1746081154` and .NET templates TPZ `ed196ee69204a829176129878e48916fc30370941340558ba38db8210ff92dcb`. These are inspected local download records, not a fresh download or comparison against provider checksums. No map datasets or source assets retrieved; scene primitives are repository-authored and have no CRS/vertical datum.
+
+Sources checked 2026-10-03: [Godot 4.5 C# basics](https://docs.godotengine.org/en/4.5/tutorials/scripting/c_sharp/c_sharp_basics.html), [CLI tutorial](https://docs.godotengine.org/en/4.5/tutorials/editor/command_line_tutorial.html), [Windows export](https://docs.godotengine.org/en/4.5/tutorials/export/exporting_for_windows.html) and [solution directory property](https://docs.godotengine.org/en/4.5/classes/class_projectsettings.html#class-projectsettings-property-dotnet-project-solution-directory). GitHub/tagged raw project-generator fetch unavailable through browsing; csproj manually authored against documented baseline, not claimed editor-generated. Installed SDK props and runtimeconfig inspected directly.
+
+Manual evidence: **unverified**. No floor/cube visual confirmation was performed by the agent or reported by the user. Follow [RUN.md](RUN.md): open/run Main.tscn through the Linux editor, then launch C:\TEMP\driving-time-P02\DrivingTime.exe in Windows. Expected: lit orange cube resting on blue-gray floor, visible from the angled camera, with no startup errors. Record editor and native Windows appearance separately. P02 is awaiting-manual-test; G0 open. No driving/performance test claimed. WSL software rendering and missing audio libraries are known environment limits; Windows graphical startup succeeded without those warnings.
+
+Final verification: `dotnet build DrivingTime.sln --no-restore` and `dotnet build DrivingTime.sln -c ExportRelease --no-restore` both exited 0 with 0 warnings/errors after solution configuration cleanup. `git diff --check` passed; `git check-ignore` confirmed Godot cache, Windows export and export credentials exclusion. New source/guide/solution whitespace checks also passed. No commits, pushes or publication performed. Recommended next task: P03 after P02 manual visual acceptance.

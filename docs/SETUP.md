@@ -2,6 +2,10 @@
 
 Updated 2026-10-03 following the user's WSL workflow requirement (D012) and approval of .NET 10 (D013). All development, Godot editing/import, C# builds, tests, offline pipeline work and Windows exports run in WSL2. Keep the repository in the WSL Linux filesystem. Transfer only the exported game to Windows for native playtesting. Windows desktop x64 remains the first target. C#/.NET remains fixed for both game and pipeline. No second language runtime, container or external GIS CLI is required.
 
+## P02 verification update — 2026-10-03
+
+The editor and templates are now installed at the paths in step 5. P02 verified SDK 10.0.112 building an explicitly authored net8.0 game, Godot 4.5.2 .NET import/runtime/editor launch, Windows release cross-export, runtime-only transfer and native Windows startup. Export includes a self-contained .NET 8.0.31 runtime directory, EXE and PCK. Visual acceptance remains pending; WSLg uses software rendering and lacks Linux audio libraries. Follow [RUN.md](RUN.md) for the current project commands and [TESTING.md](TESTING.md#p02--minimal-scene-build-export-and-native-startup) for actual results. The inventory and unperformed-setup wording below describe the earlier P01 session and are historical where superseded by this update. Tagged project-generator source was unavailable; the csproj was not editor-generated.
+
 ## Observed tools
 
 | Component | Actual evidence | Readiness |

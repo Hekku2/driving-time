@@ -5,8 +5,8 @@ Updated: 2026-10-03. P00 and P01 are complete. Deferred is a backlog disposition
 | ID | Task | Type | Status | Dependencies | Disposition |
 |---|---|---|---|---|---|
 | <a id="p00"></a>P00 | [Bootstrap the planning workspace](../../HELSINKI_DRIVING_PLAN.md#p00--bootstrap-the-planning-workspace) | planning | done | none | Bootstrap complete |
-| <a id="p01"></a>P01 | [Verify the toolchain and choose the first slice](P01-toolchain.md) | research | done | [P00](#p00) | Research/setup complete; SDK 10 available, editor/templates missing |
-| <a id="p02"></a>P02 | [Launch and export an empty 3D scene](P02-empty-scene.md) | implementation | todo | [P01](#p01) | Card prepared |
+| <a id="p01"></a>P01 | [Verify the toolchain and choose the first slice](P01-toolchain.md) | research | done | [P00](#p00) | Research complete; selected tools exercised by P02 |
+| <a id="p02"></a>P02 | [Launch and export an empty 3D scene](P02-empty-scene.md) | implementation | awaiting-manual-test | [P01](#p01) | WSL build/export and Linux/Windows startup pass; visual confirmation pending |
 | <a id="p03"></a>P03 | [Move a simple car on flat ground](P03-car.md) | implementation | todo | [P02](#p02) | Card prepared |
 | <a id="p04"></a>P04 | [Add a usable chase camera](P04-chase-camera.md) | implementation | todo | [P03](#p03) | Card prepared |
 | <a id="p05"></a>P05 | [Add collision and safe recovery](P05-recovery.md) | implementation | todo | [P04](#p04) | Card prepared |
@@ -43,7 +43,7 @@ Local setup follow-up (2026-10-03): SETUP.md step 3 now documents executable, Gi
 
 Local setup follow-up (2026-10-03): SETUP.md step 4 now documents the executable, Git-ignored `scripts/launch-godot-wsl.sh` helper. Bash syntax and ignore checks passed; execution stopped with actionable missing-editor guidance (exit 1). Actual editor launch remains unverified; P01 remains research-complete and P02 remains todo.
 
-P02 is recommended next; P06 is independently ready by dependencies if selected. Both use the installed pinned Linux SDK 10.0.112 in WSL (D013); P06 plans net10.0 pipeline/tests. P02 also needs Linux Godot/templates, Godot-generated target/runtime/export verification, WSLg inspection and transfer of the exported runtime output to Windows (D012). Read [SETUP.md](../SETUP.md). Execute one task per session. If a dependency awaits a manual check, do not treat it as done; select only independent ready work.
+P02 implementation and command checks completed 2026-10-03; follow [RUN.md](../RUN.md) to confirm the WSLg scene and native Windows appearance. P03 is recommended after that confirmation; do not implement it while P02 remains awaiting-manual-test. P06 remains independently ready if selected. SDK 10.0.112, Godot 4.5.2 .NET, game net8.0 build/runtime and Windows cross-export are now exercised (D014); P06 still plans net10.0. Execute one task per session.
 
 P09–P27 retain the plan's prompts, dependencies and completion checks; create detailed cards from actual evidence before execution. P16 expands P17–P19 where necessary; P20 and P23 each plan 2–6 children. P21 and P24 execute only the next ready child per session, and their parents remain open until all required child and parent checks pass.
 
@@ -51,7 +51,7 @@ P09–P27 retain the plan's prompts, dependencies and completion checks; create 
 
 | Gate | Required tasks | Current evidence |
 |---|---|---|
-| G0: instructions and viable toolchain | P00–P02 | Open: P00/P01 research complete; SDK 10 available, editor/templates missing and blank exported Windows game untested |
+| G0: instructions and viable toolchain | P00–P02 | Open: build/import/export and native Windows startup pass; scene/export visual confirmation pending |
 | G1: car, camera and recovery | P03–P05 | Not run |
 | G2: aligned synthetic pipeline assets | P06–P08 | Not run |
 | G3: real road and buildings | P09–P15 | Not run |

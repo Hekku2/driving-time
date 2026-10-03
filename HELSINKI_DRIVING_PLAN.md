@@ -1,6 +1,6 @@
 # Helsinki driving game: expandable Codex plan
 
-Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-03 · Status: planning; nothing implemented yet
+Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-03 · Status: P02 minimal scene implemented; awaiting visual acceptance
 
 ## Goal
 
