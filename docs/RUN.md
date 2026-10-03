@@ -1,6 +1,25 @@
-# Run the P05 collision and recovery scene
+# Run the P05a VehicleBody3D experiment
 
-The current Windows artifact is `20261003-164321-f5563ae3`, exported/transferred on 2026-10-03; native launch and drive remain unverified. Prior task statuses are unchanged. The controls and P03/P04 driving tests below still apply.
+The default scene is now `VehicleExperiment.tscn`. The HUD identifies **VehicleBody3D experiment**; the original `Main.tscn` shows **CharacterBody3D baseline**. Use the same loop, camera, controls, obstacles and ramp for comparison. Both scenes retain R and fall recovery. The user reported slight jitter in the baseline on 2026-10-03; the cause and improvement remain unverified.
+
+Current Windows artifact: **20261003-184950-a7195a8f**, exported/transferred successfully (188 files, SHA-256 verified) to `W:\projektit\driving-time`. Native startup and visual comparison remain pending.
+
+## P05a manual comparison
+
+1. Close the previous game and launch `W:\projektit\driving-time\DrivingTime.exe` after the P05a transfer. Drive a loop slowly, then accelerate/brake and reverse. W drives the headlights/nose forward; S brakes forward motion before reversing; Space overrides throttle. A/D steer the front wheels; corner slowly. Expect suspension-supported movement and physical pitch/roll, with animated wheels rather than an upright sliding chassis.
+2. Climb the green ramp from its low end, brake, reverse back and hit an interior obstacle. Expect wheel support and solid chassis contact. A physical car can roll or drift on slopes; the old arcade promise of zero slope drift does not apply. The ramp's high end is a drop.
+3. Press R while moving/turning or after tipping. Expect return facing -Z at the start stripe, cleared linear/angular motion and controls, and camera reset. The body then settles briefly onto its suspension. Holding driving keys resumes acceleration on the next tick. Drive off an open floor edge, release input and expect automatic recovery below Y=-10 m.
+4. Close the game and compare the baseline in Windows PowerShell: `.\DrivingTime.exe res://Main.tscn`. Launch the experiment explicitly with `.\DrivingTime.exe res://VehicleExperiment.tscn`. Repeat each at `--max-fps 30 --disable-vsync`, 60 and 144 if useful. Keep platform, caps and route alike; report jitter while straight, turning and on the ramp, braking/steering feel, and preferred version. Caps do not prove achieved FPS. No smoothness improvement or native visual pass is claimed yet.
+
+WSL equivalents: `"$GODOT4" --path game res://VehicleExperiment.tscn` and `"$GODOT4" --path game res://Main.tscn`. F5 launches the experiment; F6 runs the selected scene. Inspector tuning on the experiment Car: DriveForce 2800 per driven rear wheel, BrakeForce 55, forward/reverse force cutoffs 12/4 m/s, steering 28 degrees with 3 rad/s response, suspension stiffness 30, mass 1000 kg. These are provisional values, not a validated realistic model; the speed cutoffs taper propulsion rather than clamping momentum. Vehicle suspension/wheel geometry is created by C# on startup. The baseline tuning and historical P03–P05 guides below remain specific to `Main.tscn`.
+
+The chassis uses -Z as its nose, so the engine-force sign is reversed from Godot's documented +Z vehicle front. Normal motion is engine-integrated; reset teleports through `_IntegrateForces`. The experiment's spawn is (14,0.45,8), providing suspension clearance. The existing camera parameters and global 60 Hz interpolation remain unchanged for comparison. This experiment does not diagnose camera/rendering jitter.
+
+Export/update from WSL: `dotnet run --file scripts/export-windows.cs`. Keep all runtime companion files together. Status/evidence: [P05a](tasks/P05a-vehicle-experiment.md), [TESTING.md](TESTING.md#p05a--vehiclebody3d-comparison).
+
+## Historical P05 baseline guide
+
+The historical P05 artifact was `20261003-164321-f5563ae3`; the W: destination now contains P05a. Prior task statuses are unchanged. The baseline scene and P03/P04 driving tests below still apply when launching `res://Main.tscn` explicitly.
 
 ## P05 Manual Test
 
@@ -94,3 +113,12 @@ Get-Content .\startup.log
 The current transferred release includes P05; native Windows startup and drive remain unverified. Copy overwrites matching files but preserves unrelated/stale files; it is not atomic. If interrupted or a file is locked, close the game and rerun before playing. Fresh local exports and logs are retained and not pruned automatically. Report the WSLg scene and native Windows drive separately, including any errors. Passing command checks does not complete appearance/feel acceptance. The old P02 export at C:\TEMP\driving-time-P02 remains available for its original floor/cube visual check; P05 does not close it automatically. Actual session results and environment limitations are recorded in [TESTING.md](TESTING.md).
 
 Official references checked 2026-10-03: [C# prerequisites and desktop support](https://docs.godotengine.org/en/4.5/tutorials/scripting/c_sharp/c_sharp_basics.html), [command-line import/export](https://docs.godotengine.org/en/4.5/tutorials/editor/command_line_tutorial.html), [Windows export](https://docs.godotengine.org/en/4.5/tutorials/export/exporting_for_windows.html), and [solution directory setting](https://docs.godotengine.org/en/4.5/classes/class_projectsettings.html#class-projectsettings-property-dotnet-project-solution-directory). These explain configuration; local execution evidence is separate.
+## P06 pipeline CLI
+
+Pipeline runs entirely in WSL using pinned SDK 10.0.112. Initial locked restore, configuration/manifest v1 and offline steps are in [PIPELINE.md](PIPELINE.md). After restore, from the repository root:
+
+```bash
+dotnet run --project pipeline/DrivingTime.Pipeline.csproj --no-restore -- --config config/synthetic-scene.json
+```
+
+Expect exit 0 and the generated manifest path; invalid input exits 2. No downloads or extra runtime. Pipeline outputs/tools stay in WSL; only exported game runtime files transfer to Windows.

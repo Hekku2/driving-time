@@ -1,6 +1,6 @@
 # Task index
 
-Updated: 2026-10-03. P00 and P01 are complete. Deferred is a backlog disposition, not a completion status: all P09–P27 remain `todo`. Dependencies are copied from the plan; acceptance evidence is required before a dependency counts as complete. P01 research completion documents required installs; it does not certify a runnable toolchain.
+Updated: 2026-10-03. P00, P01, P02a, P06 and P07 are complete. Deferred is a backlog disposition, not a completion status: all P09–P27 remain `todo`. Dependencies are copied from the plan; acceptance evidence is required before a dependency counts as complete. P01 research completion documents required installs; subsequent P02/P06 command evidence verifies the toolchain without closing visual gates.
 
 | ID | Task | Type | Status | Dependencies | Disposition |
 |---|---|---|---|---|---|
@@ -11,8 +11,9 @@ Updated: 2026-10-03. P00 and P01 are complete. Deferred is a backlog disposition
 | <a id="p03"></a>P03 | [Move a simple car on flat ground](P03-car.md) | implementation | awaiting-manual-test | [P02](#p02) | Build/import/export and 30/60/144-cap integration checks pass; two-minute manual drive pending |
 | <a id="p04"></a>P04 | [Add a usable chase camera](P04-chase-camera.md) | implementation | awaiting-manual-test | [P03](#p03) | Build/import/export/transfer and camera checks pass; turning/wall visual check pending |
 | <a id="p05"></a>P05 | [Add collision and safe recovery](P05-recovery.md) | implementation | awaiting-manual-test | [P04](#p04) | Obstacles/ramp, R/fall recovery, camera reset and focused impact-speed correction; build/import/checks/export/transfer pass; manual acceptance pending |
-| <a id="p06"></a>P06 | [Create the offline pipeline CLI](P06-pipeline-cli.md) | implementation | todo | [P01](#p01) | Card prepared |
-| <a id="p07"></a>P07 | [Specify and verify coordinate transforms](P07-coordinates.md) | implementation | todo | [P06](#p06) | Card prepared |
+| <a id="p05a"></a>P05a | [Compare VehicleBody3D driving](P05a-vehicle-experiment.md) | implementation / validation | awaiting-manual-test | [P03](#p03), [P04](#p04), [P05](#p05) implemented baseline | Vehicle/30–60 cap and baseline checks pass; Windows export/transfer verified; VehicleBody3D chosen (D016), detailed manual observations pending |
+| <a id="p06"></a>P06 | [Create the offline pipeline CLI](P06-pipeline-cli.md) | implementation | done | [P01](#p01) | net10.0 CLI/tests in root solution; locked restore/builds/15 tests pass; identical manifests and clear input errors; no downloads |
+| <a id="p07"></a>P07 | [Specify and verify coordinate transforms](P07-coordinates.md) | implementation | done | [P06](#p06) | Explicit contract and ProjNET 2.1.0/NLS reference evaluation; 31 tests and build pass; real origin and vertical controls remain P09 |
 | <a id="p08"></a>P08 | [Import one generated GLB and manifest](P08-synthetic-import.md) | implementation | todo | [P02](#p02), [P07](#p07) | Card prepared |
 | <a id="p09"></a>P09 | [Verify data sources and select a bounded area](../../HELSINKI_DRIVING_PLAN.md#p09--verify-data-sources-and-select-a-bounded-area) | research | todo | [P07](#p07) | Deferred; expand before execution |
 | <a id="p10"></a>P10 | [Acquire and inspect a small road sample](../../HELSINKI_DRIVING_PLAN.md#p10--acquire-and-inspect-a-small-road-sample) | implementation | todo | [P09](#p09) | Deferred; expand before execution |
@@ -40,6 +41,8 @@ P00 created AGENTS.md, README.md, PROJECT_STATE.md, DECISIONS.md, TESTING.md, th
 
 ## Selecting work
 
+Current P07 outcome (2026-10-03): [coordinate contract and transform evaluation](P07-coordinates.md) done. Locked restore, root Debug build and 31 tests pass; ProjNET 2.1.0 matches independent NLS reference within 0.01 m. [Contract](../COORDINATES.md) records source axes, N2000 validation and EPSG:4326 approximation limits; no real origin selected. Agent contract review performed, user review not performed. Next recommended task: P08 (prior P02 visual acceptance remains open). Historical notes below retain earlier recommendations; G0/G1 manual checks and P08/G2 remain open.
+
 Local setup follow-up (2026-10-03): SETUP.md step 3 now documents executable, Git-ignored `scripts/setup-godot-wsl.sh` for editor/template download and installation. Syntax, help, ignore and whitespace checks passed; actual downloads, archive layout, installation and editor execution remain unverified. P01 remains research-complete; P02 remains todo.
 
 Local setup follow-up (2026-10-03): SETUP.md step 4 now documents the executable, Git-ignored `scripts/launch-godot-wsl.sh` helper. Bash syntax and ignore checks passed; execution stopped with actionable missing-editor guidance (exit 1). Actual editor launch remains unverified; P01 remains research-complete and P02 remains todo.
@@ -50,13 +53,15 @@ P09–P27 retain the plan's prompts, dependencies and completion checks; create 
 
 ## Gates
 
+P05a follow-up (2026-10-03): user reports slightly jittery movement and requests VehicleBody3D. Alternative scene/controller, 30/60-cap checks and baseline regressions pass; current Windows transfer is 20261003-184950-a7195a8f (188 runtime files, hashes verified). The user subsequently chose VehicleBody3D (D016), already the default scene; `res://Main.tscn` retains the arcade baseline. Detailed manual observations remain open; selection alone does not close P05a, P03–P05, G0 or G1. Next independent implementation task remains P06.
+
 P05 was explicitly selected on 2026-10-03 while prior manual evidence remained open. Its static obstacles/ramp and unified R/fall recovery are implemented; C# collision/recovery and existing driving/camera regression checks, build/import and Windows export/transfer pass. P05 awaits [manual testing](../RUN.md#p05-manual-test); G0/G1 remain open. Existing local P03/P04 card checkbox edits were preserved; this session adds no manual results for those tasks. Next recommended task: P06 (independently ready).
 
 | Gate | Required tasks | Current evidence |
 |---|---|---|
 | G0: instructions and viable toolchain | P00–P02 | Open: build/import/export and native Windows startup pass; scene/export visual confirmation pending |
 | G1: car, camera and recovery | P03–P05 | P03/P04 regressions and P05 collision/ramp/recovery checks pass; P05 implemented, manual gate acceptance remains open |
-| G2: aligned synthetic pipeline assets | P06–P08 | Not run |
+| G2: aligned synthetic pipeline assets | P06–P08 | Open: P06 manifest CLI and P07 coordinate tests/reference verified; P08 asset import and visual alignment remain todo |
 | G3: real road and buildings | P09–P15 | Not run |
 | G4: terrain and intersection | P16–P21 | Not run |
 | G5: tile crossing | P22–P24 | Not run |

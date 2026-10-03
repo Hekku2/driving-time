@@ -1,5 +1,33 @@
 # Testing and evidence
 
+## P05a — VehicleBody3D comparison
+
+Checked 2026-10-03 in WSL2 using SDK 10.0.112/Godot 4.5.2 .NET. User reports slight movement jitter and requests VehicleBody3D testing. Original jitter cause remains undiagnosed. P05a is `awaiting-manual-test`; no prior manual acceptance or gate is closed. No dependency/tool/data changes. Synthetic geometry only; no dataset provenance or redistribution introduced.
+
+`GODOT4` below denotes `/home/hekku2/.local/share/driving-time/godot-4.5.2/Godot_v4.5.2-stable_mono_linux.x86_64`. Installed-tool checks: `command -v dotnet`, `dotnet --version` (10.0.112), editor directory inspection; runtime prints 4.5.2.stable.mono. C# Godot API names compiled successfully against the pinned SDK. Official sources checked on this date: [VehicleBody3D](https://docs.godotengine.org/en/4.5/classes/class_vehiclebody3d.html), [VehicleWheel3D](https://docs.godotengine.org/en/4.5/classes/class_vehiclewheel3d.html) and [RigidBody3D](https://docs.godotengine.org/en/4.5/classes/class_rigidbody3d.html). These document raycast wheels, force/brake/steering inputs, +Z vehicle front, wheel suspension/contact and rigid-body direct-state integration. Godot documents known vehicle realism limitations; no realistic simulation claim.
+
+| Actual command / check | Result |
+|---|---|
+| `dotnet build DrivingTime.sln --no-restore` | Passed on initial implementation and after tuning/check changes; 0 warnings/errors |
+| `"$GODOT4" --headless --path game --editor --import` in sandbox | Exit 0 but socket/IDE permission errors and editor-settings save errors: not counted as successful import |
+| Initial sandbox VehicleChecks launch | Failed user-log access, signal 11/exit 134 before checks; retried with approved escalation |
+| Import command outside sandbox | Exit 0, no reported errors |
+| First VehicleChecks, 60 cap | Brake 35 left 1.471 m/s after one second; check failed. Brake increased to 55; subsequent stopping check passes |
+| Second VehicleChecks, 60 cap | Forward/brake/reverse/right turn/impact pass. Ramp check ended at its entrance (Y=0.397 m, Z=5.457 m); increased approach/climb check duration by 40 ticks, without changing ramp/controller |
+| `"$GODOT4" --headless --path game res://Checks/VehicleChecks.tscn --max-fps 60 --disable-vsync --quit-after 1400` | Final pass: 1150 physics ticks, five recoveries, exit 0; PASS printed |
+| Same VehicleChecks command with `--max-fps 30` | Pass: 1150 ticks, five recoveries, exit 0; identical sampled physical traces |
+| `"$GODOT4" --headless --path game res://Checks/DrivingChecks.tscn --max-fps 60 --disable-vsync --quit-after 1000` | Baseline regression passed at 720 ticks/713 frame callbacks; original trace unchanged |
+| `"$GODOT4" --headless --path game res://Checks/CameraChecks.tscn --max-fps 60 --disable-vsync --quit-after 600` | Baseline camera regression passed at 420 ticks, exit 0 |
+| `"$GODOT4" --headless --path game res://Checks/RecoveryChecks.tscn --max-fps 60 --disable-vsync --quit-after 1800` | Baseline collision/recovery regression passed at 1411 ticks/three recoveries, exit 0 |
+| `dotnet run --file scripts/export-windows.cs` outside sandbox | ExportRelease build 0 warnings/errors; import/publish/packing successful; 188 runtime files (168.2 MiB) copied and SHA-256 verified at W:\projektit\driving-time |
+| `git diff --check` | Passed |
+
+Final vehicle check exercises actual input, all four physical wheel contacts and settled chassis clearance, nose-first -Z acceleration, Space overriding throttle, reverse, right-turn sign, chassis contact with ImpactBlock, ramp ascent, held R, full reset pose, zero linear/angular velocity and control forces, camera placement behind heading, and natural fall recovery with a -3 m override. Five callbacks comprise manual R, three test placements through the same reset operation, and natural fall. Placement goes through rigid-body integration rather than continuous transform manipulation. Tests are explicit scenes, not invoked by normal gameplay. Test callback indentation only was adjusted afterward; runtime behavior is unchanged.
+
+Identical 30/60-cap sampled results: forward signed speed 9.986 m/s; brake 0.054 m/s; reverse -3.801 m/s; right yaw -0.915 rad; ramp position (-14,1.285,0.409); final settled position (14,0.306,8.000). Caps are not measurements of achieved native frame rate or visual smoothness. No rendered/manual run or Windows startup performed for P05a.
+
+Current artifact/logs: `artifacts/windows/20261003-184950-a7195a8f` (`build.log`, `import.log`, `export.log`, `runtime/`). Export logs confirm both Main and VehicleExperiment scenes packed. C# vehicle defaults and scene match the tested implementation; original arcade controller remains unchanged. W: now launches the vehicle experiment by default. Manual same-route comparison, including straight/turn/ramp jitter and controller preference: [RUN.md](RUN.md#p05a-manual-comparison). Both scenes identify their body type in the HUD. Tuning, slope drift, tipping, appearance, reset settling and camera/rendering smoothness need native playtesting; P05a and G1 remain open.
+
 ## P05 — Collision and safe recovery
 
 Checked 2026-10-03 in WSL2 with pinned SDK 10.0.112 and installed Godot 4.5.2 .NET. P05 selected explicitly; prior manual evidence/statuses were not closed. Existing local P03/P04 acceptance-checkbox edits preserved. No dependencies, tools or datasets added. Status: `awaiting-manual-test`; G1 remains open.
@@ -232,3 +260,47 @@ Fresh artifact: `artifacts/windows/20261003-155717-ba7ee883/runtime`. Build/impo
 Manual check: launch `W:\projektit\driving-time\DrivingTime.exe`, expect orange car, square loop and speed HUD. Drive with W/A/S/D, stop with Space, hold S to reverse. Record feedback against artifact `20261003-155717-ba7ee883`. Copy is not atomic, overwrites matching files, preserves unrelated/stale destination files, and retains prior WSL artifacts. Close the game before rerunning; rerun after an interrupted copy. No datasets, public packaging or publishing added. Recommended next task: P04 after P03 manual acceptance.
 
 Official sources checked 2026-10-03: [Godot 4.5 command-line import/export](https://docs.godotengine.org/en/4.5/tutorials/editor/command_line_tutorial.html) for headless import, preset name, absolute export path and existing output directory; [Microsoft .NET file-based apps](https://learn.microsoft.com/en-us/dotnet/core/sdk/file-based-apps) for single-file C# execution with .NET 10. Local execution above verifies compatibility with the pinned installed SDK. No extra project or language runtime added.
+## P06 — Offline synthetic manifest CLI
+
+Date: 2026-10-03. Environment: Ubuntu 24.04 WSL2, Linux SDK 10.0.112/runtime 10.0.12 as reported by `dotnet --info`; root global.json unchanged. Existing staged P05a changes were preserved. No game export, native Windows launch or geographic download performed in P06.
+
+| Actual command/check | Outcome |
+|---|---|
+| `dotnet restore tests/DrivingTime.Pipeline.Tests/DrivingTime.Pipeline.Tests.csproj` | Restore completed from available packages but sandbox reported NU1900 vulnerability-service network failure; not accepted as final restore evidence |
+| `dotnet restore tests/DrivingTime.Pipeline.Tests/DrivingTime.Pipeline.Tests.csproj --locked-mode --source https://api.nuget.org/v3/index.json --force` (approved outside sandbox) | Exit 0, both projects restored, no warnings; exact test references/transitive hashes recorded in lock files |
+| `dotnet build pipeline/DrivingTime.Pipeline.csproj --no-restore` | Exit 0, 0 warnings/errors |
+| `dotnet test tests/DrivingTime.Pipeline.Tests/DrivingTime.Pipeline.Tests.csproj --no-restore` | Exit 0, 15 passed, 0 failed/skipped; actual test execution, not just project build |
+| `dotnet build DrivingTime.sln --no-restore` | Exit 0, all three projects built, 0 warnings/errors |
+| `dotnet build DrivingTime.sln -c ExportRelease --no-restore` | Exit 0, game ExportRelease and pipeline/tests Release built, 0 warnings/errors |
+| `dotnet run --project pipeline/DrivingTime.Pipeline.csproj --no-restore -- --config config/synthetic-scene.json` twice | Both exit 0; copy first to `/tmp/p06-first.manifest.json`, `cmp` with second exits 0 |
+| Same run command with `/tmp/p06-invalid-config.json` (sample copied with tile size 0) | Exit 2; stderr: `Pipeline error: tileSizeMetres must be a finite positive number.` plus documentation/permissions guidance |
+| Same run command with `/tmp/p06-missing-config.json` | Exit 2; missing input named, useful guidance, no unhandled exception |
+
+The two CLI runs used no restore and the program has no network APIs or external processes. Offline execution here means the local cached SDK/build/input/output path; OS network namespace isolation was not used. NuGet access was confined to the earlier restore. No deterministic metadata exclusions: manifest bytes include no generation timestamp, machine path or random identifier.
+
+SHA-256 (`sha256sum`): input `config/synthetic-scene.json`: `8f35618a0b9db8bc2e57caf284b4dc0a9b99fa86e00e0088f088d2d1d1c49ca5`; output `config/generated/synthetic-scene.manifest.json`: `e9cc6948c388e32f241725a924a2e5a69a49b868b2e6923357e8ba253dbdba6f`.
+
+Targeted tests exercise missing/malformed/null/unknown/duplicate JSON fields, schema/coordinate rejection, region inversion/zero extent/overflow, origin outside bounds and on an accepted boundary, nonfinite numbers, invalid tile size, escaping/absolute output paths, culture-independent JSON, stable ordinal IDs, expected ground dimensions, repeat CLI byte identity, config-relative output location and preserving previous output when validation fails. Missing paths/invalid arguments are covered through the CLI entry point.
+
+Manual/review: agent followed the documented initial-restore/build/test/run steps and inspected the output version, two primitive descriptions, input checksum and synthetic provenance. User replay not performed. No visual check is required for P06. Short optional review: [PIPELINE.md](PIPELINE.md#short-review), run twice and expect identical bytes; copy config and set tile size 0, expect exit 2 and no newly created output.
+
+Limitations: synthetic source descriptions only, no chosen Helsinki CRS/origin/datum, engine transforms, GLB, tile lifecycle or game staging. Valid output writes overwrite and are not atomic. P07/P08 remain todo; P06 alone does not pass G2. Package/API sources and checked date are recorded in [PIPELINE.md](PIPELINE.md); this task changes no existing game restore policy.
+
+## P07 — Coordinate contract and transform evaluation
+
+Executed 2026-10-03 in WSL with pinned SDK 10.0.112/runtime 10.0.12. Existing staged/unrelated work preserved. No editor, game export, manual drive or third-party dataset retrieval performed. [Contract, fixtures, sources and limits](COORDINATES.md).
+
+```bash
+dotnet --info
+dotnet restore tests/DrivingTime.Pipeline.Tests/DrivingTime.Pipeline.Tests.csproj
+dotnet restore tests/DrivingTime.Pipeline.Tests/DrivingTime.Pipeline.Tests.csproj --locked-mode
+dotnet build DrivingTime.sln --no-restore
+dotnet test tests/DrivingTime.Pipeline.Tests/DrivingTime.Pipeline.Tests.csproj --no-restore --logger 'console;verbosity=normal'
+dotnet test tests/DrivingTime.Pipeline.Tests/DrivingTime.Pipeline.Tests.csproj --no-build --no-restore --filter FullyQualifiedName~ProjNetAgainstPublishedNlsExample10 --logger 'console;verbosity=detailed'
+```
+
+Restore and locked restore: pass, ProjNET 2.1.0 with content hashes in both lock files. Root Debug build: pass, 0 warnings/errors. Initial sandbox test run built projects but aborted on local VSTest socket creation (SocketException 13); escalated same test command passed all 31 cases (16 new P07 cases, 15 P06 regressions). Targeted detailed replay printed E=214141.42267341953, N=7016196.144977237; residual E=-0.000026580470148473978 m, N=-0.00002276245504617691 m against published NLS example 10. Tolerances: 0.01 m reference projection; 1e-7 degrees inverse/projection round trip; 1e-9 m local horizontal round trip. Residuals below reference rounding are numerical evidence, not real-world survey accuracy.
+
+Coverage: four cardinal directions; +37.25 m elevation above nonzero synthetic height origin; independent 60/80/100 m synthetic segment; right-handed east-cross-north basis; millimetre preservation after origin subtraction; explicit E,N / N,E and lat,lon / lon,lat adapters; datum mismatch/nonfinite rejection; exact/negative tile edges and neighbor recomposition; GRS80 TM35FIN forward/inverse reference; central-meridian easting; geographic round trips around the Finland envelope; swapped axes rejected; WGS84 approximation requires opt-in.
+
+Manual review performed by agent: axis/units table, fixed origin requirement, vertical validation process, approximation limitations and no invented real origin. User replay not performed; no visual acceptance is required for this task. Optional review: read COORDINATES.md and rerun the detailed reference command; expect a passing result and north toward engine -Z. Real height controls and WGS84 realization/epoch accuracy remain unverified; P08 must verify geometry import/appearance before G2 passes. Recommended next task: P08.

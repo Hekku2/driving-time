@@ -1,6 +1,6 @@
 # P06: Create the offline pipeline CLI
 
-Status: todo
+Status: done
 Type: implementation
 Dependencies: P01
 Goal: A deterministic offline synthetic manifest CLI with validated configuration.
@@ -9,11 +9,11 @@ Scope: Minimal independent C# pipeline CLI, explicit NuGet versions if needed, r
 Out of scope: Downloads, geospatial conversion frameworks, extra language/runtime/GIS setup and speculative dependencies.
 Deliverables: Pipeline project in repository solution, documented dotnet run command and small .NET test project.
 Acceptance:
-- [ ] Automated / research: Planned: dotnet build / dotnet test on actual project paths; after documented initial restore, run documented dotnet run command twice offline and compare outputs; invalid configuration fails with actionable errors.
-- [ ] Manual / review: Follow documented WSL CLI steps after initial restore; offline execution requires no extra runtime.
-- [ ] Plan completion: After the documented initial restore, run the command twice offline and compare outputs; they match except explicitly excluded diagnostic metadata. Invalid configuration fails clearly. The CLI builds and its targeted checks run with dotnet build / dotnet test.
-Evidence: Automated / research: not run. Manual / review: not run. Build/export: not run. Commands above are planned, not completed.
-Risks / blockers: Pinned Linux SDK 10.0.112 is available; project/dependency restore and build remain untested. Deterministic metadata exclusions must be explicit.
+- [x] Automated / research: SDK 10.0.112; locked restore, pipeline build, root Debug/ExportRelease builds and 15 .NET tests pass. Two documented local no-restore runs produce byte-identical manifests. Invalid tile size and missing configuration exit 2 with actionable stderr.
+- [x] Manual / review: Agent followed/reviewed documented WSL CLI steps and inspected v1 manifest. No additional runtime or download calls in pipeline; no visual acceptance criterion. User replay not performed.
+- [x] Plan completion: After initial restore, documented no-restore command twice and cmp exit 0; no diagnostic metadata exclusions. Build/test pass. No OS network isolation claimed; local offline path uses cached SDK/assets without restore or network APIs.
+Evidence: 2026-10-03; [PIPELINE.md](../PIPELINE.md), [TESTING.md](../TESTING.md#p06--offline-synthetic-manifest-cli). Pipeline and test projects target net10.0 in DrivingTime.sln alongside independent net8.0 game. Built-in JSON/SHA-256/files only in CLI; three exact test PackageReferences and reviewed lock files. Sample configuration validates synthetic region/origin/tile size/relative manifest path. Agent CLI/document review performed; no user manual run, game export or geographic retrieval in P06.
+Risks / blockers: No blocker. Geographic CRS/origin/datum and engine transforms are unselected; fixture is synthetic only. Primitive descriptions, no meshes or tiles. Initial restore requires network; sandbox vulnerability-service failure was resolved by approved restore retry. Writes are not atomic. No P07/P08 or gate completion inferred.
 Follow-up tasks: P07; no implementation implied.
 
 ## Execution prompt

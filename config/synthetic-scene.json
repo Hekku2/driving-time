@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "sceneId": "synthetic-p06",
+  "coordinateSystem": "synthetic-local-metres",
+  "region": { "minEast": -30, "minNorth": -30, "maxEast": 30, "maxNorth": 30 },
+  "origin": { "east": 0, "north": 0, "height": 0 },
+  "tileSizeMetres": 500,
+  "manifestPath": "generated/synthetic-scene.manifest.json"
+}

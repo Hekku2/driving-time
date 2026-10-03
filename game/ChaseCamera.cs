@@ -32,12 +32,14 @@ public partial class ChaseCamera : Node3D
         if (_target is CollisionObject3D collider)
             _query.Exclude = new Godot.Collections.Array<Rid> { collider.GetRid() };
         if (_target is Car car) car.Recovered += ResetToTarget;
+        if (_target is VehicleCar vehicle) vehicle.Recovered += ResetToTarget;
         ResetToTarget();
     }
 
     public override void _ExitTree()
     {
         if (_target is Car car) car.Recovered -= ResetToTarget;
+        if (_target is VehicleCar vehicle) vehicle.Recovered -= ResetToTarget;
     }
 
     public void ResetToTarget()

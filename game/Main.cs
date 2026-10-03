@@ -3,6 +3,7 @@ using Godot;
 public partial class Main : Node3D
 {
     private Car _car;
+    private VehicleCar _vehicle;
     private Label _speed;
 
     public override void _EnterTree()
@@ -25,7 +26,8 @@ public partial class Main : Node3D
 
     public override void _Ready()
     {
-        _car = GetNode<Car>("Car");
+        _car = GetNodeOrNull<Car>("Car");
+        _vehicle = GetNodeOrNull<VehicleCar>("Car");
         // Flat markings form a square loop: 36 m outer edge, 20 m inner edge.
         // No barriers or raised curbs. The existing ground is extended to 60 m.
         Color asphalt = new(0.15f, 0.17f, 0.19f);
@@ -68,12 +70,15 @@ public partial class Main : Node3D
         _speed.AddThemeFontSizeOverride("font_size", 28);
         labels.AddChild(_speed);
         labels.AddChild(new Label { Text = "W / ↑ accelerate   S / ↓ brake, then reverse\nA D / ← → steer   Space brake   R reset\nGreen ramp on west side; solid blocks inside loop" });
-        GD.Print("P05: collision and recovery scene ready (C#), physics=", Engine.PhysicsTicksPerSecond);
+        labels.AddChild(new Label { Text = _vehicle != null ? "VehicleBody3D experiment" : "CharacterBody3D baseline" });
+        GD.Print(_vehicle != null ? "P05a: VehicleBody3D experiment ready (C#), physics=" : "P05: collision and recovery scene ready (C#), physics=", Engine.PhysicsTicksPerSecond);
     }
 
     public override void _Process(double delta)
     {
-        _speed.Text = $"{_car.SpeedKmh:0.0} km/h   {(_car.SignedSpeed < -0.01f ? "REV" : "FWD")}";
+        float speed = _vehicle != null ? _vehicle.SpeedKmh : _car.SpeedKmh;
+        float signed = _vehicle != null ? _vehicle.SignedSpeed : _car.SignedSpeed;
+        _speed.Text = $"{speed:0.0} km/h   {(signed < -0.01f ? "REV" : "FWD")}";
     }
 
     public static void AddBox(Node3D parent, string name, Vector3 size, Vector3 position, Color color)

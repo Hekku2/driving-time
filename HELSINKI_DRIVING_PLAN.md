@@ -1,6 +1,6 @@
 # Helsinki driving game: expandable Codex plan
 
-Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-03 · Status: P05 collision/recovery implemented; G0/G1 manual evidence remains open
+Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-03 · Status: P07 coordinate contract/reference tests done; G0/G1 manual evidence and G2 import/alignment remain open
 
 ## Goal
 
@@ -22,6 +22,8 @@ Selected language requirement and initial assumptions, to confirm in P01:
 C# for both game and pipeline is fixed by the current user instruction. The WSL-development/Windows-runtime workflow is also fixed by the 2026-10-03 user instruction. Other defaults can evolve as evidence changes. Pin actual tool versions after verifying compatibility; do not assume the newest engine and newest .NET SDK are compatible. Aim for one installed .NET SDK that supports both projects, and verify target-framework compatibility rather than forcing identical target frameworks. Test export early. A web target requires a fresh engine/export-support decision while preserving the C# requirement unless the user changes it.
 
 ## How to use this file with Codex
+
+User-selected follow-up P05a (2026-10-03): [Compare VehicleBody3D driving](docs/tasks/P05a-vehicle-experiment.md). Following the built-in vehicle experiment, the user chose VehicleBody3D (D016). Keep the arcade baseline runnable. Detailed loop/ramp/turning manual evidence remains open. Status and evidence live in the card/ledger. This does not execute P06 or close G1.
 
 User-selected follow-up P02a (2026-10-03): [Script the current Windows export and transfer](docs/tasks/P02a-windows-export-script.md). Status: done. This narrow helper builds/imports/exports the existing game in WSL and copies verified runtime files to W:\projektit\driving-time. It does not execute P25 or close P02/P03 manual acceptance. Dependencies and acceptance evidence are in the task card and ledger.
 
@@ -189,6 +191,8 @@ Completion check: Hit an obstacle, drive the slope, fall out of bounds and reset
 
 Type: **implementation** · Depends on: **P01**
 
+Status: **done** (2026-10-03). [Task card](docs/tasks/P06-pipeline-cli.md), [WSL workflow/restore policy](docs/PIPELINE.md), [command evidence](docs/TESTING.md#p06--offline-synthetic-manifest-cli). SDK 10.0.112, independent net10.0 CLI/tests in root solution, locked restore, Debug/ExportRelease builds and 15 tests pass. Two no-restore runs produce identical versioned manifests; invalid configuration exits 2. Synthetic CLI only; P07 now verifies its separate coordinate contract, P08 remains todo and G2 stays open.
+
 ```text
 Execute P06. Create a minimal C#/.NET console CLI in pipeline/ and add it to the repository solution alongside the game when present. Use the SDK verified in P01, explicit NuGet versions and a documented restore policy. Read validated region/origin configuration and write a versioned manifest for a synthetic scene, using built-in .NET facilities where sufficient. Include one documented dotnet run command, deterministic output ordering, clear input errors and a small .NET test project for nontrivial validation. Start with no geospatial downloads. Document a WSL-development workflow that requires no Python runtime, Node.js, container or external GIS CLI; the pipeline stays in WSL and only exported game runtime files go to Windows. Add only dependencies already needed for this task.
 ```
@@ -198,6 +202,8 @@ Completion check: After the documented initial restore, run the command twice of
 ### P07 — Specify and verify coordinate transforms
 
 Type: **implementation** · Depends on: **P06**
+
+Status: **done** (2026-10-03). [Task card](docs/tasks/P07-coordinates.md), [coordinate contract](docs/COORDINATES.md), [command evidence](docs/TESTING.md#p07--coordinate-contract-and-transform-evaluation). Double-precision cardinal/100 m/elevation/round-trip/tile checks and ProjNET 2.1.0 comparison with independent NLS example pass; 31 total tests, locked restore and root Debug build pass. EPSG:3067/N2000 target selected, real origin unselected. Accurate WGS84 datum/vertical conversions unsupported; explicit approximation policy documented. P08/G2 visual import remains open.
 
 ```text
 Execute P07. Define an explicit coordinate contract: source axis order and units, projected east/north coordinates, vertical datum, fixed origin, engine axes, handedness and tile-local coordinates. Use projected meters and local engine coordinates; keep source coordinates in double precision. A possible mapping is X=east-originEast, Y=height-originHeight, Z=-(north-originNorth), but verify it rather than assuming source X means east. Implement and test synthetic cardinal points, a measured 100 m segment, round trips and a nonzero elevation. Record how EPSG:4326 to the chosen projected CRS will be handled in C# and how vertical data will be validated. Evaluate a .NET coordinate-transform library against a trusted reference and verify its required CRS support and axis semantics; do not assume a package name proves compatibility. Do not invent origin coordinates.

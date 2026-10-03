@@ -431,3 +431,6 @@ FodyWeavers.xsd
 # Godot import/editor caches and local export credentials
 .godot/
 export_credentials.cfg
+
+# P06 synthetic pipeline output
+config/generated/
