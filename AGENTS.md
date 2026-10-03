@@ -1,0 +1,30 @@
+# Repository execution contract
+
+Build a small drivable Helsinki desktop prototype through one selected task at a time. The authoritative backlog is [HELSINKI_DRIVING_PLAN.md](HELSINKI_DRIVING_PLAN.md); current evidence lives in [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md) and [docs/tasks/INDEX.md](docs/tasks/INDEX.md).
+
+## Execution rules
+
+- Read repository instructions, the plan, `docs/PROJECT_STATE.md`, and the selected task card before changing code. Inspect existing work and preserve unrelated changes.
+- Execute only the requested task. If it needs more than one independently testable feature, split it into child tasks before implementation. Aim for one focused session and one useful test outcome; do not invent time estimates.
+- Prefer a working vertical slice over a broad framework. Do not introduce dependency injection containers, plugin systems, generic orchestration frameworks or cloud infrastructure without a concrete need.
+- Inspect installed tools. Consult official documentation for uncertain APIs, current export support, data access and dependency compatibility. Record sources and checked dates. If browsing is unavailable, record what remains unverified.
+- Never pretend a dataset was fetched, the editor launched, an export succeeded or a manual drive test passed. Record actual commands and results. Use `unverified` or `blocked` when appropriate.
+- Use targeted automated tests for coordinate transforms, parsing, geometry and tile lifecycle behavior. Use manual checks for appearance and driving feel. Avoid tests that merely duplicate code.
+- A task is `done` only when its acceptance criteria have evidence. A working feature awaiting the user's visual test is `awaiting-manual-test`.
+- Keep changes reproducible. Configuration controls paths, region, origin and tile size. Downloads are bounded, cached and separate from offline conversion. Fail with actionable messages.
+- Write game logic, offline conversion, retrieval tools and automated tests in C#/.NET. This is a fixed user requirement. Prefer NuGet libraries and `dotnet` commands. Do not add Python, Node.js, containers or an external GIS CLI to the required workflow. If a dataset needs a native dependency, investigate a managed alternative or a simpler source format first, document the smallest necessary dependency and its packaging before adding it. Godot remains the provisional game editor/import/export tool.
+- Use one repository-level .NET solution and a compatible pinned SDK where practical. Keep pipeline code independent of Godot. Share a small contract or coordinate library only when both projects actually need it; verify it targets a framework supported by both. Do not build a shared framework in advance.
+- Document data provenance, license, retrieval date, checksum, coordinate reference system, vertical datum and known limitations. Non-commercial use does not remove license obligations. Do not redistribute unreviewed source data.
+- End with: what changed, commands/tests and outcomes, a short manual test with expected result, known limitations, and one recommended next task ID.
+- Update `docs/PROJECT_STATE.md` and the task ledger. Do not mark later tasks complete simply because some scaffolding exists. Do not commit, push or publish unless requested or already authorized in repository instructions.
+- Stop at the selected task boundary. Planning prompts produce plans and TODOs, not implementation. Raise a blocker only after useful independent work has been completed.
+
+## Status and task discipline
+
+Statuses: `todo` → `in-progress` → `awaiting-manual-test` → `done`; also `blocked` and `superseded`. Automated evidence alone may allow `in-progress` → `done` where the acceptance criteria require no manual check. Track automated and manual results separately.
+
+Use the stable task-card format in the plan: ID/title, Status, Type, Dependencies, Goal, Inputs, Scope, Out of scope, Deliverables, Acceptance, Evidence, Risks / blockers, Follow-up tasks. Preserve IDs and link dependencies in the index. Split broad tasks into 2–6 useful children; parents remain open until required children and parent acceptance checks pass. P21 and P24 execute only one ready child per session.
+
+C#/.NET is fixed for both game and pipeline. Development, Godot editing/import, builds, tests, pipeline conversion and Windows export run in WSL2 as a fixed user workflow requirement (D012). Keep the checkout and development tools in WSL; transfer only the exported runnable game, including required companion files, to Windows for native playtesting. Other initial choices are provisional; consult `docs/DECISIONS.md`. Pin versions only after verified compatibility, test export early, and verify shared target-framework compatibility rather than forcing identical frameworks. A web target requires a new engine/export decision without changing the language requirement.
+
+Create directories only when used. Keep bulk source data and generated assets out of ordinary Git unless a storage decision is recorded. Decide engine-readable asset staging in P08. Do not expand area to hide alignment, topology or driving defects. Track G0–G6 evidence; scaffolding alone never passes a gate.
