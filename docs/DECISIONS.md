@@ -1,6 +1,6 @@
 # Decisions
 
-Updated: 2026-10-04. P08 verifies synthetic GLB writer/staging/import/export (D018); visual acceptance and datasets remain unverified. Historical toolchain and controller decisions remain below.
+Updated: 2026-10-04. P09 verifies bounded source access and records the provisional Stenbäckinkatu area/origin (D019); P08 visual acceptance, real conversion and route/height validation remain open. Historical toolchain and controller decisions remain below.
 
 | ID | Status | Decision / assumption | Review |
 |---|---|---|---|
@@ -9,13 +9,25 @@ Updated: 2026-10-04. P08 verifies synthetic GLB writer/staging/import/export (D0
 | D003 | Game and pipeline compatibility verified | One installed SDK 10.0.112 pinned in root global.json; net10.0 pipeline/tests verified in P06, game net8.0 verified in P02, and one root DrivingTime.sln. | D014 records game evidence; P06 records locked restore/build/test evidence. |
 | D004 | Controller choice superseded by D016 | Historical C# CharacterBody3D scripted arcade movement for P03; keyboard, third-person camera, daylight, single player. Existing first-prototype exclusions remain. | Retain the runnable baseline; VehicleBody3D is now chosen (D016). |
 | D005 | Provisional | Semantic roads, building geometry and terrain are separate inputs; photogrammetry is optional reference or distant scenery. Retain synthetic fixtures when downloads fail. | P09 verifies sources and terms before retrieval. |
-| D006 | Provisional | Synthetic scene first, then one real street; approximately 1 × 1 km near Töölönlahti later. Ground-level roads first; bridges and tunnels may be excluded with reasons. | P09 selects exact bounds and measured origin; P16 checks terrain exclusions. |
-| D007 | Contract/projection verified; real data validation pending | EPSG:3067 E,N projected metres, N2000 real heights, double source/normalized coordinates; X=east−originEast, Y=height−originHeight, Z=−(north−originNorth), right-handed. Real origin/bounds unselected. | P07 contract/tests and D017; P09 selects traceable origin and verifies source axes/datums; P17 validates heights. |
+| D006 | Provisional area selected | Synthetic scene first, then one real street; user selects Stenbäckinkatu 1km square in P09 (D019). Ground-level roads first, exclude tram/junction/hospital and stacked structures from initial run. | P10 verifies the route; P16 checks terrain exclusions. |
+| D007 | Contract/projection verified; provisional origin measured | EPSG:3067 E,N projected metres, N2000 real heights, double source/normalized coordinates; X=east−originEast, Y=height−originHeight, Z=−(north−originNorth), right-handed. P09 origin/bounds in D019. | P07/D017; P09 source axes/datums evidence; P17 independently validates heights. |
 | D008 | Provisional | 500 m square tiles, only two neighbors initially; bounded lifecycle before larger coverage. | P22–P24 verify borders, ownership and collision retention. |
 | D009 | Provisional | 60 FPS at 1080p as an initial performance target; reference hardware unknown. | P01 records target; P26 measures actual hardware. |
 | D010 | Writer/staging/import/export verified; appearance pending | SharpGLTF.Toolkit 1.0.7 and asset manifest v1; ignored generation under game/Generated/P08 before import/export. No shared library needed. | P08 / D018; manual editor/Windows visual checks remain open. |
 
-Remaining initial defaults are assumptions, not evidence. P07 selects ProjNET for bounded horizontal projection (D017); no dataset reader/format, source-data license, real origin or native dependency is selected. Future records must include rationale, sources and checked dates, affected tasks and acceptance evidence.
+Remaining initial defaults are assumptions, not evidence. P07 selects ProjNET for bounded horizontal projection (D017); P09 records provisional source products, formats, terms and measured origin (D019). No production dataset reader or native dependency is selected. Future records must include rationale, sources and checked dates, affected tasks and acceptance evidence.
+
+## D019 — Provisional Stenbäckinkatu square and source choices
+
+Date / checked date: 2026-10-04. Status: research verified; area/route provisional. Updates D005–D007 without changing synthetic configuration or completing acquisition/conversion tasks.
+
+User selects Stenbäckinkatu instead of the initial Töölönlahti-centred suggestion. Centre a 1000m EPSG:3067 square on city address reference `Helsinki_osoiteluettelo.45899`: E=384236.0361374, N=6674210.89320437; bounds E=383736.0361374..384736.0361374, N=6673710.89320437..6674710.89320437. Provider-projected coordinates derive from native GK25 E=25495142, N=6675054. Containing 1m terrain pixel supplies H=13.52536678314209m, provider N2000; independent height control remains P17. This is an anchor, not a vehicle spawn. Preserve/version it explicitly in later configuration; no synthetic fixture reconfiguration now.
+
+Prefer semantic city-model CityGML WFS, initially LoD1; served 2021 1m WCS terrain; OSM semantic road ways after P10 access verification. A bounded CityGML building, two GeoJSON footprints and 4x4 Float32 GeoTIFF prove actual local access/formats. Served 1m terrain contradicts older 50cm metadata; native physical E/N request order is measured despite inconsistent WCS labels, and the declared band unit is defective. Registry retains exact URLs, checked/retrieval dates, byte counts and SHA-256; raw files stay ignored. Production managed readers and local GK25 transform remain P14/P17 work.
+
+Propose a 100–150m eastern Stenbäckinkatu interior run avoiding junction/tram/hospital structures. The official 2026 street plan proposes a Topeliuksenkatu through-traffic cut; no completed construction or measured centreline is claimed. P10 must verify endpoints/access/topology. OSM 406/alternate timeout has a manual Overpass export fallback; older footprint terms conflict needs P14 review. Current city guidance supports CC BY 4.0 for selected open products; OSM uses ODbL. Non-commercial intent gives no exemption or conclusion about future distribution.
+
+Sources, provider claims versus measurements and bounded cached retrieval/storage/manual fallbacks: [DATA_SOURCES.md](DATA_SOURCES.md), [registry](../config/source-registry.json), [P09 evidence](TESTING.md#p09--bounded-source-research). Official links and checked dates live there. Affected tasks: P09 done; P10, P14, P16/P17 informed but unexecuted. No gate or earlier visual acceptance changed.
 
 ## D016 — VehicleBody3D chosen
 

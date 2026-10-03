@@ -1,12 +1,12 @@
 # Helsinki driving game: expandable Codex plan
 
-Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-04 · Status: P08 synthetic GLB/import/export checks pass, awaiting visual test; G0/G1/G2 manual evidence remains open
+Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-04 · Status: P09 source research done at Stenbäckinkatu; P08 awaits visual test; G0/G1/G2 manual evidence remains open
 
 ## Goal
 
 Build a non-commercial desktop 3D game in which one player can drive through recognizable Helsinki streets. Develop it through small, independently reviewable tasks. The plan is a living backlog: early prompts implement narrow features; later prompts generate more detailed plans as evidence becomes available.
 
-The first useful result is a car driving around a small synthetic test scene. The first Helsinki milestone is a short real-world road segment with surrounding buildings. The first playable area is approximately 1 × 1 km near Töölönlahti, subject to data availability. Whole-city coverage is a later ambition.
+The first useful result is a car driving around a small synthetic test scene. The first Helsinki milestone is a short real-world road segment with surrounding buildings. The initial area suggestion was approximately 1 × 1 km near Töölönlahti. On 2026-10-04 the user selected Stenbäckinkatu instead; P09 records its provisional 1 km square, measured origin and source evidence in [DATA_SOURCES.md](docs/DATA_SOURCES.md) and [source-registry.json](config/source-registry.json). Whole-city coverage is a later ambition.
 
 Selected language requirement and initial assumptions, to confirm in P01:
 
@@ -234,6 +234,8 @@ Execute P09. Consult current official Helsinki documentation and official OpenSt
 ```
 
 Completion check: The selected area, origin, access route and dataset-specific terms are traceable. Missing data has a named fallback or blocked task.
+
+P09 executed 2026-10-04: [research card](docs/tasks/P09-data-sources.md) done with the user's Stenbäckinkatu area selection. Building/terrain probes and registry inspection pass. OSM access failed; manual fallback and P10 route validation are recorded. Footprint fallback terms and independent heights remain P14/P17 checks. P09 does not close any playable-area gate or execute acquisition/conversion tasks.
 
 ### P10 — Acquire and inspect a small road sample
 

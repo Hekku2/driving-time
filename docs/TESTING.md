@@ -323,3 +323,31 @@ Session 2026-10-03–04, WSL2 SDK 10.0.112, Godot 4.5.2 .NET. Official sources/c
 Artifact/logs: `artifacts/windows/20261003-204544-dc05f013` (UTC artifact timestamp); 188 runtime files, 168.2 MiB transferred and SHA-256 verified. Windows headless log is `W:\projektit\driving-time\p08-check.log`. Synthetic GLB SHA-256: `f64be72dacbed42167efdb13fb3e4ef59f3b2867b32ce296c4c04504db6f75e7`; input configuration SHA-256: `8f35618a0b9db8bc2e57caf284b4dc0a9b99fa86e00e0088f088d2d1d1c49ca5`.
 
 GLB readback verifies five meshes, 60 triangles, each object bound, identity nodes, no images, single-sided colored material, CCW triangles and outward flat unit normals. Nonzero (1000,2000,40) source origin produces identical localized bytes; too-small region rejected. Manifest path/hash/units/version/origin/bounds checks pass. Independent Godot inspection verifies all five imported bounds, identity global transforms, metallic/roughness/sRGB factors, outward unit normals and CW indices. Same check in the native Windows export proves resource remapping and manifest inclusion. No human visual result or performance measurement inferred. [Manual steps](RUN.md#p08-manual-inspection); P08 remains awaiting-manual-test and G2 open.
+
+## P09 — bounded source research
+
+Date: 2026-10-04, Europe/Helsinki. Research task done; no conversion or game change. Official sources/checked dates, exact source-request URLs, measured bounds/origin, licence limits and downstream fallbacks are in [DATA_SOURCES.md](DATA_SOURCES.md) and [source-registry.json](../config/source-registry.json). Successful raw responses are ignored in `artifacts/p09`; retained locally, not redistributed.
+
+| Actual command / request | Outcome |
+|---|---|
+| `dotnet --version`, `command -v curl jq dotnet`, existing pipeline/tool inspection | SDK 10.0.112, curl and dotnet available; jq absent; existing ProjNET 2.1.0 available; no install |
+| `curl --fail --location --max-time 30 --max-filesize 3000000 -o /tmp/p09-wfs.xml '<WFS GetCapabilities URL>'` in sandbox | Exit 6, DNS resolution failed; approved escalated retry exit 0 |
+| Same bounded curl form against city WFS/WCS/CityGML capabilities and DescribeCoverage, exact URLs in registry | Exit 0; 305680 / 641372 / 11136 / 3333 bytes respectively; live terrain coverage is 1m, not catalogue 50cm |
+| City address WFS, street filter count=20; same reference feature count=1 in EPSG:3067 and EPSG:4326 | Exit 0; 20 of 23 addresses returned; reference `Helsinki_osoiteluettelo.45899`; native GK25 and projected/geographic coordinates agree by feature ID/property values; no local transform claim |
+| CityGML `bldg:Building`, count=1 in 200m GK25 box | N,E request returned zero (829-byte empty collection); corrected physical E,N request exit 0, 20 matched / 1 returned, 26638 bytes; one LoD1/2 building with compound GK25/N2000 CRS |
+| WCS GetCoverage, 4m square, image/tiff, compression=NONE | Swapped physical axes returned HTTP 404 / curl exit 22. Corrected E,N request exit 0, 1429-byte GeoTIFF; 4x4 valid Float32 samples, EPSG:3879, pixel-is-area, 1m steps, matrix georeferencing, uncompressed tiled layout |
+| Footprint WFS count=2 in 200m EPSG:3067 box | Exit 0, 1907 bytes; two 2D polygons / 21 matched; no actual heights |
+| Overpass GET, street name in bbox (60.18,24.90,60.20,24.93), timeout=20/maxsize=16777216 | Main endpoint HTTP 406 / curl exit 22; ASCII-name regex variant same result; alternate kumi endpoint exit 28 after 30s, zero bytes; no OSM payload or road measurements |
+| Helsinki 3D HTML, public start script; exploratory `config.json` path | HTML/script loaded (2631/158 bytes); guessed config path HTTP 404. Graphical viewer/export not run |
+| Street-line DescribeFeatureType and count=5 street-name GetFeature | Exit 0; schema 3905 bytes; returned 1211-byte bicycle-rack feature, not centreline; reject layer as road-graph fallback |
+| `dotnet run --file scripts/p09-inspect.cs -- artifacts/p09` in sandbox | Build-cache path outside workspace denied; retried with approved escalation |
+| Same offline .NET command, final version | Exit 0; strict TIFF readback, building dates, measured origin/height, 1000m bounds, JSON and all ten registered payload byte counts/SHA-256 pass. Initial inspector revisions exposed TIFF Rational tags, tiling and matrix layout; final supports the observed tiny probe only, not a generic reader |
+| `git diff --check` | Exit 0 |
+
+The exact successful probe URLs can be replayed with the recorded bounded curl command; each response hash is in the registry. Service timestamps/content can change, so keep replay snapshots separate. GeoServer response UTC timestamps fell on 2026-10-03 evening; local retrieval date was 2026-10-04. CityGML timestamps omit timezone and must not be assumed UTC. HTTP response ETag/Last-Modified headers were not captured; future retrieval cache must record them where supplied.
+
+Measured origin: EPSG:3067 E=384236.0361374, N=6674210.89320437; native GK25 E=25495142, N=6675054. Containing DEM cell row=2,col=2 gives H=13.52536678314209m, provider-declared N2000; Float32 value expanded to double. Independent vertical datum/control is not verified. Terrain range about 13.410841–13.583823m; no NoData in this tiny probe. Full route/area NoData and building completeness unverified.
+
+Manual check (not performed): open the city map at lon=24.91244103, lat=60.18828858 and inspect the eastern Stenbäckinkatu interior run. Expected: a short surface street segment within the recorded square, with endpoints away from the named junction/tram/hospital structures; compare construction/access with the official 2026 street plan. P10 must obtain the centreline and validate actual conditions before accepting the route. P17 must check independent heights. No manual game drive, graphical download, export, performance run or earlier gate acceptance was performed in P09.
+
+Recommended next task: P10. Missing OSM access has a manual Overpass export fallback or named P10 acquisition blocker; P14 must resolve footprint fallback terms; P17 must validate a managed TIFF reader and defective band-unit/axis metadata. These do not close or implement later tasks.

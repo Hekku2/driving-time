@@ -1,0 +1,530 @@
+{
+  "schemaVersion": 1,
+  "checkedDate": "2026-10-04",
+  "task": "P09",
+  "purpose": "Research registry; not a pipeline runtime configuration or redistribution clearance",
+  "area": {
+    "id": "stenbackinkatu-1km-v1",
+    "status": "provisional",
+    "selection": "User-selected Stenbäckinkatu supersedes Töölönlahti-centred initial suggestion",
+    "horizontalCrs": "EPSG:3067",
+    "verticalDatum": "N2000 (provider declaration; independent vertical control pending P17)",
+    "bounds": {
+      "minEast": 383736.0361374,
+      "minNorth": 6673710.89320437,
+      "maxEast": 384736.0361374,
+      "maxNorth": 6674710.89320437
+    },
+    "origin": {
+      "east": 384236.0361374,
+      "north": 6674210.89320437,
+      "height": 13.52536678314209,
+      "horizontalMethod": "Geometry of Helsinki_osoiteluettelo.45899 requested in EPSG:3067; street reference point without house number, not vehicle spawn",
+      "horizontalNative": {
+        "crs": "EPSG:3879",
+        "east": 25495142,
+        "north": 6675054
+      },
+      "geographicLocator": {
+        "crs": "EPSG:4326",
+        "longitude": 24.91244103,
+        "latitude": 60.18828858,
+        "method": "Same feature requested from city WFS; projection performed by provider"
+      },
+      "heightMethod": "Nearest containing pixel-is-area terrain cell; exact boundary chooses east/south cell, row 2 col 2 of probe; no interpolation",
+      "heightCellCenterNative": {
+        "east": 25495142.5,
+        "north": 6675053.5
+      },
+      "heightPrecision": "Float32 expanded to double; decimals are storage precision, not surveyed accuracy"
+    },
+    "tileSizeMetres": 500,
+    "route": {
+      "status": "provisional_not_driven_not_centerline_measured",
+      "description": "Short interior eastern Stenbäckinkatu segment from the Mannerheimintie end toward Töölöntullinkatu; stop before either intersection",
+      "targetLengthMetres": [
+        100,
+        150
+      ],
+      "direction": "Outward run then reset; no intersection or road loop required",
+      "exclude": [
+        "Mannerheimintie junction and tram corridor",
+        "Topeliuksenkatu junction and proposed through-traffic closure",
+        "Töölöntullinkatu and Messeniuksenkatu junction patches",
+        "hospital access roads, bridges, tunnels, any nonzero-layer or stacked carriageway"
+      ],
+      "endpointSelectionTask": "P10: snap endpoints 20m inside verified street interior; reject access restrictions/bridge/tunnel/stacked topology; no invented centerline coordinates",
+      "currentConstructionState": "unverified",
+      "officialReference": "https://ptp.hel.fi/DataForms/katu_ja_puistosuunnitelmat/Download.ashx?q=d0428056/Selostus_6.3.2026_Stenb%C3%A4ckinkatu_Stenb%C3%A4ckinkatu_v%C3%A4lill%C3%A4_Topeliuksenkatu_-_Mannerheimintie_Selostus.pdf"
+    },
+    "retrievalEnvelopeNative": {
+      "crs": "EPSG:3879",
+      "minEast": 25494592,
+      "minNorth": 6674504,
+      "maxEast": 25495692,
+      "maxNorth": 6675604,
+      "status": "provisional conservative 1100m square; verify transformed target corners before P14/P17; clip to exact target region offline"
+    },
+    "osmDiscoveryBbox": {
+      "order": "south,west,north,east",
+      "values": [
+        60.18,
+        24.9,
+        60.2,
+        24.93
+      ],
+      "purpose": "Name-filtered research probe only; P10 must derive a tighter corridor bbox from target projection"
+    }
+  },
+  "sources": [
+    {
+      "id": "helsinki-citygml-buildings",
+      "role": "preferred_buildings",
+      "provider": "City of Helsinki / City Survey Services",
+      "checkedDate": "2026-10-04",
+      "providerLinks": [
+        "https://www.hel.fi/en/decision-making/information-on-helsinki/maps-and-geospatial-data/helsinki-3d",
+        "https://kartta.hel.fi/paikkatietohakemisto/pth/?id=457"
+      ],
+      "access": {
+        "endpoint": "https://kartta.hel.fi/3d/citydb-wfs/wfs",
+        "service": "WFS 2.0.0",
+        "typeNames": "bldg:Building",
+        "format": "CityGML 2.0 XML in WFS FeatureCollection / GML 3.1",
+        "bboxOrderObserved": "east,north in EPSG:3879",
+        "authenticationObserved": "none"
+      },
+      "providerClaims": {
+        "coverage": "Helsinki except outer archipelago (metadata 457)",
+        "horizontalCrs": "EPSG:3879 ETRS-GK25",
+        "verticalDatum": "N2000 / EPSG:3900",
+        "updatePolicy": "continuous",
+        "metadataCurrencyDate": "2021-01-01",
+        "metadataUpdated": "2021-04-12",
+        "directSheetAreaKm2": 4
+      },
+      "observed": {
+        "access": "success, 1 building returned, 20 matched in 200m box",
+        "id": "BID_4c477677-cdf6-494a-a84b-6472939eb448",
+        "sourceCrs": "urn:ogc:def:crs,crs:EPSG::3879,crs:EPSG::3900",
+        "coordinateOrder": "E,N,H",
+        "lods": [
+          1,
+          2
+        ],
+        "boundsNative": {
+          "min": [
+            25495240.4,
+            6675037.176,
+            13.719
+          ],
+          "max": [
+            25495284.898,
+            6675058.723,
+            40.13
+          ]
+        },
+        "buildingCreationDate": "2016-05-22",
+        "surfaceCreationDate": "2024-01-04",
+        "surveyDate": null,
+        "texturesFetched": false,
+        "fullAreaCompletenessVerified": false,
+        "capabilitiesWorldExtentIsCoverageEvidence": false,
+        "pagingTransactionSafe": false,
+        "responseCacheTimeoutSeconds": 300
+      },
+      "license": {
+        "id": "CC-BY-4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "authority": "https://www.hel.fi/en/decision-making/information-on-helsinki/maps-and-geospatial-data/helsinki-3d",
+        "credit": "City of Helsinki, City Survey Services",
+        "changesNoticeRequired": true,
+        "redistributionReview": "pending for actual converted assets"
+      },
+      "fallback": {
+        "preferred": "Bounded Rakennukset_alue footprints with explicit synthetic height, pending P14 terms review",
+        "manual": "City 3D viewer: select small area, non-textured download; official direct CityGML map sheet route (4 km²) only if within byte cap and only needed sheet; record format/datums/terms. No UI download verified.",
+        "viewer": "https://kartta.hel.fi/3d/"
+      },
+      "readerPlan": "System.Xml.XmlReader streaming; select LoD1 initially; holes/xlinks/semantics and GK25 to TM35FIN require P14/P15 validation"
+    },
+    {
+      "id": "helsinki-building-footprints",
+      "role": "simpler_building_fallback",
+      "provider": "City of Helsinki / City Survey Services",
+      "checkedDate": "2026-10-04",
+      "providerLinks": [
+        "https://kartta.hel.fi/paikkatietohakemisto/pth/?id=278",
+        "https://www.hel.fi/en/decision-making/information-on-helsinki/maps-and-geospatial-data/make-better-use-of-geospatial-data/open-geographic-data"
+      ],
+      "access": {
+        "endpoint": "https://kartta.hel.fi/ws/geoserver/avoindata/wfs",
+        "typeNames": "avoindata:Rakennukset_alue",
+        "service": "WFS 2.0.0",
+        "format": "GeoJSON FeatureCollection",
+        "outputCrsVerified": "EPSG:3067",
+        "sourceCrs": "EPSG:3879",
+        "bboxOrderObserved": "east,north using EPSG:3067"
+      },
+      "providerClaims": {
+        "coverage": "Helsinki",
+        "verticalDatum": "not defined",
+        "updatePolicy": "continuous",
+        "metadataCurrencyDate": "2017-12-01"
+      },
+      "observed": {
+        "returned": 2,
+        "matched": 21,
+        "geometry": "2D Polygon",
+        "featureIds": [
+          "Rakennukset_alue.761064",
+          "Rakennukset_alue.833641"
+        ],
+        "exampleModifiedDate": "2025-09-09",
+        "publicationDateField": "2026-10-02",
+        "realHeightsAvailable": false
+      },
+      "license": {
+        "id": "CC-BY-4.0 general open-publication policy, dataset conflict pending review",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "authority": "https://www.hel.fi/en/decision-making/information-on-helsinki/maps-and-geospatial-data/make-better-use-of-geospatial-data/open-geographic-data",
+        "conflict": "Older dataset metadata 278 says order/agreement terms; P14 must capture current product-specific licence before adopting fallback.",
+        "redistributionReview": "pending"
+      },
+      "fallback": {
+        "manual": "Helsinki Map Service open-data directory; export bounded footprints and accompanying terms or ask paikkatieto@hel.fi about conflicting metadata; no message sent"
+      },
+      "readerPlan": "System.Text.Json; flat debug extrusion must identify synthetic heights"
+    },
+    {
+      "id": "helsinki-terrain-2021-1m",
+      "role": "preferred_terrain",
+      "provider": "City of Helsinki / City Survey Services",
+      "checkedDate": "2026-10-04",
+      "providerLinks": [
+        "https://kartta.hel.fi/paikkatietohakemisto/pth/?id=234",
+        "https://kartta.hel.fi/paikkatietohakemisto/pth/?id=536",
+        "https://hri.fi/data/fi/dataset/helsingin-korkeusmalli",
+        "https://kartta.hel.fi/avoindata/dokumentit/Aineistolista_wcs_avoindata.html",
+        "https://www.hel.fi/en/decision-making/information-on-helsinki/maps-and-geospatial-data/make-better-use-of-geospatial-data/open-geographic-data"
+      ],
+      "access": {
+        "endpoint": "https://kartta.hel.fi/ws/geoserver/avoindata/wcs",
+        "service": "WCS 2.0.1",
+        "coverageId": "avoindata__Korkeusmalli_2021_1m",
+        "formatVerified": "GeoTIFF, big endian classic TIFF, Float32 single band, tiled, uncompressed probe",
+        "requestAxesObserved": "E=physical easting; N=physical northing"
+      },
+      "providerClaims": {
+        "coverage": "Helsinki",
+        "horizontalCrs": "EPSG:3879",
+        "verticalDatum": "N2000",
+        "catalogueResolutionMetres": 0.5,
+        "metadataCurrencyDate": "2021-06-15",
+        "metadataUpdated": "2022-11-11",
+        "productYear": 2021
+      },
+      "observed": {
+        "nativeResolutionMetres": [
+          1,
+          1
+        ],
+        "coverageGrid": [
+          29000,
+          35000
+        ],
+        "physicalCoverageEnvelope": {
+          "minEast": 25487000,
+          "minNorth": 6655000,
+          "maxEast": 25516000,
+          "maxNorth": 6690000
+        },
+        "nodata": -32767,
+        "probeDimensions": [
+          4,
+          4
+        ],
+        "probeValidCells": 16,
+        "probeHeightRangeMetres": [
+          13.410841,
+          13.583823
+        ],
+        "geotiffCrsCode": 3879,
+        "geotiffRasterType": "PixelIsArea",
+        "verticalCrsEmbedded": false,
+        "describeCoverageAxisLabelsConflict": true,
+        "describeCoverageBandUnit": "W.m-2.Sr-1 (inconsistent with elevation product; do not use as height units)",
+        "fullAreaNoDataVerified": false,
+        "actualAcquisitionDate": null,
+        "serviceListPrintedDate": "2026-09-24",
+        "hriFetch": "403 in browsing"
+      },
+      "license": {
+        "id": "CC-BY-4.0 under current City Survey Services open-data policy",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "authority": "https://www.hel.fi/en/decision-making/information-on-helsinki/maps-and-geospatial-data/make-better-use-of-geospatial-data/open-geographic-data",
+        "credit": "City of Helsinki, City Survey Services",
+        "exceptions": "2012 product has different order/agreement terms; not selected",
+        "redistributionReview": "pending for converted assets"
+      },
+      "fallback": {
+        "manual": "Save the exact bounded GetCoverage URL response in a browser; alternatively use Helsinki Map Service open-data directory. Preserve bytes and terms; PNG/JPEG/WMS shaded images are not height data.",
+        "secondary": "P17 may investigate NLS Elevation model 2m if city access fails; not verified or selected in P09"
+      },
+      "readerPlan": "P17 evaluate managed TIFF reader on actual tiled Float32/matrix-georeferenced file. Probe inspector is not a production reader. No GDAL/native GIS dependency selected; require independent N2000 height controls."
+    },
+    {
+      "id": "osm-roads",
+      "role": "preferred_semantic_roads_pending_access",
+      "provider": "OpenStreetMap contributors; Overpass instance operator for delivery",
+      "checkedDate": "2026-10-04",
+      "providerLinks": [
+        "https://www.openstreetmap.org/copyright",
+        "https://operations.osmfoundation.org/policies/api/",
+        "https://osmfoundation.org/wiki/Licence/Attribution_Guidelines",
+        "https://opendatacommons.org/licenses/odbl/1-0/",
+        "https://dev.overpass-api.de/overpass-doc/en/preface/commons.html"
+      ],
+      "access": {
+        "endpoint": "https://overpass-api.de/api/interpreter",
+        "formatPlanned": "Overpass JSON with way nodes/tags; OSM XML manual alternative",
+        "queryUsed": "[out:json][timeout:20][maxsize:16777216];way[\"name\"=\"Stenbäckinkatu\"](60.18,24.90,60.20,24.93);out meta geom;"
+      },
+      "providerClaims": {
+        "horizontalCrs": "WGS84 geographic coordinates",
+        "verticalDatum": "none guaranteed for road ways/ele tags",
+        "coverage": "contributor-maintained; completeness not guaranteed",
+        "updatePolicy": "changing database; record osm_base and element timestamps per extract"
+      },
+      "observed": {
+        "access": "failed",
+        "primaryGetHttpStatus": 406,
+        "asciiNameQueryHttpStatus": 406,
+        "alternateEndpoint": "https://overpass.kumi.systems/api/interpreter",
+        "alternateResult": "30-second timeout, no bytes",
+        "fileFormat": null,
+        "sourceTimestamp": null,
+        "roadLengthMetres": null,
+        "bridgeTunnelAccessTags": null
+      },
+      "license": {
+        "id": "ODbL-1.0",
+        "url": "https://opendatacommons.org/licenses/odbl/1-0/",
+        "credit": "© OpenStreetMap contributors",
+        "attributionLink": "https://www.openstreetmap.org/copyright",
+        "redistributionReview": "Classify actual derived database/Produced Work and obligations before public distribution; non-commercial use is not an exemption"
+      },
+      "fallback": {
+        "manual": "overpass-turbo.eu: inspect same narrow query, Export raw JSON/XML and capture osm_base, query and checksum; don't automate browser forms. If unavailable investigate bounded city carriageway polygon WFS, not cartographic lines.",
+        "url": "https://overpass-turbo.eu/",
+        "followup": "P10 must record successful small road sample or blocker; no fallback semantic equivalence claimed"
+      },
+      "readerPlan": "System.Text.Json or XmlReader; explicit approximate WGS84 datum policy from P07; no inference of N2000 height from OSM ele"
+    },
+    {
+      "id": "helsinki-address-origin",
+      "role": "origin_control",
+      "provider": "City of Helsinki",
+      "checkedDate": "2026-10-04",
+      "providerLinks": [
+        "https://www.hel.fi/en/decision-making/information-on-helsinki/maps-and-geospatial-data/make-better-use-of-geospatial-data/open-geographic-data",
+        "https://kartta.hel.fi/ws/geoserver/avoindata/wfs"
+      ],
+      "access": {
+        "endpoint": "https://kartta.hel.fi/ws/geoserver/avoindata/wfs",
+        "typeNames": "avoindata:Helsinki_osoiteluettelo",
+        "featureId": "Helsinki_osoiteluettelo.45899",
+        "format": "GeoJSON"
+      },
+      "providerClaims": {
+        "horizontalCrs": "EPSG:3879 maintenance; supported output projection",
+        "verticalDatum": null
+      },
+      "observed": {
+        "outputCrsVerified": [
+          "EPSG:3879",
+          "EPSG:3067",
+          "EPSG:4326"
+        ],
+        "publicationDateField": "2026-10-02",
+        "heightAvailable": false,
+        "streetReferenceWithoutNumber": true
+      },
+      "license": {
+        "id": "CC-BY-4.0 general City Survey Services open-data policy",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "authority": "https://www.hel.fi/en/decision-making/information-on-helsinki/maps-and-geospatial-data/make-better-use-of-geospatial-data/open-geographic-data"
+      },
+      "fallback": {
+        "manual": "Save single-feature WFS response; if absent on replay retain immutable previously measured origin, don't replace silently"
+      }
+    }
+  ],
+  "retrievalPlan": {
+    "implementationStatus": "planned_only",
+    "cacheRoot": "data/raw/<source-id>/<request-sha256>/ (add ignores when P10 creates directory)",
+    "offlineConversionRequired": true,
+    "concurrency": 1,
+    "minimumRequestSpacingSeconds": 2,
+    "maxRetries": 2,
+    "retryScheduleSeconds": [
+      30,
+      120
+    ],
+    "respectRetryAfter": true,
+    "stopOn": [
+      "401/403 or persistent 406",
+      "service error XML/HTML despite HTTP 200",
+      "response exceeds byte/count/area cap",
+      "inconsistent CRS/NoData/datums"
+    ],
+    "partialFiles": "write .partial then checksum and atomic rename; never use partial as cache",
+    "cacheMetadata": [
+      "exact URL or POST/query body",
+      "UTC retrieval timestamp and HTTP status",
+      "ETag/Last-Modified if supplied",
+      "byte count/SHA-256",
+      "provider terms snapshot and checked date",
+      "CRS/axis order/vertical datum/units/coverage/resolution",
+      "element/product update timestamps"
+    ],
+    "refresh": "explicit opt-in; no automatic re-download or game network access",
+    "projectCaps": {
+      "roadProbeBytes": 1000000,
+      "roadSampleBytes": 10000000,
+      "buildingProbeCount": 1,
+      "buildingSampleCount": 10,
+      "buildingSampleBytes": 10000000,
+      "buildingAreaBytes": 100000000,
+      "terrainRequestBytes": 8000000,
+      "terrainRequestMaxPixels": 1100000,
+      "metadataBytes": 3000000,
+      "totalSessionDownloadBytes": 150000000
+    },
+    "providerLimits": {
+      "helsinki": "No numeric request/day/byte ceiling found in checked guidance; continuous/large use or online integration requires contacting City Survey Services. Advertised GeoServer WFS CountDefault=1000000 is not a safe request size.",
+      "citygml": "ResponseCacheTimeout=300 seconds, paging not transaction-safe; no verified numeric quota",
+      "overpass": "Operator broad guidance about 10000 requests/day and below 1GB/day, not allocation or guarantee; load-dependent slots, 429/504, default timeout180s/maxsize512MiB; project uses20s/16MiB"
+    },
+    "storageEstimates": {
+      "status": "planning estimates, not measured downloads",
+      "roadsRawMiB": [
+        1,
+        10
+      ],
+      "buildingsRawMiB": [
+        10,
+        100
+      ],
+      "terrainOneKmFloat32PayloadBytes": 4000000,
+      "terrain1100mSquarePayloadBytes": 4840000,
+      "terrain500mFloat32PayloadBytes": 1000000,
+      "totalRawIntermediateGeneratedWorkingBudgetMiB": 512,
+      "texturesExcluded": true,
+      "geometryVariationMayExceedCap": true
+    },
+    "manualImport": "Save untouched file into ignored source cache with companion provenance JSON; validate bounds/terms/checksum before offline read"
+  },
+  "probes": [
+    {
+      "file": "p09-origin.json",
+      "bytes": 734,
+      "sha256": "ae29bf2261039444999dd189c1ced5dbe34753815c346626ef9bc6b992e6b1d5",
+      "url": "https://kartta.hel.fi/ws/geoserver/avoindata/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=avoindata:Helsinki_osoiteluettelo&featureID=Helsinki_osoiteluettelo.45899&count=1&srsName=EPSG:3067&outputFormat=application%2Fjson",
+      "method": "GET",
+      "retrievedLocalDate": "2026-10-04",
+      "location": "artifacts/p09 (ignored, not redistributed)",
+      "httpResult": "success"
+    },
+    {
+      "file": "p09-origin-geographic.json",
+      "bytes": 726,
+      "sha256": "f7133097be2ebb6e21bde3afd5617bf35afe79fc025d3f2481f630a7d658df04",
+      "url": "https://kartta.hel.fi/ws/geoserver/avoindata/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=avoindata:Helsinki_osoiteluettelo&featureID=Helsinki_osoiteluettelo.45899&count=1&srsName=EPSG:4326&outputFormat=application%2Fjson",
+      "method": "GET",
+      "retrievedLocalDate": "2026-10-04",
+      "location": "artifacts/p09 (ignored, not redistributed)",
+      "httpResult": "success"
+    },
+    {
+      "file": "p09-address.json",
+      "bytes": 10432,
+      "sha256": "d5279598446ea37c53017d56675b154e87e4ff0ebb63e90fbb83e42f07c381e8",
+      "url": "https://kartta.hel.fi/ws/geoserver/avoindata/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=avoindata:Helsinki_osoiteluettelo&count=20&outputFormat=application%2Fjson&CQL_FILTER=katunimi%3D%27Stenb%C3%A4ckinkatu%27",
+      "method": "GET",
+      "retrievedLocalDate": "2026-10-04",
+      "location": "artifacts/p09 (ignored, not redistributed)",
+      "httpResult": "success"
+    },
+    {
+      "file": "p09-building.gml",
+      "bytes": 26638,
+      "sha256": "e7bc5f6e6913f8c28127eb0af4fffb6acd39fc02be63827f896c0f628b3fbe2d",
+      "url": "https://kartta.hel.fi/3d/citydb-wfs/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=bldg:Building&count=1&bbox=25495042,6674954,25495242,6675154,urn:ogc:def:crs:EPSG::3879",
+      "method": "GET",
+      "retrievedLocalDate": "2026-10-04",
+      "location": "artifacts/p09 (ignored, not redistributed)",
+      "httpResult": "success"
+    },
+    {
+      "file": "p09-terrain.tif",
+      "bytes": 1429,
+      "sha256": "b96cf35301f43816783e311fc4c0d20636af2464d32409449ed8a735e979ab9d",
+      "url": "https://kartta.hel.fi/ws/geoserver/avoindata/wcs?service=WCS&version=2.0.1&request=GetCoverage&coverageId=avoindata__Korkeusmalli_2021_1m&subset=E(25495140,25495144)&subset=N(6675052,6675056)&format=image/tiff&compression=NONE",
+      "method": "GET",
+      "retrievedLocalDate": "2026-10-04",
+      "location": "artifacts/p09 (ignored, not redistributed)",
+      "httpResult": "success"
+    },
+    {
+      "file": "p09-footprints.json",
+      "bytes": 1907,
+      "sha256": "064b8a9cd2f5dc7704ba7afb308740c53c53eab04ae0e43df7ec2637e2f2a25d",
+      "url": "https://kartta.hel.fi/ws/geoserver/avoindata/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=avoindata:Rakennukset_alue&count=2&bbox=384136,6674110,384336,6674310,EPSG:3067&srsName=EPSG:3067&outputFormat=application%2Fjson",
+      "method": "GET",
+      "retrievedLocalDate": "2026-10-04",
+      "location": "artifacts/p09 (ignored, not redistributed)",
+      "httpResult": "success"
+    },
+    {
+      "file": "p09-citywfs.xml",
+      "bytes": 11136,
+      "sha256": "b5d80c1c310ca25cd84f5cbfd6a61f892da4e05800160c8d36d13431666bce43",
+      "url": "https://kartta.hel.fi/3d/citydb-wfs/wfs?service=WFS&request=GetCapabilities",
+      "method": "GET",
+      "retrievedLocalDate": "2026-10-04",
+      "location": "artifacts/p09 (ignored, not redistributed)",
+      "httpResult": "success"
+    },
+    {
+      "file": "p09-describe.xml",
+      "bytes": 3333,
+      "sha256": "343b8926b11b527be245d212f7ddce316ef6a8d57720f3fe2376b9a10c3d9dcc",
+      "url": "https://kartta.hel.fi/ws/geoserver/avoindata/wcs?service=WCS&version=2.0.1&request=DescribeCoverage&coverageId=avoindata__Korkeusmalli_2021_1m",
+      "method": "GET",
+      "retrievedLocalDate": "2026-10-04",
+      "location": "artifacts/p09 (ignored, not redistributed)",
+      "httpResult": "success"
+    },
+    {
+      "file": "p09-wcs.xml",
+      "bytes": 641372,
+      "sha256": "f6c1f85b4b828e258d53332cfe89f905bd7b482951ee10224047708e90c42680",
+      "url": "https://kartta.hel.fi/ws/geoserver/avoindata/wcs?service=WCS&version=2.0.1&request=GetCapabilities",
+      "method": "GET",
+      "retrievedLocalDate": "2026-10-04",
+      "location": "artifacts/p09 (ignored, not redistributed)",
+      "httpResult": "success"
+    },
+    {
+      "file": "p09-wfs.xml",
+      "bytes": 305680,
+      "sha256": "6f094a37b6ab10001a31c34cd6a7ee5e4d3614c8dcb1f9f3d1fa17d64d4b6ea0",
+      "url": "https://kartta.hel.fi/ws/geoserver/avoindata/wfs?service=WFS&request=GetCapabilities",
+      "method": "GET",
+      "retrievedLocalDate": "2026-10-04",
+      "location": "artifacts/p09 (ignored, not redistributed)",
+      "httpResult": "success"
+    }
+  ]
+}

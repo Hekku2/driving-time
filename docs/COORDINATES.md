@@ -1,6 +1,6 @@
 # P07 coordinate contract
 
-Version 1, checked 2026-10-03. Implementation: `pipeline/Coordinates.cs` and `pipeline/Tm35FinProjection.cs`; fixtures: `tests/DrivingTime.Pipeline.Tests/CoordinateTests.cs`. This contract prepares P08/P09; the P06 v1 CLI still accepts only synthetic configurations and emits its existing manifest. No game or mesh import change is implied.
+Version 1, checked 2026-10-03; P09 origin evidence added 2026-10-04. Implementation: `pipeline/Coordinates.cs` and `pipeline/Tm35FinProjection.cs`; fixtures: `tests/DrivingTime.Pipeline.Tests/CoordinateTests.cs`. The CLI accepts only synthetic configurations; P09's source registry is research metadata. No game or mesh import change is implied.
 
 ## Source and normalized coordinates
 
@@ -19,7 +19,7 @@ The importer must check CRS metadata, format/transport axis rules, units and a k
 
 ## Origin, axes and precision
 
-No real origin or geographic bounds have been selected. P09 must record a traceable fixed E,N,H origin in EPSG:3067/N2000 from the selected bounded area, plus selection method and source/control evidence. It must be identical for all layers, tiles and manifests and persisted in configuration; do not recalculate it per object, tile or run. `CoordinateFrame` requires the caller to supply that origin and tile size and stores immutable values. P06's configured (0,0,0) is synthetic only. Large numbers in P07 fixtures deliberately exercise precision and are not origin recommendations. No Helsinki coordinates were invented or committed as configuration.
+P09 records a provisional data-derived Stenbäckinkatu origin E=384236.0361374, N=6674210.89320437 (EPSG:3067), H=13.52536678314209m (provider N2000) and a 1000m square in [source-registry.json](../config/source-registry.json). [DATA_SOURCES.md](DATA_SOURCES.md) traces the city-projected address anchor and containing terrain pixel; the anchor is not a spawn. Independent vertical controls remain P17 work. Persist the adopted origin identically for all real layers, tiles and manifests; do not recalculate per object, tile or run. `CoordinateFrame` requires a caller-supplied origin/tile size and stores immutable values. P06's (0,0,0) configuration and P07 fixtures remain synthetic; the research registry does not reconfigure them.
 
 For normalized projected east, north and validated height:
 
@@ -73,4 +73,4 @@ Official sources checked 2026-10-03:
 - [Godot 4.5 axes and scale](https://docs.godotengine.org/en/4.5/tutorials/3d/introduction_to_3d.html).
 - [RFC 7946 positions and height semantics](https://www.rfc-editor.org/rfc/rfc7946) and [OGC CRS/encoding rules](https://docs.ogc.org/is/18-058r1/18-058r1.html). Direct EPSG:4326 registry page retrieval was unavailable; transport axis order still requires actual-source review.
 
-Manual review: read the axis table, origin rules and vertical validation checklist; expect no selected real origin, north toward -Z and explicit rejection of unsupported heights. Agent contract review completed; user replay not performed. No runtime visual check is required for P07. P08 must show cardinal markers, a 100 m scale and raised marker in Godot before G2 can pass.
+Manual review: read the axis table, origin rules and vertical validation checklist; expect north toward -Z and explicit rejection of unsupported heights. P07's historical review had no real origin; P09 now records a provisional measured anchor, with independent real-height validation still pending. Agent contract review completed; user replay not performed. No runtime visual check is required for P07. P08 must show cardinal markers, a 100 m scale and raised marker in Godot before G2 can pass.

@@ -2,9 +2,9 @@
 
 Goal: Small drivable Helsinki desktop prototype<br>
 Current gate: G0 — open; command checks pass, visual acceptance pending<br>
-Last completed task: P07 (coordinate contract and transform evaluation)<br>
-Selected task: P08 — awaiting-manual-test; P05a remains awaiting-manual-test<br>
-Next recommended task: P09 (verify bounded data sources); P08 visual inspection remains open<br>
+Last completed task: P09 (bounded data-source research at Stenbäckinkatu)<br>
+Selected task: P09 — done; P08/P05a remain awaiting-manual-test<br>
+Next recommended task: P10 (acquire and inspect a small road sample); P08 visual inspection remains open<br>
 Updated: 2026-10-04
 
 ## Verified environment
@@ -17,6 +17,10 @@ Updated: 2026-10-04
 - Fixed requirements: C#/.NET for game/pipeline/tools/tests; development and export in WSL; only exported runtime files go to Windows (D001/D012).
 
 ## Current implementation and evidence
+
+- P09 research done (2026-10-04): user selects Stenbäckinkatu. [DATA_SOURCES.md](DATA_SOURCES.md) and [source registry](../config/source-registry.json) separate provider declarations, bounded measurements and unknowns. Exact 1000m EPSG:3067 square surrounds city address reference E=384236.0361374, N=6674210.89320437; terrain-origin height=13.52536678314209m (provider N2000; independent control pending P17). Origin is provisional and not a vehicle spawn; synthetic configuration unchanged. Bounds/provenance recorded in D019.
+- P09 small probes verify CityGML 2.0 LoD1/2 geometry (one building, 20 matches), GeoJSON footprints (two polygons), three CRS outputs for the origin and 4x4 tiled Float32 GeoTIFF. Live terrain is 1m, conflicting with older 50cm metadata; axis-label/band-unit defects documented. Offline C# inspection verifies JSON, origin/bounds and ten byte counts/SHA-256 hashes; whitespace check passes. Source bytes stay in ignored artifacts/p09. No city-wide retrieval, conversion, game changes, publication or manual drive. [Commands](TESTING.md#p09--bounded-source-research).
+- P09 route is a provisional 100–150m eastern Stenbäckinkatu interior run, avoiding junction/tram/hospital structures and the 2026 planned Topeliuksenkatu through-traffic cut. Construction state/endpoints remain P10 checks. OSM requests failed (406 and alternate timeout), with manual export fallback; footprint terms conflict requires P14 review. P17 verifies a managed TIFF reader and independent N2000 heights. No G3/G4 evidence is implied.
 
 - P08 implemented, awaiting-manual-test (2026-10-04): SharpGLTF.Toolkit 1.0.7 pinned/locked (MIT, net10.0); one deterministic 6,664-byte GLB contains a 10 m cube, east/north/up markers and thin ground. Minimal asset manifest v1 records source origin/region, local bounds/metres/axes, relative asset path and SHA-256/provenance. `--stage-fixture game/Generated/P08` stages ignored engine-readable files; export helper regenerates before Godot import. Preset includes manifest JSON; runtime loads imported PackedScene through resource remapping. Separate `AssetInspection.tscn` provides labeled orbit view; vehicle default remains.
 - P08 locked restore, Debug/ExportRelease builds (0 warnings/errors), all 33 pipeline tests, Godot import and headless inspection pass. Serialized triangles are glTF CCW with outward flat unit normals; Godot imports clockwise and linear factors to sRGB without coordinate rotation/scale. Nonzero configured origin produces identical localized GLB. Windows export/transfer `artifacts/windows/20261003-204544-dc05f013` passed (188 runtime files, hashes verified); native Windows headless exported inspection passes, proving manifest/mesh package availability. Manual editor/Windows appearance remains unverified; G2 stays open. [Workflow](PIPELINE.md#p08-synthetic-glb-staging), [evidence](TESTING.md#p08--synthetic-glb-import), [manual steps](RUN.md#p08-manual-inspection).
@@ -56,7 +60,7 @@ P05 final verification follow-up: RecoveryChecks also passed at 30 FPS cap (1411
 
 ## Selected world configuration
 
-P07 working contract: EPSG:3067 projected east/north metres and N2000 heights for real elevated assets; X=east−originEast, Y=height−originHeight, Z=−(north−originNorth), right-handed. Real region bounds and geographic origin remain unselected; P09 must supply traceable configuration and validate sources. Approximately 1 × 1 km near Töölönlahti and 500 m tiles remain provisional. No geographic datum is implied by the synthetic scene. Data sources and license registry remain P09 work.
+P07 working contract: EPSG:3067 projected east/north metres and N2000 heights for real elevated assets; X=east−originEast, Y=height−originHeight, Z=−(north−originNorth), right-handed. P09 supplies provisional Stenbäckinkatu bounds/origin in the research registry (D019), with 500m tiles. Local GK25 conversion, accurate WGS84 datum conversion and independent vertical controls remain downstream checks. No geographic datum is implied by the unchanged synthetic scene.
 
 P06 sample only: `config/synthetic-scene.json`, region east/north -30..30 m, origin (0,0,0), tile size metadata 500 m, coordinate label `synthetic-local-metres`. These are test values, not Helsinki coordinates or an adopted geographic contract. Output is `config/generated/synthetic-scene.manifest.json` (ignored); path resolves from configuration directory. See [PIPELINE.md](PIPELINE.md).
 
@@ -70,6 +74,6 @@ The user explicitly selected P03, P04 and then P05 before all prior manual evide
 
 ## Next session
 
-VehicleBody3D is chosen (D016); controller selection is resolved. For P05a's remaining manual evidence, run the default vehicle scene and optionally `DrivingTime.exe res://Main.tscn` for the retained baseline. Report artifact/platform, straight/turn/ramp jitter and steering/braking observations. Keep P05a awaiting-manual-test until this evidence arrives. P08 awaits the editor/Windows visual inspection in RUN.md; P09 is the next recommended task, with prior visual gates still open.
+VehicleBody3D is chosen (D016); controller selection is resolved. For P05a's remaining manual evidence, run the default vehicle scene and optionally `DrivingTime.exe res://Main.tscn` for the retained baseline. Report artifact/platform, straight/turn/ramp jitter and steering/braking observations. Keep P05a awaiting-manual-test until this evidence arrives. P08 awaits the editor/Windows visual inspection in RUN.md. P09 research is done; P10 is next, with prior visual gates still open.
 
-Read AGENTS.md, the plan, this state, [decisions](DECISIONS.md) and [task index](tasks/INDEX.md). Record manual feedback against the tested artifact before closing acceptance. Recommended next task: P09; expand its card from the plan before execution. Stop at one selected task.
+Read AGENTS.md, the plan, this state, [decisions](DECISIONS.md), [data sources](DATA_SOURCES.md) and [task index](tasks/INDEX.md). Record manual feedback against the tested artifact before closing acceptance. Recommended next task: P10; create its card from the plan and P09's access/route checks before execution. Stop at one selected task.
