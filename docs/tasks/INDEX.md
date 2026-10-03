@@ -1,6 +1,6 @@
 # Task index
 
-Updated: 2026-10-03. P00, P01, P02a, P06 and P07 are complete. Deferred is a backlog disposition, not a completion status: all P09–P27 remain `todo`. Dependencies are copied from the plan; acceptance evidence is required before a dependency counts as complete. P01 research completion documents required installs; subsequent P02/P06 command evidence verifies the toolchain without closing visual gates.
+Updated: 2026-10-04. P00, P01, P02a, P06 and P07 are complete; P08 awaits manual inspection after automated import/export checks passed. Deferred is a backlog disposition, not a completion status: all P09–P27 remain `todo`. Dependencies are copied from the plan; acceptance evidence is required before a dependency counts as complete. P01 research completion documents required installs; subsequent command evidence verifies the toolchain without closing visual gates.
 
 | ID | Task | Type | Status | Dependencies | Disposition |
 |---|---|---|---|---|---|
@@ -14,7 +14,7 @@ Updated: 2026-10-03. P00, P01, P02a, P06 and P07 are complete. Deferred is a bac
 | <a id="p05a"></a>P05a | [Compare VehicleBody3D driving](P05a-vehicle-experiment.md) | implementation / validation | awaiting-manual-test | [P03](#p03), [P04](#p04), [P05](#p05) implemented baseline | Vehicle/30–60 cap and baseline checks pass; Windows export/transfer verified; VehicleBody3D chosen (D016), detailed manual observations pending |
 | <a id="p06"></a>P06 | [Create the offline pipeline CLI](P06-pipeline-cli.md) | implementation | done | [P01](#p01) | net10.0 CLI/tests in root solution; locked restore/builds/15 tests pass; identical manifests and clear input errors; no downloads |
 | <a id="p07"></a>P07 | [Specify and verify coordinate transforms](P07-coordinates.md) | implementation | done | [P06](#p06) | Explicit contract and ProjNET 2.1.0/NLS reference evaluation; 31 tests and build pass; real origin and vertical controls remain P09 |
-| <a id="p08"></a>P08 | [Import one generated GLB and manifest](P08-synthetic-import.md) | implementation | todo | [P02](#p02), [P07](#p07) | Card prepared |
+| <a id="p08"></a>P08 | [Import one generated GLB and manifest](P08-synthetic-import.md) | implementation | awaiting-manual-test | [P02](#p02), [P07](#p07) | 6,664-byte GLB, versioned manifest, ignored staging and inspection scene; 33 tests/build/import/export/native Windows mesh check pass; editor/export visuals pending |
 | <a id="p09"></a>P09 | [Verify data sources and select a bounded area](../../HELSINKI_DRIVING_PLAN.md#p09--verify-data-sources-and-select-a-bounded-area) | research | todo | [P07](#p07) | Deferred; expand before execution |
 | <a id="p10"></a>P10 | [Acquire and inspect a small road sample](../../HELSINKI_DRIVING_PLAN.md#p10--acquire-and-inspect-a-small-road-sample) | implementation | todo | [P09](#p09) | Deferred; expand before execution |
 | <a id="p11"></a>P11 | [Normalize a small road graph](../../HELSINKI_DRIVING_PLAN.md#p11--normalize-a-small-road-graph) | implementation | todo | [P10](#p10), [P07](#p07) | Deferred; expand before execution |
@@ -61,10 +61,12 @@ P05 was explicitly selected on 2026-10-03 while prior manual evidence remained o
 |---|---|---|
 | G0: instructions and viable toolchain | P00–P02 | Open: build/import/export and native Windows startup pass; scene/export visual confirmation pending |
 | G1: car, camera and recovery | P03–P05 | P03/P04 regressions and P05 collision/ramp/recovery checks pass; P05 implemented, manual gate acceptance remains open |
-| G2: aligned synthetic pipeline assets | P06–P08 | Open: P06 manifest CLI and P07 coordinate tests/reference verified; P08 asset import and visual alignment remain todo |
+| G2: aligned synthetic pipeline assets | P06–P08 | Open: P06/P07 done; P08 serialized/imported/exported geometry checks pass; manual editor/Windows visual alignment pending |
 | G3: real road and buildings | P09–P15 | Not run |
 | G4: terrain and intersection | P16–P21 | Not run |
 | G5: tile crossing | P22–P24 | Not run |
 | G6: repeatable export and performance | P25–P27 | Not run |
 
 Statuses: `todo`, `in-progress`, `awaiting-manual-test`, `done`, `blocked`, `superseded`. Record automated and manual evidence separately. Do not close later tasks because scaffolding exists. Later E01–E09 expansion modules remain unselected planning entry points in the plan.
+
+Current P08 outcome (2026-10-04): awaiting-manual-test. Deterministic SharpGLTF GLB and asset manifest, C# staging/export integration and separate labeled inspection scene implemented. Locked restore, builds, 33 tests, Godot import and native Windows exported mesh/material check pass. Manual appearance remains unverified; G2 stays open. Next recommended task: P09.

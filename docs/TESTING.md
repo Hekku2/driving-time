@@ -304,3 +304,22 @@ Restore and locked restore: pass, ProjNET 2.1.0 with content hashes in both lock
 Coverage: four cardinal directions; +37.25 m elevation above nonzero synthetic height origin; independent 60/80/100 m synthetic segment; right-handed east-cross-north basis; millimetre preservation after origin subtraction; explicit E,N / N,E and lat,lon / lon,lat adapters; datum mismatch/nonfinite rejection; exact/negative tile edges and neighbor recomposition; GRS80 TM35FIN forward/inverse reference; central-meridian easting; geographic round trips around the Finland envelope; swapped axes rejected; WGS84 approximation requires opt-in.
 
 Manual review performed by agent: axis/units table, fixed origin requirement, vertical validation process, approximation limitations and no invented real origin. User replay not performed; no visual acceptance is required for this task. Optional review: read COORDINATES.md and rerun the detailed reference command; expect a passing result and north toward engine -Z. Real height controls and WGS84 realization/epoch accuracy remain unverified; P08 must verify geometry import/appearance before G2 passes. Recommended next task: P08.
+
+## P08 — Synthetic GLB import
+
+Session 2026-10-03–04, WSL2 SDK 10.0.112, Godot 4.5.2 .NET. Official sources/checked dates and format rationale: [PIPELINE.md](PIPELINE.md#p08-synthetic-glb-staging), D018. Manual editor/Windows appearance: **unverified**.
+
+| Actual command / check | Outcome |
+|---|---|
+| `dotnet restore DrivingTime.sln`, then `dotnet restore DrivingTime.sln --locked-mode` | Both pass; SharpGLTF.Toolkit/Core/Runtime 1.0.7 locked; installed nuspec MIT/net10.0 verified |
+| `dotnet build DrivingTime.sln --no-restore` | Sandbox build returned failure without diagnostics; approved retry passed with 0 warnings/errors |
+| `dotnet test tests/DrivingTime.Pipeline.Tests --no-build --no-restore` outside sandbox | 33 passed: 31 prior plus two GLB/manifest geometry and nonzero-origin tests |
+| `dotnet run --project pipeline --no-build --no-restore -- --config config/synthetic-scene.json --stage-fixture game/Generated/P08` | Exit 0, 6,664-byte GLB and manifest; repeat bytes identical; bounds (-15,-0.2,-15)–(15,10,15) m |
+| Godot `--headless --path game --editor --import` outside sandbox | Exit 0; synthetic GLB imported without errors; default root scale=1, no import script |
+| Godot `--headless --path game res://AssetInspection.tscn --quit-after 120 -- --check-fixture` | First run failed material comparison; checked tagged importer linear-to-sRGB handling and corrected expected colors. After `dotnet build game --no-restore`, final run exit 0, `P08 PASS` |
+| `dotnet run --file scripts/export-windows.cs` | Exit 0; ExportRelease build 0 warnings/errors; fixture regeneration, import, publish/packing pass; manifest, imported mesh and inspection scene visibly listed in export log |
+| Native PowerShell `& "W:\projektit\driving-time\DrivingTime.exe" --headless res://AssetInspection.tscn --quit-after 120 --log-file "W:\projektit\driving-time\p08-check.log" -- --check-fixture; exit $LASTEXITCODE` | Exit 0, `P08 PASS` from native exported package |
+
+Artifact/logs: `artifacts/windows/20261003-204544-dc05f013` (UTC artifact timestamp); 188 runtime files, 168.2 MiB transferred and SHA-256 verified. Windows headless log is `W:\projektit\driving-time\p08-check.log`. Synthetic GLB SHA-256: `f64be72dacbed42167efdb13fb3e4ef59f3b2867b32ce296c4c04504db6f75e7`; input configuration SHA-256: `8f35618a0b9db8bc2e57caf284b4dc0a9b99fa86e00e0088f088d2d1d1c49ca5`.
+
+GLB readback verifies five meshes, 60 triangles, each object bound, identity nodes, no images, single-sided colored material, CCW triangles and outward flat unit normals. Nonzero (1000,2000,40) source origin produces identical localized bytes; too-small region rejected. Manifest path/hash/units/version/origin/bounds checks pass. Independent Godot inspection verifies all five imported bounds, identity global transforms, metallic/roughness/sRGB factors, outward unit normals and CW indices. Same check in the native Windows export proves resource remapping and manifest inclusion. No human visual result or performance measurement inferred. [Manual steps](RUN.md#p08-manual-inspection); P08 remains awaiting-manual-test and G2 open.

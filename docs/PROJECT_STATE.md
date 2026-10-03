@@ -3,9 +3,9 @@
 Goal: Small drivable Helsinki desktop prototype<br>
 Current gate: G0 — open; command checks pass, visual acceptance pending<br>
 Last completed task: P07 (coordinate contract and transform evaluation)<br>
-Selected task: P07 — done; P05a remains awaiting-manual-test<br>
-Next recommended task: P08 (synthetic GLB import); P05a detailed manual evidence remains open<br>
-Updated: 2026-10-03
+Selected task: P08 — awaiting-manual-test; P05a remains awaiting-manual-test<br>
+Next recommended task: P09 (verify bounded data sources); P08 visual inspection remains open<br>
+Updated: 2026-10-04
 
 ## Verified environment
 
@@ -17,6 +17,9 @@ Updated: 2026-10-03
 - Fixed requirements: C#/.NET for game/pipeline/tools/tests; development and export in WSL; only exported runtime files go to Windows (D001/D012).
 
 ## Current implementation and evidence
+
+- P08 implemented, awaiting-manual-test (2026-10-04): SharpGLTF.Toolkit 1.0.7 pinned/locked (MIT, net10.0); one deterministic 6,664-byte GLB contains a 10 m cube, east/north/up markers and thin ground. Minimal asset manifest v1 records source origin/region, local bounds/metres/axes, relative asset path and SHA-256/provenance. `--stage-fixture game/Generated/P08` stages ignored engine-readable files; export helper regenerates before Godot import. Preset includes manifest JSON; runtime loads imported PackedScene through resource remapping. Separate `AssetInspection.tscn` provides labeled orbit view; vehicle default remains.
+- P08 locked restore, Debug/ExportRelease builds (0 warnings/errors), all 33 pipeline tests, Godot import and headless inspection pass. Serialized triangles are glTF CCW with outward flat unit normals; Godot imports clockwise and linear factors to sRGB without coordinate rotation/scale. Nonzero configured origin produces identical localized GLB. Windows export/transfer `artifacts/windows/20261003-204544-dc05f013` passed (188 runtime files, hashes verified); native Windows headless exported inspection passes, proving manifest/mesh package availability. Manual editor/Windows appearance remains unverified; G2 stays open. [Workflow](PIPELINE.md#p08-synthetic-glb-staging), [evidence](TESTING.md#p08--synthetic-glb-import), [manual steps](RUN.md#p08-manual-inspection).
 
 - P07 done (2026-10-03): [coordinate contract](COORDINATES.md), double-precision projected/engine mapping, explicit source-axis adapters, fixed supplied origin, N2000/synthetic datum checks and tile-local mapping implemented independently of Godot. EPSG:3067 horizontal / N2000 vertical target selected; no real origin or bounds selected. ProjNET 2.1.0 pinned/locked and evaluated against published NLS example 10: east/north residuals -0.0000265805/-0.0000227625 m. Actual library lon/lat input semantics verified despite latitude-first WKT. EPSG:4326 requires explicit approximate datum opt-in; exact epoch/grid/height conversion remains unsupported.
 - P07 restore/locked restore and root Debug build pass (0 warnings/errors); 31 tests pass (16 P07 plus 15 P06). Initial sandbox test-runner socket denied; escalated run passed. Agent contract review complete; no user review, editor, export or manual drive performed. CLI remains P06 synthetic-only; G2 awaits P08 import/visual acceptance. [Evidence](TESTING.md#p07--coordinate-contract-and-transform-evaluation).
@@ -46,7 +49,7 @@ Updated: 2026-10-03
 - P05: three solid box obstacles in the loop interior; 6 m wide/12 m long 10-degree green ramp on the west straight, rising toward -Z to approximately 2.08 m. Ground bounds remain 60 m. Scene Spawn marker at (14,0,8), yaw 0. R and Y below exported RecoveryHeight (default -10 m) share recovery: restore full spawn transform, zero Velocity and SignedSpeed, reset car interpolation and notify camera to clear anchor/yaw/arm and interpolation. No motion applied on the recovery tick; held throttle can accelerate afresh next tick.
 - P05 collision verification: CharacterBody3D with upright 1.8 × 0.7 × 3.4 m chassis box, grounded MoveAndSlide and default 0.1 m floor snap. Full-speed impacts block; reverse escape and ramp climb/brake/idle/descent pass. Initial impact retained controller speed after physics stopped motion; narrow wall-contact speed reconciliation corrects this. No controller replacement or child required by these checks. Cosmetic cabin/wheels and unswept angular motion remain limitations.
 - P05 Debug/ExportRelease builds and headless import passed. RecoveryChecks passed 1411 ticks at 60 FPS cap: obstacle overlap queries, ramp behavior, manual and natural fall resets, configurable -3 m threshold, zero stored/vertical/horizontal velocity, immediate camera reset from compressed/turned state and held/repeated R. P03/P04 regressions passed 720/420 ticks; original driving trace unchanged. Export/transfer passed: artifacts/windows/20261003-164321-f5563ae3, 188 runtime files (168.2 MiB) SHA-256 verified at W:\projektit\driving-time. Native startup/manual tests unverified. [Evidence](TESTING.md#p05--collision-and-safe-recovery), [manual guide](RUN.md#p05-manual-test).
-- Generated caches/builds/exports and sample pipeline output ignored. No datasets downloaded; P07 is the latest implemented task. No commit/push/publish. Primitive geometry and manifest fixture are repository-authored synthetic meter-space content; no geographic CRS or vertical datum.
+- Generated caches/builds/exports, fixture staging and sample pipeline output ignored. No datasets downloaded; P08 is the latest implemented task. No commit/push/publish. Primitive geometry and manifest fixture are repository-authored synthetic meter-space content; no geographic CRS or vertical datum.
 - Full commands, checksums, sources and limitations: [TESTING.md](TESTING.md#p02--minimal-scene-build-export-and-native-startup), D014 and [RUN.md](RUN.md).
 
 P05 final verification follow-up: RecoveryChecks also passed at 30 FPS cap (1411 physics ticks, 3 recoveries), after the check's failure-exit guard was added. Final Debug build and whitespace check passed. Gameplay code in the exported artifact is unchanged by that test-only follow-up.
@@ -67,6 +70,6 @@ The user explicitly selected P03, P04 and then P05 before all prior manual evide
 
 ## Next session
 
-VehicleBody3D is chosen (D016); controller selection is resolved. For P05a's remaining manual evidence, run the default vehicle scene and optionally `DrivingTime.exe res://Main.tscn` for the retained baseline. Report artifact/platform, straight/turn/ramp jitter and steering/braking observations. Keep P05a awaiting-manual-test until this evidence arrives. P07 is complete; P08 is the next recommended task, with prior P02 visual acceptance still open.
+VehicleBody3D is chosen (D016); controller selection is resolved. For P05a's remaining manual evidence, run the default vehicle scene and optionally `DrivingTime.exe res://Main.tscn` for the retained baseline. Report artifact/platform, straight/turn/ramp jitter and steering/braking observations. Keep P05a awaiting-manual-test until this evidence arrives. P08 awaits the editor/Windows visual inspection in RUN.md; P09 is the next recommended task, with prior visual gates still open.
 
-Read AGENTS.md, the plan, this state, [decisions](DECISIONS.md) and [task index](tasks/INDEX.md). Record manual feedback against the tested artifact before closing acceptance. Recommended next task: P08, using P07's synthetic coordinate fixtures and contract. Stop at one selected task.
+Read AGENTS.md, the plan, this state, [decisions](DECISIONS.md) and [task index](tasks/INDEX.md). Record manual feedback against the tested artifact before closing acceptance. Recommended next task: P09; expand its card from the plan before execution. Stop at one selected task.

@@ -1,6 +1,6 @@
 # Helsinki driving game: expandable Codex plan
 
-Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-03 · Status: P07 coordinate contract/reference tests done; G0/G1 manual evidence and G2 import/alignment remain open
+Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-04 · Status: P08 synthetic GLB/import/export checks pass, awaiting visual test; G0/G1/G2 manual evidence remains open
 
 ## Goal
 
@@ -212,6 +212,8 @@ Execute P07. Define an explicit coordinate contract: source axis order and units
 Completion check: Automated fixtures prove direction, 100 m scale, elevation and round-trip tolerance. The coordinate contract includes source CRS axis-order handling.
 
 ### P08 — Import one generated GLB and manifest
+
+Status: **awaiting-manual-test** (2026-10-04). [Task card](docs/tasks/P08-synthetic-import.md), [staging/schema/workflow](docs/PIPELINE.md#p08-synthetic-glb-staging), [evidence](docs/TESTING.md#p08--synthetic-glb-import). SharpGLTF.Toolkit 1.0.7 verified with a 6,664-byte synthetic GLB; 33 tests, locked restore, builds, Godot import and native Windows exported geometry/material checks pass. Editor/Windows visual inspection remains open; G2 stays open. Next recommended task: P09.
 
 Type: **implementation** · Depends on: **P02, P07**
 

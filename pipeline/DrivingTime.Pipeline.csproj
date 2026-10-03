@@ -8,5 +8,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ProjNET" Version="[2.1.0]" />
+    <PackageReference Include="SharpGLTF.Toolkit" Version="[1.0.7]" />
   </ItemGroup>
 </Project>

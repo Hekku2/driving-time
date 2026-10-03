@@ -122,3 +122,19 @@ dotnet run --project pipeline/DrivingTime.Pipeline.csproj --no-restore -- --conf
 ```
 
 Expect exit 0 and the generated manifest path; invalid input exits 2. No downloads or extra runtime. Pipeline outputs/tools stay in WSL; only exported game runtime files transfer to Windows.
+
+## P08 manual inspection
+
+Generate/build/import using [PIPELINE.md](PIPELINE.md#p08-synthetic-glb-staging). Open `game/AssetInspection.tscn` in the WSL Godot editor and run that scene (F6), or run:
+
+```bash
+"$HOME/.local/share/driving-time/godot-4.5.2/Godot_v4.5.2-stable_mono_linux.x86_64" --path game res://AssetInspection.tscn
+```
+
+For native Windows, close the current game and run the export helper in WSL. Then from Windows PowerShell:
+
+```powershell
+& 'W:\projektit\driving-time\DrivingTime.exe' 'res://AssetInspection.tscn'
+```
+
+Use Left/Right arrows to orbit. Expect a solid orange 10 × 10 × 10 m cube on a 30 m ground slab, a red east marker (+X), a green north marker (-Z), and a blue 6 m vertical marker (+Y). Labels should stay attached to each marker. Orbit fully around: all outside faces remain visible with flat lighting and correct colors, with no holes, inverted faces, reflection or extra rotation. Compare editor and Windows export. Report the artifact/platform, scale/direction/material observations and any console errors. Passing headless mesh checks does not establish visual acceptance. This is a separate inspection scene; normal startup remains the vehicle experiment.

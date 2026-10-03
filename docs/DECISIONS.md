@@ -1,6 +1,6 @@
 # Decisions
 
-Updated: 2026-10-03. P00 recorded assumptions; P01 verified tool inventory and official compatibility documentation. P02 verifies the minimal game build/export/startup (D014); visual acceptance and datasets remain unverified.
+Updated: 2026-10-04. P08 verifies synthetic GLB writer/staging/import/export (D018); visual acceptance and datasets remain unverified. Historical toolchain and controller decisions remain below.
 
 | ID | Status | Decision / assumption | Review |
 |---|---|---|---|
@@ -13,7 +13,7 @@ Updated: 2026-10-03. P00 recorded assumptions; P01 verified tool inventory and o
 | D007 | Contract/projection verified; real data validation pending | EPSG:3067 E,N projected metres, N2000 real heights, double source/normalized coordinates; X=east−originEast, Y=height−originHeight, Z=−(north−originNorth), right-handed. Real origin/bounds unselected. | P07 contract/tests and D017; P09 selects traceable origin and verifies source axes/datums; P17 validates heights. |
 | D008 | Provisional | 500 m square tiles, only two neighbors initially; bounded lifecycle before larger coverage. | P22–P24 verify borders, ownership and collision retention. |
 | D009 | Provisional | 60 FPS at 1080p as an initial performance target; reference hardware unknown. | P01 records target; P26 measures actual hardware. |
-| D010 | Provisional | GLB assets and versioned manifests with reproducible staging into Godot's project for import/export. No specific writer, layout or shared library chosen. | P08 verifies writer and staging; share code only when needed. |
+| D010 | Writer/staging/import/export verified; appearance pending | SharpGLTF.Toolkit 1.0.7 and asset manifest v1; ignored generation under game/Generated/P08 before import/export. No shared library needed. | P08 / D018; manual editor/Windows visual checks remain open. |
 
 Remaining initial defaults are assumptions, not evidence. P07 selects ProjNET for bounded horizontal projection (D017); no dataset reader/format, source-data license, real origin or native dependency is selected. Future records must include rationale, sources and checked dates, affected tasks and acceptance evidence.
 
@@ -90,3 +90,11 @@ Adopt EPSG:3067 projected E,N metres, N2000 heights for real elevated assets, im
 Use pinned ProjNET 2.1.0 for the offline horizontal TM35FIN projection with explicit GRS80 WKT parameters. Package netstandard2.0/2.1 metadata and actual net10.0 restore/build/tests establish compatibility; no shared library or native dependency added. LGPL-2.1-or-later package metadata recorded; no redistribution performed. Actual library lon/lat input semantics verified against the independent NLS/FGI example even with latitude-first WKT. EPSG:4326 conversion rejects by default; explicit approximate datum opt-in treats WGS84 angles as EUREF-FIN and must be recorded/accepted during source review. No accurate epoch-aware datum/grid/geoid support is claimed.
 
 31 tests pass including P06 regressions, cardinal/100 m/elevation/precision/round-trip/tile checks and NLS example 10 (residual magnitudes under 0.000027 m, acceptance 0.01 m). Contract review complete; no editor/import/export or manual drive. Required vertical-control validation and sources/checked dates are in [COORDINATES.md](COORDINATES.md); actual commands in [TESTING.md](TESTING.md#p07--coordinate-contract-and-transform-evaluation). Affected tasks: P07, P08/P09/P11 and later elevation/tile work; no later task completed.
+
+## D018 — P08 GLB writer and Godot staging
+
+Date: 2026-10-04; official source checks: 2026-10-03. Status: writer/import/export verified; visual acceptance pending. Resolves D010 for this slice.
+
+Use managed SharpGLTF.Toolkit 1.0.7 (MIT, net10.0; Core/Runtime 1.0.7 transitively locked) only in the offline pipeline. Keep a separate minimal asset manifest v1 alongside one GLB. Generate into ignored `game/Generated/P08` before Godot import, without external symlinks or committed generated binary assets. Export all resources and explicitly include the manifest JSON. Load the imported PackedScene and JSON with Godot resource/file APIs; no writer/pipeline dependency in game. The existing WSL export helper regenerates this small fixture before import/export.
+
+Map double E,N,H corners to local X,Y,Z once using P07. Identity GLB/runtime transforms preserve metres and direction; pipeline writes glTF CCW/outward normals, importer produces Godot CW indices. Linear glTF color factors become Godot sRGB albedo in the importer. Deterministic/nonzero-origin GLB tests and Godot checks prove bounds/transforms/normals/materials; native Windows exported checks prove packaged availability. Manual editor/Windows appearance remains open. Full sources, schema/workflow and limitations: [PIPELINE.md](PIPELINE.md#p08-synthetic-glb-staging). Actual evidence: [TESTING.md](TESTING.md#p08--synthetic-glb-import). Affected task: P08 only; no real data, collision, streaming or P25 orchestration added.

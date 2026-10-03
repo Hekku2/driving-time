@@ -46,6 +46,8 @@ try
     Directory.CreateDirectory(artifact);
     Console.WriteLine($"Artifact: {artifact}\nDestination: {destination}");
     await Run("dotnet", ["build", "DrivingTime.sln", "-c", "ExportRelease"], repo, Path.Combine(artifact, "build.log"));
+    await Run("dotnet", ["run", "--project", "pipeline", "-c", "Release", "--no-build", "--no-restore", "--",
+        "--config", "config/synthetic-scene.json", "--stage-fixture", "game/Generated/P08"], repo, Path.Combine(artifact, "fixture.log"));
     await Run(godot, ["--headless", "--path", Path.Combine(repo, "game"), "--editor", "--import"], repo, Path.Combine(artifact, "import.log"));
     var runtime = Path.Combine(artifact, "runtime");
     Directory.CreateDirectory(runtime);

@@ -434,3 +434,6 @@ export_credentials.cfg
 
 # P06 synthetic pipeline output
 config/generated/
+
+# P08 reproducible engine-readable staging; generated GLB, manifest and import sidecars
+game/Generated/
