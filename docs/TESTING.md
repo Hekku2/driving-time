@@ -1,5 +1,30 @@
 # Testing and evidence
 
+## P04 — Chase Camera
+
+Checked 2026-10-03 in WSL2 using SDK 10.0.112 and installed Godot 4.5.2 .NET. User explicitly selected P04 with P03 manual acceptance pending; P02/P03 and G0/G1 remain open. No tools, packages or datasets added. P04 status: `awaiting-manual-test`.
+
+`GODOT4` denotes `$HOME/.local/share/driving-time/godot-4.5.2/Godot_v4.5.2-stable_mono_linux.x86_64`; Godot commands use `DOTNET_ROOT=/usr/lib/dotnet`.
+
+| Actual command/check | Outcome |
+|---|---|
+| `dotnet --version`; clean starting `git status --short` | SDK 10.0.112; no prior tracked/untracked changes |
+| `dotnet build DrivingTime.sln --no-restore` | Passed before/after interpolation change, 0 warnings/errors |
+| `"$GODOT4" --headless --path game --editor --import` | Passed; C# scripts registered, no reported errors |
+| `"$GODOT4" --headless --path game res://Checks/CameraChecks.tscn --max-fps 60 --disable-vsync` | Passed, 420 ticks; rerun after enabling interpolation also passed |
+| Same headless check with `--max-fps 30` and `144` | Both passed, 420 ticks each; final interpolation-enabled reruns also passed |
+| `"$GODOT4" --path game res://Checks/CameraChecks.tscn --max-fps 60 --disable-vsync --audio-driver Dummy` | WSLg-rendered check passed, 420 ticks; llvmpipe and unsupported V-Sync warning |
+| `"$GODOT4" --headless --path game res://Checks/DrivingChecks.tscn --max-fps 60 --disable-vsync` | P03 regression passed before/after interpolation, 720 ticks, 713 frame callbacks; checkpoint trace unchanged |
+| `git diff --check` | Passed |
+| Editor diagnostics for ChaseCamera.cs, CameraChecks.cs, Main.cs | No errors |
+| `dotnet run --file scripts/export-windows.cs` | ExportRelease build 0 warnings/errors, import/export passed; 188 runtime files (168.1 MiB) copied and SHA-256 verified at W:\projektit\driving-time |
+
+Artifact/logs: `artifacts/windows/20261003-161322-f7a5a660`. Native Windows startup/drive: **unverified**. Manual visual/feel acceptance: **unverified**. See [RUN.md](RUN.md#p04-manual-test) for tight-loop and wall steps. Rendered startup/test success does not prove appearance, interpolation quality or native performance.
+
+CameraChecks is C# inside Godot, explicitly launched instead of Main.tscn. It moves/turns the target in physics ticks, checks finite/bounded transforms, small smooth turn steps and road-ahead framing, independently queries a sphere at the camera for solid overlap each tick, places the car with the wall behind it, and verifies retraction plus bounded outward return when clear. Teleports are test-only; there is no gameplay reset. P03 checks still exercise real input and MoveAndSlide. Inspector overrides must remain at defaults. Basic convex-wall behavior is covered; pivot-inside-solid and enclosed-space handling are not. Sphere sweep ignores initial overlaps per the engine API, so the pivot must remain clear. Camera tuning and close-range car occlusion need visual feedback.
+
+Official sources checked 2026-10-03: [PhysicsDirectSpaceState3D](https://docs.godotengine.org/en/4.5/classes/class_physicsdirectspacestate3d.html) for CastMotion's safe fraction and initial-overlap limitation; [SpringArm3D](https://docs.godotengine.org/en/4.5/classes/class_springarm3d.html) for swept-volume/exclusion/margin camera behavior; [physics interpolation](https://docs.godotengine.org/en/4.5/tutorials/physics/interpolation/using_physics_interpolation.html) for project enablement, physics-step transforms and reset on discontinuities. A direct sphere sweep is used rather than SpringArm3D so retraction can be immediate while extension is rate-limited. No engine/version/dependency change. Recommended next task: P05 after manual P04 acceptance.
+
 ## P00 documentation checks
 
 2026-10-02: the plan and repository contents were inspected using `rg --files`, `cat`, `sed`, and `git status --short`. The supplied plan filename had an extra `.md`; `mv HELSINKI_DRIVING_PLAN.md.md HELSINKI_DRIVING_PLAN.md` normalized it without content edits.

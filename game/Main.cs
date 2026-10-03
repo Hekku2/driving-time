@@ -42,6 +42,11 @@ public partial class Main : Node3D
             }
         AddBox(this, "StartLine", new Vector3(8, 0.01f, 0.3f), new Vector3(14, 0.018f, 8), Colors.White);
 
+        var wall = new StaticBody3D { Name = "CameraWall", Position = new Vector3(20, 2.5f, 0) };
+        wall.AddChild(new CollisionShape3D { Shape = new BoxShape3D { Size = new Vector3(0.5f, 5, 24) } });
+        AddBox(wall, "WallMesh", new Vector3(0.5f, 5, 24), Vector3.Zero, new Color(0.65f, 0.7f, 0.66f));
+        AddChild(wall);
+
         var hud = new CanvasLayer();
         AddChild(hud);
         var panel = new PanelContainer { Position = new Vector2(16, 16) };
@@ -51,8 +56,8 @@ public partial class Main : Node3D
         _speed = new Label();
         _speed.AddThemeFontSizeOverride("font_size", 28);
         labels.AddChild(_speed);
-        labels.AddChild(new Label { Text = "W / ↑ accelerate   S / ↓ brake, then reverse\nA D / ← → steer   Space brake\nFollow the flat loop; corners need low speed.\nFixed overview camera · close window to exit" });
-        GD.Print("P03: flat driving loop ready (C#), physics=", Engine.PhysicsTicksPerSecond);
+        labels.AddChild(new Label { Text = "W / ↑ accelerate   S / ↓ brake, then reverse\nA D / ← → steer   Space brake" });
+        GD.Print("P04: chase camera driving loop ready (C#), physics=", Engine.PhysicsTicksPerSecond);
     }
 
     public override void _Process(double delta)
@@ -64,7 +69,8 @@ public partial class Main : Node3D
     {
         parent.AddChild(new MeshInstance3D
         {
-            Name = name, Position = position,
+            Name = name,
+            Position = position,
             Mesh = new BoxMesh { Size = size, Material = new StandardMaterial3D { AlbedoColor = color, Roughness = 0.9f } }
         });
     }

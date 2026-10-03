@@ -1,19 +1,19 @@
 # P04: Add a usable chase camera
 
-Status: todo
+Status: awaiting-manual-test
 Type: implementation
 Dependencies: P03
 Goal: A chase camera that follows turns and avoids basic obstruction.
 Inputs: P03 car and primitive scene.
 Scope: Bounded smoothing, road-ahead view, basic obstruction handling and camera logic separate from input.
 Out of scope: Multiple camera modes and cinematic effects.
-Deliverables: Camera implementation and turning/wall manual guide.
+Deliverables: game/ChaseCamera.cs, perspective rig in Main.tscn, wall outside the loop, C# CameraChecks scene and turning/wall guide in docs/RUN.md.
 Acceptance:
-- [ ] Automated / research: Run the verified C# build and record results; do not equate build success with camera acceptance.
+- [x] Automated / research: Run the verified C# build and record results; do not equate build success with camera acceptance.
 - [ ] Manual / review: Drive a tight loop and past a wall: smooth follow and no view from inside obstacles.
 - [ ] Plan completion: Drive a tight loop and past a wall; the camera follows smoothly and does not leave the player viewing from inside an obstacle.
-Evidence: Automated / research: not run. Manual / review: not run. Build/export: not run. Commands above are planned, not completed.
-Risks / blockers: Obstruction behavior and tuning need visual evidence.
+Evidence: 2026-10-03: Debug/ExportRelease builds passed with 0 warnings/errors; headless import passed. CameraChecks passed at 30/60/144 caps (420 physics ticks) and in WSLg at 60 cap. P03 DrivingChecks passed at 60 cap (720 ticks). Windows export/transfer passed: 188 SHA-256-verified runtime files, artifact 20261003-161322-f7a5a660. See [TESTING.md](../TESTING.md#p04--chase-camera). Manual / review: unverified; native launch/drive not run. User explicitly selected P04 while P03 manual acceptance remained open.
+Risks / blockers: Obstruction behavior and tuning need visual evidence. Basic convex-wall coverage only; camera pivot must remain outside solids. Close-up car occlusion is possible. No recovery until P05; no mode switching or cinematic effects.
 Follow-up tasks: P05; no implementation implied.
 
 ## Execution prompt
