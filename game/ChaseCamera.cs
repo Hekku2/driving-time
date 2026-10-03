@@ -23,9 +23,6 @@ public partial class ChaseCamera : Node3D
         Camera = GetNode<Camera3D>("Camera");
         ProcessPhysicsPriority = 10;
         PhysicsInterpolationMode = PhysicsInterpolationModeEnum.On;
-        _anchor = _target.GlobalPosition;
-        _yaw = _target.GlobalRotation.Y;
-        _armLength = new Vector3(0, Height, Distance).Length();
         _query = new PhysicsShapeQueryParameters3D
         {
             Shape = new SphereShape3D { Radius = 0.35f },
@@ -34,8 +31,23 @@ public partial class ChaseCamera : Node3D
         };
         if (_target is CollisionObject3D collider)
             _query.Exclude = new Godot.Collections.Array<Rid> { collider.GetRid() };
+        if (_target is Car car) car.Recovered += ResetToTarget;
+        ResetToTarget();
+    }
+
+    public override void _ExitTree()
+    {
+        if (_target is Car car) car.Recovered -= ResetToTarget;
+    }
+
+    public void ResetToTarget()
+    {
+        _anchor = _target.GlobalPosition;
+        _yaw = _target.GlobalRotation.Y;
+        _armLength = new Vector3(0, Height, Distance).Length();
         UpdateCamera(0);
         ResetPhysicsInterpolation();
+        Camera.ResetPhysicsInterpolation();
     }
 
     public override void _PhysicsProcess(double delta) => UpdateCamera((float)delta);

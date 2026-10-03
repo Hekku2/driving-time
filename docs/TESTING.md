@@ -1,5 +1,35 @@
 # Testing and evidence
 
+## P05 — Collision and safe recovery
+
+Checked 2026-10-03 in WSL2 with pinned SDK 10.0.112 and installed Godot 4.5.2 .NET. P05 selected explicitly; prior manual evidence/statuses were not closed. Existing local P03/P04 acceptance-checkbox edits preserved. No dependencies, tools or datasets added. Status: `awaiting-manual-test`; G1 remains open.
+
+`GODOT4` denotes `$HOME/.local/share/driving-time/godot-4.5.2/Godot_v4.5.2-stable_mono_linux.x86_64`; every Godot command below uses `DOTNET_ROOT=/usr/lib/dotnet`. Godot checks ran outside the sandbox after approval because its normal user-log directory is outside the writable roots.
+
+| Actual command/check | Outcome |
+|---|---|
+| `dotnet --version`; tool directory inventory | SDK 10.0.112; existing portable Godot 4.5.2 .NET installation present |
+| `dotnet build DrivingTime.sln --no-restore` | Passed after implementation and final check edit, 0 warnings/errors |
+| `dotnet build DrivingTime.sln -c ExportRelease --no-restore` | Passed, 0 warnings/errors; export helper later rebuilt release successfully |
+| Initial sandbox RecoveryChecks startup | User-log write denied; Godot crashed with signal 11 before tests. Escalated retry ran normally |
+| Initial escalated RecoveryChecks | Failed reverse-escape criterion: actual impact speed 0, but SignedSpeed remained 12 m/s. Corrected wall-contact speed reconciliation in Car.cs |
+| Intermediate checks | Passed impacts/climb; test used exact zero at the brake boundary and then released/repressed R instead of holding it. Corrected floating-point tolerance and input injection, without further movement changes |
+| `"$GODOT4" --headless --path game --editor --import` | Passed, exit 0, C# resources registered without reported errors |
+| `"$GODOT4" --headless --path game res://Checks/RecoveryChecks.tscn --max-fps 60 --disable-vsync --quit-after 1800` | Passed at 1411 physics ticks, 3 recoveries; PASS printed, exit 0 |
+| Same RecoveryChecks command at `--max-fps 30` | Final check version passed at 1411 ticks, 3 recoveries; PASS printed, exit 0 |
+| `"$GODOT4" --headless --path game res://Checks/DrivingChecks.tscn --max-fps 60 --disable-vsync --quit-after 1000` | P03 regression passed at 720 ticks / 713 frame callbacks; all 12 original checkpoints unchanged |
+| `"$GODOT4" --headless --path game res://Checks/CameraChecks.tscn --max-fps 60 --disable-vsync --quit-after 600` | P04 regression passed at 420 ticks, exit 0 |
+| `dotnet run --file scripts/export-windows.cs` | ExportRelease build 0 warnings/errors; headless import and Windows publish/packing passed; 188 runtime files (168.2 MiB) copied to W:\projektit\driving-time and SHA-256 verified |
+| `git diff --check` | Passed |
+
+Artifact/logs: `artifacts/windows/20261003-164321-f5563ae3`. Gameplay matches the tested source; the final RecoveryChecks failure-exit guard was added afterward and passed at 30 cap. Tests are explicit scenes, never part of the playable Main scene. Native Windows startup/manual drive, appearance, camera interpolation quality and human driving feel: **unverified**. Manual steps and expected results: [RUN.md](RUN.md#p05-manual-test). No rendered run or performance baseline claimed this session.
+
+RecoveryChecks exercises actual Main.tscn, physical solids and real input actions. Each tick independently queries a slightly inset chassis box for overlap with solid interiors. It verifies blocking by all three obstacles, heading speed removed on impact, reversing away, climbing/braking/holding/descending the 10-degree ramp, R while throttle/steering are held, held R versus a second press, and a natural fall off the bounded ground. That fall overrides RecoveryHeight to -3 m to prove the threshold is configurable. Recovery callbacks inspect the full spawn transform, zero horizontal/vertical/controller speed, and camera transform matching initial spawn even after wall compression and a yaw change. A failure sets exit 1; frame caps are not measured performance or manual acceptance.
+
+Collision model: grounded CharacterBody3D, explicit gravity, MoveAndSlide translation and default 0.1 m floor snap/45-degree maximum floor angle. Its 1.8 × 0.7 × 3.4 m upright chassis box is sufficient for these scripted impacts and 10-degree slope. Cabin/wheels are cosmetic; no suspension, pitching, tipping or physical bounce. Rotation is a direct yaw change, not an angular sweep; sharp corner turning and close-range camera occlusion need manual coverage. Spawn at (14,0,8), yaw 0, must remain clear and above RecoveryHeight (default -10 m). Reset clears motion on that tick; held driving input can accelerate on the next tick. Ramp high end is a drop. No focused controller child is required by the passing modest checks; the verified narrow defect was corrected without a redesign.
+
+Synthetic provenance: repository-authored boxes in meters; no external data, download date/checksum, geographic CRS or vertical datum applies. Sources checked 2026-10-03: [Godot 4.5 CharacterBody3D](https://docs.godotengine.org/en/4.5/classes/class_characterbody3d.html) for MoveAndSlide velocity modification, grounded walls/floors, floor snap and slope stop; [Godot 4.5 Node](https://docs.godotengine.org/en/4.5/classes/class_node.html#class-node-method-reset-physics-interpolation) for resetting interpolation after teleportation. Behavior claims are backed by the runs above. Recommended next task: P06, independently ready while manual P05 feedback is pending.
+
 ## P04 — Chase Camera
 
 Checked 2026-10-03 in WSL2 using SDK 10.0.112 and installed Godot 4.5.2 .NET. User explicitly selected P04 with P03 manual acceptance pending; P02/P03 and G0/G1 remain open. No tools, packages or datasets added. P04 status: `awaiting-manual-test`.

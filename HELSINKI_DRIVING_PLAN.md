@@ -1,6 +1,6 @@
 # Helsinki driving game: expandable Codex plan
 
-Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-03 · Status: P04 chase camera implemented; P02/P03/P04 manual acceptance pending
+Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-03 · Status: P05 collision/recovery implemented; G0/G1 manual evidence remains open
 
 ## Goal
 

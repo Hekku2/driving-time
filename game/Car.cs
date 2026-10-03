@@ -1,4 +1,5 @@
 using Godot;
+using System;
 
 public partial class Car : CharacterBody3D
 {
@@ -8,12 +9,18 @@ public partial class Car : CharacterBody3D
     [Export(PropertyHint.Range, "1,30,0.5")] public float ForwardLimit { get; set; } = 12f;
     [Export(PropertyHint.Range, "1,15,0.5")] public float ReverseLimit { get; set; } = 4f;
     [Export(PropertyHint.Range, "10,180,1")] public float SteeringDegrees { get; set; } = 75f;
+    [Export] public NodePath SpawnPath { get; set; } = new("../Spawn");
+    [Export] public float RecoveryHeight { get; set; } = -10f;
+
+    public event Action Recovered;
+    private Node3D _spawn;
 
     public float SignedSpeed { get; private set; }
     public float SpeedKmh => new Vector2(Velocity.X, Velocity.Z).Length() * 3.6f;
 
     public override void _Ready()
     {
+        _spawn = GetNode<Node3D>(SpawnPath);
         AddChild(new CollisionShape3D { Shape = new BoxShape3D { Size = new Vector3(1.8f, 0.7f, 3.4f) }, Position = new Vector3(0, 0.35f, 0) });
         Main.AddBox(this, "Body", new Vector3(1.8f, 0.65f, 3.4f), new Vector3(0, 0.55f, 0), new Color(0.95f, 0.42f, 0.12f));
         Main.AddBox(this, "Cabin", new Vector3(1.4f, 0.6f, 1.5f), new Vector3(0, 1.15f, 0.3f), new Color(0.16f, 0.24f, 0.3f));
@@ -29,6 +36,11 @@ public partial class Car : CharacterBody3D
 
     public override void _PhysicsProcess(double delta)
     {
+        if (Input.IsActionJustPressed("reset") || GlobalPosition.Y < RecoveryHeight)
+        {
+            ResetToSpawn();
+            return; // No gravity or held driving input on the recovery tick.
+        }
         float dt = (float)delta;
         float throttle = Input.GetAxis("reverse", "accelerate");
         if (Input.IsActionPressed("brake"))
@@ -48,5 +60,23 @@ public partial class Car : CharacterBody3D
         Velocity = new Vector3(horizontal.X, IsOnFloor() ? 0 : Velocity.Y - 9.8f * dt, horizontal.Z);
         // MoveAndSlide integrates velocity itself; do not multiply by delta again.
         MoveAndSlide();
+        if (IsOnWall())
+        {
+            // Do not retain speed removed by an impact (or brake that hidden speed
+            // before backing away). Preserve only remaining motion along the heading.
+            float remaining = Velocity.Dot(-GlobalBasis.Z);
+            SignedSpeed = SignedSpeed >= 0
+                ? Mathf.Clamp(remaining, 0, SignedSpeed)
+                : Mathf.Clamp(remaining, SignedSpeed, 0);
+        }
+    }
+
+    public void ResetToSpawn()
+    {
+        GlobalTransform = _spawn.GlobalTransform;
+        Velocity = Vector3.Zero;
+        SignedSpeed = 0;
+        ResetPhysicsInterpolation();
+        Recovered?.Invoke();
     }
 }

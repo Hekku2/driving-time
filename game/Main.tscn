@@ -31,6 +31,9 @@ shape = SubResource("GroundShape")
 position = Vector3(14, 0, 8)
 script = ExtResource("2_car")
 
+[node name="Spawn" type="Marker3D" parent="."]
+position = Vector3(14, 0, 8)
+
 [node name="Sun" type="DirectionalLight3D" parent="."]
 rotation_degrees = Vector3(-55, -30, 0)
 light_energy = 1.2

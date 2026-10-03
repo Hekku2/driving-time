@@ -10,7 +10,7 @@ Updated: 2026-10-03. P00 and P01 are complete. Deferred is a backlog disposition
 | <a id="p02a"></a>P02a | [Script the current Windows export and transfer](P02a-windows-export-script.md) | implementation | done | [P01](#p01), verified [P02](#p02) export configuration | User-requested helper; 188 runtime files exported/transferred to W: with SHA-256 verification; P25 remains todo |
 | <a id="p03"></a>P03 | [Move a simple car on flat ground](P03-car.md) | implementation | awaiting-manual-test | [P02](#p02) | Build/import/export and 30/60/144-cap integration checks pass; two-minute manual drive pending |
 | <a id="p04"></a>P04 | [Add a usable chase camera](P04-chase-camera.md) | implementation | awaiting-manual-test | [P03](#p03) | Build/import/export/transfer and camera checks pass; turning/wall visual check pending |
-| <a id="p05"></a>P05 | [Add collision and safe recovery](P05-recovery.md) | implementation | todo | [P04](#p04) | Card prepared |
+| <a id="p05"></a>P05 | [Add collision and safe recovery](P05-recovery.md) | implementation | awaiting-manual-test | [P04](#p04) | Obstacles/ramp, R/fall recovery, camera reset and focused impact-speed correction; build/import/checks/export/transfer pass; manual acceptance pending |
 | <a id="p06"></a>P06 | [Create the offline pipeline CLI](P06-pipeline-cli.md) | implementation | todo | [P01](#p01) | Card prepared |
 | <a id="p07"></a>P07 | [Specify and verify coordinate transforms](P07-coordinates.md) | implementation | todo | [P06](#p06) | Card prepared |
 | <a id="p08"></a>P08 | [Import one generated GLB and manifest](P08-synthetic-import.md) | implementation | todo | [P02](#p02), [P07](#p07) | Card prepared |
@@ -50,12 +50,12 @@ P09–P27 retain the plan's prompts, dependencies and completion checks; create 
 
 ## Gates
 
-P04 was explicitly selected on 2026-10-03 while P03 manual acceptance remained open. The independent C# chase rig and one wall fixture are implemented; headless/rendered checks and Windows export/transfer pass. P04 awaits [turning/wall testing](../RUN.md#p04-manual-test); P02/P03 and gates remain open. Next recommended task: P05 after P04 manual acceptance. No recovery implementation implied.
+P05 was explicitly selected on 2026-10-03 while prior manual evidence remained open. Its static obstacles/ramp and unified R/fall recovery are implemented; C# collision/recovery and existing driving/camera regression checks, build/import and Windows export/transfer pass. P05 awaits [manual testing](../RUN.md#p05-manual-test); G0/G1 remain open. Existing local P03/P04 card checkbox edits were preserved; this session adds no manual results for those tasks. Next recommended task: P06 (independently ready).
 
 | Gate | Required tasks | Current evidence |
 |---|---|---|
 | G0: instructions and viable toolchain | P00–P02 | Open: build/import/export and native Windows startup pass; scene/export visual confirmation pending |
-| G1: car, camera and recovery | P03–P05 | P03/P04 automated checks pass; manual driving/camera checks pending; P05 not implemented |
+| G1: car, camera and recovery | P03–P05 | P03/P04 regressions and P05 collision/ramp/recovery checks pass; P05 implemented, manual gate acceptance remains open |
 | G2: aligned synthetic pipeline assets | P06–P08 | Not run |
 | G3: real road and buildings | P09–P15 | Not run |
 | G4: terrain and intersection | P16–P21 | Not run |

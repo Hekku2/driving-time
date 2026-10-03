@@ -12,6 +12,7 @@ public partial class Main : Node3D
         Bind("steer_left", Key.A, Key.Left);
         Bind("steer_right", Key.D, Key.Right);
         Bind("brake", Key.Space);
+        Bind("reset", Key.R);
     }
 
     private static void Bind(string action, params Key[] keys)
@@ -47,6 +48,16 @@ public partial class Main : Node3D
         AddBox(wall, "WallMesh", new Vector3(0.5f, 5, 24), Vector3.Zero, new Color(0.65f, 0.7f, 0.66f));
         AddChild(wall);
 
+        // Blocks sit inside the loop; the ramp below exercises the west straight.
+        AddSolidBox("ImpactBlock", new Vector3(4, 2, 1), new Vector3(-6, 1, -4), new Color(0.7f, 0.3f, 0.25f));
+        AddSolidBox("Pillar", new Vector3(2, 3, 2), new Vector3(4, 1.5f, 5), new Color(0.65f, 0.5f, 0.25f));
+        AddSolidBox("LowBlock", new Vector3(3, 1, 2), new Vector3(-4, 0.5f, 8), new Color(0.55f, 0.3f, 0.6f));
+        // 12 m ramp rising toward -Z. The low top edge meets the floor at Y=0.
+        float angle = Mathf.DegToRad(10);
+        var ramp = AddSolidBox("Slope", new Vector3(6, 0.3f, 12),
+            new Vector3(-14, 6 * Mathf.Sin(angle) - 0.15f * Mathf.Cos(angle), 0), new Color(0.35f, 0.6f, 0.35f));
+        ramp.Rotation = new Vector3(angle, 0, 0);
+
         var hud = new CanvasLayer();
         AddChild(hud);
         var panel = new PanelContainer { Position = new Vector2(16, 16) };
@@ -56,8 +67,8 @@ public partial class Main : Node3D
         _speed = new Label();
         _speed.AddThemeFontSizeOverride("font_size", 28);
         labels.AddChild(_speed);
-        labels.AddChild(new Label { Text = "W / ↑ accelerate   S / ↓ brake, then reverse\nA D / ← → steer   Space brake" });
-        GD.Print("P04: chase camera driving loop ready (C#), physics=", Engine.PhysicsTicksPerSecond);
+        labels.AddChild(new Label { Text = "W / ↑ accelerate   S / ↓ brake, then reverse\nA D / ← → steer   Space brake   R reset\nGreen ramp on west side; solid blocks inside loop" });
+        GD.Print("P05: collision and recovery scene ready (C#), physics=", Engine.PhysicsTicksPerSecond);
     }
 
     public override void _Process(double delta)
@@ -73,5 +84,14 @@ public partial class Main : Node3D
             Position = position,
             Mesh = new BoxMesh { Size = size, Material = new StandardMaterial3D { AlbedoColor = color, Roughness = 0.9f } }
         });
+    }
+
+    private StaticBody3D AddSolidBox(string name, Vector3 size, Vector3 position, Color color)
+    {
+        var body = new StaticBody3D { Name = name, Position = position };
+        body.AddChild(new CollisionShape3D { Shape = new BoxShape3D { Size = size } });
+        AddBox(body, "Mesh", size, Vector3.Zero, color);
+        AddChild(body);
+        return body;
     }
 }
