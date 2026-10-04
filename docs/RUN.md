@@ -138,3 +138,9 @@ For native Windows, close the current game and run the export helper in WSL. The
 ```
 
 Use Left/Right arrows to orbit. Expect a solid orange 10 × 10 × 10 m cube on a 30 m ground slab, a red east marker (+X), a green north marker (-Z), and a blue 6 m vertical marker (+Y). Labels should stay attached to each marker. Orbit fully around: all outside faces remain visible with flat lighting and correct colors, with no holes, inverted faces, reflection or extra rotation. Compare editor and Windows export. Report the artifact/platform, scale/direction/material observations and any console errors. Passing headless mesh checks does not establish visual acceptance. This is a separate inspection scene; normal startup remains the vehicle experiment.
+
+## P12 manual road inspection
+
+Generate the assets using [the offline P12 commands](PIPELINE.md#p12-single-flat-road-strip), then open the existing Godot project in the WSL editor. In a temporary unsaved 3D scene, drag `Generated/P12/road.glb` from the FileSystem dock, select its mesh and press F to frame it. Inspect from above and at an oblique angle: expect one plain dark asphalt strip, 100 m along its gently bending centreline, 8.8 m nominal width, flat Y=0, no holes, inverted faces or spikes. Its local bounds are X=51.4614..138.0052, Z=−111.1080..−46.5271 metres, preserving the configured origin.
+
+Add `Generated/P12/collision.glb` separately at identity transform. Enable editable children on the instance and select its CollisionShape3D child with editor gizmos visible. Expect a StaticBody3D and a concave flat shape tracing the same strip, with no second rendered asphalt mesh. Inspect it separately by temporarily hiding the visual instance. Do not save a new gameplay scene for this check. Report visual/collision results; the headless import/ray check does not establish appearance or driving feel. P13 supplies the car/spawn/temporary ground and native Windows driving test.

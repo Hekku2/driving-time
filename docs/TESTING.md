@@ -430,3 +430,26 @@ Repeated JSON/SVG comparisons exit 0; help and ignore checks pass. SHA-256:
 Provenance uses P10's network sidecar: retrieval 2026-10-04T06:08:03.6563316+00:00, OSM base 2026-10-04T06:06:51Z, ODbL source declaration/OSM attribution retained. EPSG:4326 raw input is projected to EPSG:3067 horizontal metres with explicit P07 WGS84/EUREF-FIN approximation. No vertical datum/heights introduced. Official OSM sources and failed layer/tunnel fetches are recorded in [PIPELINE.md](PIPELINE.md#p11-offline-intermediate-road-graph).
 
 Optional manual check (not run): open `data/intermediate/p11/road-graph.svg` in a browser; expect a north-up/east-right labeled bounded street chain, base-direction arrows, shared-node markers and one orange western boundary endpoint. Hover segment tags and inspect JSON diagnostics. This intermediate-data task requires an inspectable artifact rather than a manual drive/appearance gate; P11 is done, earlier visual gates remain open. Next P12.
+
+## P12 — single flat road strip
+
+Date: 2026-10-04. SDK `dotnet --version`: 10.0.112. Godot reports 4.5.2.stable.mono.official.6ce3de25a. No dependencies installed/downloads attempted for generation.
+
+Commands and final outcomes:
+
+```sh
+dotnet test tests/DrivingTime.Pipeline.Tests --no-restore
+dotnet build DrivingTime.sln --no-restore
+dotnet run --project pipeline --no-build -- road-strip --config config/road-strip.json
+"$HOME/.local/share/driving-time/godot-4.5.2/Godot_v4.5.2-stable_mono_linux.x86_64" --headless --path game --editor --import
+"$HOME/.local/share/driving-time/godot-4.5.2/Godot_v4.5.2-stable_mono_linux.x86_64" --headless --path game res://Checks/RoadAssetChecks.tscn
+```
+
+- All 78 tests pass (13 P12 cases, 65 regressions). New cases check independent straight bounds/width, nonzero origin, duplicate/near-zero vertices, ordinary/short/extreme capped bends, supported/invalid width tags, region/settings/grade/reversal rejection, serialized finite upward nondegenerate triangles/bounds/identity, identical collision geometry and deterministic offline CLI/hash manifest with failure preserving output. Initial sharp/short bend cases exposed the fixed-diagonal assumption; corrected triangulation chooses the interior diagonal for concave capped quads.
+- Full Debug solution build passes, zero warnings/errors. Initial sandbox test runner/local socket denial and empty-error sandbox build failed; approved retries passed. Sandbox Godot import returned 0 but logged socket/settings errors; approved retry cleanly passed. These failures are not counted as successful checks.
+- Real cached P11 conversion: one 100 m interior section of OSM 310376967, eight retained centreline points, width tag 8.8 m (`source:width=ARCore`), no removed points/capped joins, 14 triangles each. Configured width/height/limited-context assumptions printed and stored. No other roads or markings generated.
+- Copied all three outputs to `/tmp/p12-{road.glb,collision.glb,manifest.json}`, replayed the exact CLI, and ran `cmp` for each: all exit 0. GLB lengths 1516/1524 bytes, manifest 6460 bytes. SHA-256 road `a1e43fcc0cf77aa64d25e7e30804b4a2d54a6dc3d5043466349c08db19caf10e`; collision `37962c7151aaeed482edc6db1663ac8aa4bc609dd2609411a45ecfdb47bce9ce`; manifest `fd3ee990a27513c76ec557e3b136bd7df599b9e03206e3820fd0603cefb4eb54`.
+- Godot C# check passes: one visual mesh, separate non-rendered StaticBody3D/ConcavePolygonShape3D, 14 triangles each, identity transforms, matching manifest metre bounds, clockwise nondegenerate imported visual triangles, downward collision rays at every retained edge midpoint. Initial endpoint rays missed at open-surface edges where double endpoints round relative to float mesh; probes now use edge interiors. Endpoints are not padded, and this is not a drive test.
+- A temporary C# run-file inventory measured all eleven cached P11 segment lengths, establishing the selected source length ~115.579 m. First run-file launch was blocked by read-only home cache; `XDG_DATA_HOME=/tmp/p12-dotnet` retry passed with NuGet audit network/compiler-server warnings. The generated run-file bookkeeping is removed from the checkout; no additional tool/runtime is required.
+
+Manual appearance/collision gizmo inspection: **not run**, [steps](RUN.md#p12-manual-road-inspection). No editor graphical inspection, Windows export/native playtest or car scene integration performed. P12 awaits manual testing; prior gates remain open. Sources/checked dates and schema: [PIPELINE.md](PIPELINE.md#p12-single-flat-road-strip).

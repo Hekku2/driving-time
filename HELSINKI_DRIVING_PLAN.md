@@ -1,6 +1,6 @@
 # Helsinki driving game: expandable Codex plan
 
-Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-04 · Status: P11 projected road graph done at Stenbäckinkatu; P08 awaits visual test; G0/G1/G2 manual evidence remains open
+Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-04 · Status: P12 single Stenbäckinkatu strip implemented, awaiting visual test; P08 and G0/G1/G2 manual evidence remain open
 
 ## Goal
 
@@ -268,6 +268,8 @@ Execute P12. Generate a simple flat asphalt mesh for one short real road segment
 ```
 
 Completion check: One curved segment imports at the correct scale, with no degenerate triangles or spikes. Its collision is present and independently inspectable.
+
+2026-10-04: [P12 card](docs/tasks/P12-road-strip.md) awaiting-manual-test. One 100 m interior strip and separate collision GLB/manifest; 78 tests, full Debug build, deterministic replay and Godot metre-bounds/collision-ray checks pass. Manual appearance remains open; next P13, without closing prior gates.
 
 ### P13 — Drive on the first Helsinki road
 

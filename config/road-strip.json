@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "graphPath": "../data/intermediate/p11/road-graph.json",
+  "stagePath": "../game/Generated/P12",
+  "segmentId": "way/310376967/segment/0",
+  "startMetres": 8,
+  "lengthMetres": 100,
+  "origin": { "east": 384236.0361374, "north": 6674210.89320437, "height": 13.52536678314209 },
+  "region": { "minEast": 383736.0361374, "minNorth": 6673710.89320437, "maxEast": 384736.0361374, "maxNorth": 6674710.89320437 },
+  "flatLocalHeight": 0,
+  "widthFallbacks": { "residential": 7, "service": 4 },
+  "defaultWidthMetres": 6,
+  "minimumEdgeMetres": 0.01,
+  "maxJoinRatio": 2
+}

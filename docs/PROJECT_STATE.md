@@ -3,8 +3,8 @@
 Goal: Small drivable Helsinki desktop prototype<br>
 Current gate: G0 — open; command checks pass, visual acceptance pending<br>
 Last completed task: P11 (offline projected intermediate road graph)<br>
-Selected task: P11 — done; P08/P05a remain awaiting-manual-test<br>
-Next recommended task: P12 (generate one flat road strip); P08 visual inspection remains open<br>
+Selected task: P12 — awaiting-manual-test; P08/P05a visual checks remain open<br>
+Next recommended task: P13 (drive on the first Helsinki road), after P12 visual inspection<br>
 Updated: 2026-10-04
 
 ## Verified environment
@@ -17,6 +17,9 @@ Updated: 2026-10-04
 - Fixed requirements: C#/.NET for game/pipeline/tools/tests; development and export in WSL; only exported runtime files go to Windows (D001/D012).
 
 ## Current implementation and evidence
+
+- P12 implemented (2026-10-04), awaiting-manual-test: offline C# `road-strip` generates only a 100 m interior section of Stenbäckinkatu way 310376967, with source-tag width 8.8 m and explicitly synthetic flat Y=0. Configured fallback widths, duplicate/short-edge cleanup, bounded/narrowed miter joins and concave-quad triangulation; separate visual and static-collision GLBs plus deterministic manifest with bounds, assumptions, source references/provenance and hashes. No lane markings, other roads, terrain or playable scene. [Card](tasks/P12-road-strip.md), [workflow](PIPELINE.md#p12-single-flat-road-strip), [manual check](RUN.md#p12-manual-road-inspection).
+- P12: all 78 tests pass (13 new cases); full Debug build has zero warnings/errors; real repeated GLB/manifest bytes match. Godot import/check passes 14 triangles each, identity/metre bounds, winding and collision rays along all edge interiors; imported collision is a separate StaticBody3D/ConcavePolygonShape3D with no rendered mesh. Visual editor/collision-gizmo check not run; no Windows export, drive or physical access verification. Width is not independently surveyed; elevations, complex loops/hairpins and complete junction context remain unsupported/unverified. No gates closed. [Evidence](TESTING.md#p12--single-flat-road-strip).
 
 - P11 done (2026-10-04): offline C# `road-graph` command writes graph v1 and labeled SVG from hash-verified P10 input/provenance. Absolute double EPSG:3067 metres, explicit P07 WGS84 approximation, full source geometry/IDs/tags/OSM metadata and P10 provenance preserved. Splits shared/repeated nodes, keeps reverse-oneway arcs distinct from geometry order, preserves grade tags and separates crossings without shared IDs. Rectangular cuts retain fractional source references and distinct non-junction endpoints. Components, isolated segments and unsupported/assumption diagnostics included. [Card](tasks/P11-road-graph.md), [schema/usage](PIPELINE.md#p11-offline-intermediate-road-graph), [evidence](TESTING.md#p11--offline-road-graph).
 - P11: all 65 tests pass (15 new cases, 50 regressions); full Debug solution build passes with zero warnings/errors. Real conversion: 11 source ways, 12 nodes, 11 segments, 22 arcs, one undirected component, zero isolated segments, one western boundary cut. Twelve diagnostics: eleven missing-oneway defaults and incomplete sample context. Repeated JSON/SVG bytes match; original raw checksum unchanged. Optional SVG visual inspection not performed; no game/editor/export/drive test. No heights, legal routing, AI lanes or intersection surfaces; P12 and prior visual gates remain open.
@@ -80,6 +83,6 @@ The user explicitly selected P03, P04 and then P05 before all prior manual evide
 
 ## Next session
 
-VehicleBody3D is chosen (D016); controller selection is resolved. For P05a's remaining manual evidence, run the default vehicle scene and optionally `DrivingTime.exe res://Main.tscn` for the retained baseline. Report artifact/platform, straight/turn/ramp jitter and steering/braking observations. Keep P05a awaiting-manual-test until this evidence arrives. P08 awaits the editor/Windows visual inspection in RUN.md. P10 acquisition/parser is done; P11 is next, with prior visual gates still open.
+VehicleBody3D is chosen (D016); controller selection is resolved. For P05a's remaining manual evidence, run the default vehicle scene and optionally `DrivingTime.exe res://Main.tscn` for the retained baseline. Report artifact/platform, straight/turn/ramp jitter and steering/braking observations. Keep P05a awaiting-manual-test until this evidence arrives. P08 awaits the editor/Windows visual inspection in RUN.md. P10/P11 are done; P12 awaits its editor asphalt/collision inspection, with prior visual gates still open.
 
-Read AGENTS.md, the plan, this state, [decisions](DECISIONS.md), [data sources](DATA_SOURCES.md) and [task index](tasks/INDEX.md). Record manual feedback against the tested artifact before closing acceptance. Recommended next task: P11; create its card from the plan and P10's cached sample/limitations before execution. Stop at one selected task.
+Read AGENTS.md, the plan, this state, [decisions](DECISIONS.md), [data sources](DATA_SOURCES.md) and [task index](tasks/INDEX.md). Record manual feedback against the tested artifact before closing acceptance. Recommended next task: P13, after P12 visual acceptance; create its card from the plan and P12's generated asset/limitations before execution. Stop at one selected task.

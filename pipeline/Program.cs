@@ -9,7 +9,8 @@ public static class Program
     {
         if (args.Length > 0 && args[0] == "road-sample") return RoadSampleCommand.Run(args[1..]).GetAwaiter().GetResult();
         if (args.Length > 0 && args[0] == "road-graph") return RoadGraphCommand.Run(args[1..]);
-        const string usage = "Usage: --config <file.json> [--stage-fixture <directory>] or road-sample --config <file.json> [--input <raw.json> | --refresh] or road-graph --config <file.json> (see docs/PIPELINE.md)";
+        if (args.Length > 0 && args[0] == "road-strip") return RoadStripCommand.Run(args[1..]);
+        const string usage = "Usage: --config <file.json> [--stage-fixture <directory>] or road-sample --config <file.json> [--input <raw.json> | --refresh] or road-graph --config <file.json> or road-strip --config <file.json> (see docs/PIPELINE.md)";
         if (args is ["--help"])
         {
             Console.WriteLine(usage);
