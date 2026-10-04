@@ -437,3 +437,6 @@ config/generated/
 
 # P08 reproducible engine-readable staging; generated GLB, manifest and import sidecars
 game/Generated/
+
+# P10 raw source cache and provenance (unreviewed source data)
+data/raw/

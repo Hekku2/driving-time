@@ -1,6 +1,6 @@
 # Helsinki driving game: expandable Codex plan
 
-Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-04 · Status: P09 source research done at Stenbäckinkatu; P08 awaits visual test; G0/G1/G2 manual evidence remains open
+Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-04 · Status: P10 road acquisition/inspection done at Stenbäckinkatu; P08 awaits visual test; G0/G1/G2 manual evidence remains open
 
 ## Goal
 

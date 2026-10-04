@@ -13,5 +13,7 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="[3.1.4]" PrivateAssets="all" />
     <ProjectReference Include="../../pipeline/DrivingTime.Pipeline.csproj" />
     <None Include="../../config/synthetic-scene.json" Link="synthetic-scene.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../tests/fixtures/osm-road-sample.json" Link="osm-road-sample.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../config/road-sample.json" Link="road-sample.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

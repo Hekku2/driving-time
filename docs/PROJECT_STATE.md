@@ -2,9 +2,9 @@
 
 Goal: Small drivable Helsinki desktop prototype<br>
 Current gate: G0 — open; command checks pass, visual acceptance pending<br>
-Last completed task: P09 (bounded data-source research at Stenbäckinkatu)<br>
-Selected task: P09 — done; P08/P05a remain awaiting-manual-test<br>
-Next recommended task: P10 (acquire and inspect a small road sample); P08 visual inspection remains open<br>
+Last completed task: P10 (bounded OSM retrieval and offline inspection)<br>
+Selected task: P10 — done; P08/P05a remain awaiting-manual-test<br>
+Next recommended task: P11 (normalize a small road graph); P08 visual inspection remains open<br>
 Updated: 2026-10-04
 
 ## Verified environment
@@ -17,6 +17,9 @@ Updated: 2026-10-04
 - Fixed requirements: C#/.NET for game/pipeline/tools/tests; development and export in WSL; only exported runtime files go to Windows (D001/D012).
 
 ## Current implementation and evidence
+
+- P10 done (2026-10-04): explicit C# `road-sample` command with a configured 400×300m name-filtered discovery rectangle inside P09's square, one bounded Overpass POST, verified offline cache and local-file import. HTTP200 returned 11930 bytes: 11 residential ways, 26 unique nodes, 36 vertices. Exact raw bytes/query/request hash/payload hash, retrieval time/headers, source timestamps, CRS and ODbL attribution are under ignored `data/raw/osm-p10`. [Usage](PIPELINE.md#p10-bounded-osm-road-sample), [card](tasks/P10-road-sample.md), [evidence](TESTING.md#p10--bounded-road-retrieval-and-offline-inspection).
+- P10 default offline replay, explicit cached-real-file import and tiny authored fixture import passed; checksum unchanged. 50 tests pass, root Debug build passes with zero warnings/errors. Actual bounds are separate from request bounds; one complete-way vertex falls outside the request envelope. No guesses for missing oneway/layer/bridge/tunnel/access tags. Base maxspeed missing on one way that has directional speed tags. Physical construction, supported route/endpoints and ground-level suitability remain unverified; no graph/roads/game changes. P11 is next; P08 and prior visual gates stay open.
 
 - P09 research done (2026-10-04): user selects Stenbäckinkatu. [DATA_SOURCES.md](DATA_SOURCES.md) and [source registry](../config/source-registry.json) separate provider declarations, bounded measurements and unknowns. Exact 1000m EPSG:3067 square surrounds city address reference E=384236.0361374, N=6674210.89320437; terrain-origin height=13.52536678314209m (provider N2000; independent control pending P17). Origin is provisional and not a vehicle spawn; synthetic configuration unchanged. Bounds/provenance recorded in D019.
 - P09 small probes verify CityGML 2.0 LoD1/2 geometry (one building, 20 matches), GeoJSON footprints (two polygons), three CRS outputs for the origin and 4x4 tiled Float32 GeoTIFF. Live terrain is 1m, conflicting with older 50cm metadata; axis-label/band-unit defects documented. Offline C# inspection verifies JSON, origin/bounds and ten byte counts/SHA-256 hashes; whitespace check passes. Source bytes stay in ignored artifacts/p09. No city-wide retrieval, conversion, game changes, publication or manual drive. [Commands](TESTING.md#p09--bounded-source-research).
@@ -74,6 +77,6 @@ The user explicitly selected P03, P04 and then P05 before all prior manual evide
 
 ## Next session
 
-VehicleBody3D is chosen (D016); controller selection is resolved. For P05a's remaining manual evidence, run the default vehicle scene and optionally `DrivingTime.exe res://Main.tscn` for the retained baseline. Report artifact/platform, straight/turn/ramp jitter and steering/braking observations. Keep P05a awaiting-manual-test until this evidence arrives. P08 awaits the editor/Windows visual inspection in RUN.md. P09 research is done; P10 is next, with prior visual gates still open.
+VehicleBody3D is chosen (D016); controller selection is resolved. For P05a's remaining manual evidence, run the default vehicle scene and optionally `DrivingTime.exe res://Main.tscn` for the retained baseline. Report artifact/platform, straight/turn/ramp jitter and steering/braking observations. Keep P05a awaiting-manual-test until this evidence arrives. P08 awaits the editor/Windows visual inspection in RUN.md. P10 acquisition/parser is done; P11 is next, with prior visual gates still open.
 
-Read AGENTS.md, the plan, this state, [decisions](DECISIONS.md), [data sources](DATA_SOURCES.md) and [task index](tasks/INDEX.md). Record manual feedback against the tested artifact before closing acceptance. Recommended next task: P10; create its card from the plan and P09's access/route checks before execution. Stop at one selected task.
+Read AGENTS.md, the plan, this state, [decisions](DECISIONS.md), [data sources](DATA_SOURCES.md) and [task index](tasks/INDEX.md). Record manual feedback against the tested artifact before closing acceptance. Recommended next task: P11; create its card from the plan and P10's cached sample/limitations before execution. Stop at one selected task.

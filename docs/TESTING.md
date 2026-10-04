@@ -351,3 +351,43 @@ Measured origin: EPSG:3067 E=384236.0361374, N=6674210.89320437; native GK25 E=2
 Manual check (not performed): open the city map at lon=24.91244103, lat=60.18828858 and inspect the eastern Stenbäckinkatu interior run. Expected: a short surface street segment within the recorded square, with endpoints away from the named junction/tram/hospital structures; compare construction/access with the official 2026 street plan. P10 must obtain the centreline and validate actual conditions before accepting the route. P17 must check independent heights. No manual game drive, graphical download, export, performance run or earlier gate acceptance was performed in P09.
 
 Recommended next task: P10. Missing OSM access has a manual Overpass export fallback or named P10 acquisition blocker; P14 must resolve footprint fallback terms; P17 must validate a managed TIFF reader and defective band-unit/axis metadata. These do not close or implement later tasks.
+
+## P10 — bounded road retrieval and offline inspection
+
+Date: **2026-10-04**, WSL2, pinned SDK10.0.112/net10.0. No new dependencies, game changes, export or manual drive.
+
+Commands and actual outcomes:
+
+- `dotnet --info`: Linux SDK10.0.112/runtime10.0.12 available.
+- `dotnet build pipeline/DrivingTime.Pipeline.csproj --no-restore`: passed, 0 warnings/errors.
+- `dotnet run --project pipeline --no-build -- road-sample --config config/road-sample.json`: sandbox first returned socket permission error (CLI exit2). Approved network rerun returned HTTP200 on **one POST**, no retries/mirrors; validated/cache write exit0. Retrieval UTC `2026-10-04T06:08:03.6563316+00:00`; OSM base `2026-10-04T06:06:51Z`; generator `Overpass API 0.7.62.11 87bfad18`. Element update timestamps span 2024-07-07..2026-09-15, not survey dates.
+- `dotnet run --project pipeline --no-restore -- road-sample --config config/road-sample.json`: final code default **verified offline cache** exit0 inside network-restricted sandbox. Counts/bounds unchanged; no network needed.
+- `dotnet run --project pipeline --no-build -- road-sample --config config/road-sample.json --input data/raw/osm-p10/df20f1363a2a44336af47c5f7692cc97d60afa2b6dde0cf9b98618ace9ccdd6d/41616d85bf87502df9322df0b18cd74341fb116c814a38a6009723b14ab24142/raw.json`: real cached local-file import exit0, same counts; separate import metadata, network retrieval metadata retained.
+- Same command with `--input tests/fixtures/osm-road-sample.json`: exit0, 2 ways/3 unique nodes/4 vertices. Authored synthetic fixture, no real data redistribution.
+- `sha256sum` on real raw cache after import: `41616d85bf87502df9322df0b18cd74341fb116c814a38a6009723b14ab24142`, **11930 bytes**. Request SHA256 `df20f1363a2a44336af47c5f7692cc97d60afa2b6dde0cf9b98618ace9ccdd6d`.
+- `dotnet test tests/DrivingTime.Pipeline.Tests --no-restore`: initial sandbox test communication socket denied; approved final run **50 passed, 0 failed/skipped** (33 existing +17 P10 cases). Raw tags/missing values, measured bounds, shared IDs, truncation/HTML/missing metadata/geometry, duplicate IDs/fields, bad coordinates, node-coordinate conflicts, region cap, local raw-byte preservation, import retrieval-time unknown, cache replay/tamper detection and streamed byte cap covered.
+- `dotnet build DrivingTime.sln --no-restore`: sandbox parallel build returned exit1 without diagnostics. Approved `dotnet build DrivingTime.sln --no-restore -m:1` passed, **0 warnings/errors**. No source change was needed for the build.
+- `git check-ignore data/raw/osm-p10/request.lock`: ignored. `git diff --check`: passed.
+
+Exact query (recorded in provenance alongside actual POST form body/status/response headers):
+
+```text
+[out:json][timeout:20][maxsize:16777216];way["highway"]["name"="Stenbäckinkatu"](60.18694260169827,24.912355544171,60.189747841761815,24.91973380573806);out meta geom;
+```
+
+Projected input rectangle is E384236.0361374..384636.0361374, N6674060.89320437..6674360.89320437, 400×300m inside the original 1km square. Four inverse-projected corners derive the request envelope with P07's approximate datum policy. Actual complete-way geographic bounds: **lat60.1881866..60.189673, lon24.9122881..24.9162629**. There are **11 ways, 26 unique nodes, 36 geometry vertices**, **1 vertex outside request envelope**. Full-way overflow is retained/reported, not hidden or clipped.
+
+| Tag | Present / missing ways | Exact values/counts |
+|---|---|---|
+| highway | 11 / 0 | residential:11 |
+| oneway | 0 / 11 | none supplied |
+| lanes | 2 / 9 | `2`:2 |
+| maxspeed | 10 / 1 | `30`:7, `40`:3 |
+| layer | 0 / 11 | none supplied |
+| bridge | 0 / 11 | none supplied |
+| tunnel | 0 / 11 | none supplied |
+| access, motor_vehicle, construction | each 0 / 11 | none supplied |
+
+Way79499715 has `maxspeed:forward=30` and `maxspeed:backward=40` but no base maxspeed. Full tags and original strings are retained; no inferred defaults/direction/ground level. Raw data CRS EPSG:4326, lat/lon degrees; no elevation or vertical datum. © OpenStreetMap contributors, ODbL1.0; source licence link/check date recorded in PIPELINE.md; no distribution review or publication.
+
+P10 is **done**: its acceptance is CLI/parser evidence, without a visual criterion. Optional manual replay: run the default command again; expect "Verified offline cache", 11 ways/26 unique nodes and the same actual bounds. User replay not performed. Construction/access/physical reference, route endpoints and 100–150m ground-level segment suitability remain unverified downstream; no graph, generated roads or gate closure. Next task **P11**. Official documentation links and checked date are in [PIPELINE.md](PIPELINE.md#p10-bounded-osm-road-sample).

@@ -1,0 +1,19 @@
+{
+  "version": 0.6,
+  "generator": "repository-authored synthetic P10 fixture; not downloaded OSM",
+  "osm3s": { "timestamp_osm_base": "2026-10-04T00:00:00Z" },
+  "elements": [
+    {
+      "type": "way", "id": 101, "timestamp": "2026-10-03T00:00:00Z",
+      "nodes": [1, 2],
+      "geometry": [{ "lat": 60.18828858, "lon": 24.91244103 }, { "lat": 60.1883, "lon": 24.914 }],
+      "tags": { "name": "Stenbäckinkatu", "highway": "residential", "oneway": "-1", "lanes": "2", "maxspeed": "30", "layer": "0", "bridge": "no" }
+    },
+    {
+      "type": "way", "id": 102,
+      "nodes": [2, 3],
+      "geometry": [{ "lat": 60.1883, "lon": 24.914 }, { "lat": 60.1884, "lon": 24.916 }],
+      "tags": { "name": "Stenbäckinkatu", "highway": "service", "maxspeed": "walk", "tunnel": "building_passage" }
+    }
+  ]
+}

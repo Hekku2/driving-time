@@ -7,7 +7,8 @@ public static class Program
 {
     public static int Main(string[] args)
     {
-        const string usage = "Usage: --config <file.json> [--stage-fixture <directory>] (see docs/PIPELINE.md)";
+        if (args.Length > 0 && args[0] == "road-sample") return RoadSampleCommand.Run(args[1..]).GetAwaiter().GetResult();
+        const string usage = "Usage: --config <file.json> [--stage-fixture <directory>] or road-sample --config <file.json> [--input <raw.json> | --refresh] (see docs/PIPELINE.md)";
         if (args is ["--help"])
         {
             Console.WriteLine(usage);
