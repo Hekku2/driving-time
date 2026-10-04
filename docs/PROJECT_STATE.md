@@ -2,9 +2,9 @@
 
 Goal: Small drivable Helsinki desktop prototype<br>
 Current gate: G0 — open; command checks pass, visual acceptance pending<br>
-Last completed task: P10 (bounded OSM retrieval and offline inspection)<br>
-Selected task: P10 — done; P08/P05a remain awaiting-manual-test<br>
-Next recommended task: P11 (normalize a small road graph); P08 visual inspection remains open<br>
+Last completed task: P11 (offline projected intermediate road graph)<br>
+Selected task: P11 — done; P08/P05a remain awaiting-manual-test<br>
+Next recommended task: P12 (generate one flat road strip); P08 visual inspection remains open<br>
 Updated: 2026-10-04
 
 ## Verified environment
@@ -17,6 +17,9 @@ Updated: 2026-10-04
 - Fixed requirements: C#/.NET for game/pipeline/tools/tests; development and export in WSL; only exported runtime files go to Windows (D001/D012).
 
 ## Current implementation and evidence
+
+- P11 done (2026-10-04): offline C# `road-graph` command writes graph v1 and labeled SVG from hash-verified P10 input/provenance. Absolute double EPSG:3067 metres, explicit P07 WGS84 approximation, full source geometry/IDs/tags/OSM metadata and P10 provenance preserved. Splits shared/repeated nodes, keeps reverse-oneway arcs distinct from geometry order, preserves grade tags and separates crossings without shared IDs. Rectangular cuts retain fractional source references and distinct non-junction endpoints. Components, isolated segments and unsupported/assumption diagnostics included. [Card](tasks/P11-road-graph.md), [schema/usage](PIPELINE.md#p11-offline-intermediate-road-graph), [evidence](TESTING.md#p11--offline-road-graph).
+- P11: all 65 tests pass (15 new cases, 50 regressions); full Debug solution build passes with zero warnings/errors. Real conversion: 11 source ways, 12 nodes, 11 segments, 22 arcs, one undirected component, zero isolated segments, one western boundary cut. Twelve diagnostics: eleven missing-oneway defaults and incomplete sample context. Repeated JSON/SVG bytes match; original raw checksum unchanged. Optional SVG visual inspection not performed; no game/editor/export/drive test. No heights, legal routing, AI lanes or intersection surfaces; P12 and prior visual gates remain open.
 
 - P10 done (2026-10-04): explicit C# `road-sample` command with a configured 400×300m name-filtered discovery rectangle inside P09's square, one bounded Overpass POST, verified offline cache and local-file import. HTTP200 returned 11930 bytes: 11 residential ways, 26 unique nodes, 36 vertices. Exact raw bytes/query/request hash/payload hash, retrieval time/headers, source timestamps, CRS and ODbL attribution are under ignored `data/raw/osm-p10`. [Usage](PIPELINE.md#p10-bounded-osm-road-sample), [card](tasks/P10-road-sample.md), [evidence](TESTING.md#p10--bounded-road-retrieval-and-offline-inspection).
 - P10 default offline replay, explicit cached-real-file import and tiny authored fixture import passed; checksum unchanged. 50 tests pass, root Debug build passes with zero warnings/errors. Actual bounds are separate from request bounds; one complete-way vertex falls outside the request envelope. No guesses for missing oneway/layer/bridge/tunnel/access tags. Base maxspeed missing on one way that has directional speed tags. Physical construction, supported route/endpoints and ground-level suitability remain unverified; no graph/roads/game changes. P11 is next; P08 and prior visual gates stay open.

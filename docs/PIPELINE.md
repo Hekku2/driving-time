@@ -116,3 +116,37 @@ dotnet run --project pipeline --no-restore -- road-sample --config config/road-s
 Expected: 2 ways, 3 unique nodes; raw oneway `-1` on one way and missing on the other; maxspeed `30`/`walk` preserved. Manual review is optional for P10's CLI acceptance; no graphical/driving check is required. No roads, graph, clipping, route endpoints or spawn are produced; P11 is next. Physical construction/access and the proposed 100–150m route remain unverified downstream checks.
 
 Official sources checked **2026-10-04**: [Overpass QL](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL) (bbox order south/west/north/east, JSON, geometry/meta output and resource settings); [operator guidance](https://dev.overpass-api.de/overpass-doc/en/preface/commons.html) (load-dependent slots/429/504, no guaranteed allocation); [OSM copyright/licence](https://www.openstreetmap.org/copyright) (© OpenStreetMap contributors, ODbL1.0). These are access/terms references, not a licence review of future derivatives. Keep raw sources ignored and do not redistribute without review. Actual retrieval evidence is in [TESTING.md](TESTING.md#p10--bounded-road-retrieval-and-offline-inspection).
+
+## P11 offline intermediate road graph
+
+Run in WSL with the existing pinned SDK, after P10 has populated the cache:
+
+```bash
+dotnet run --project pipeline --no-restore -- road-graph --config config/road-graph.json
+```
+
+This command reads only local files. Configuration v1 controls raw/provenance input paths, graph/plot output paths, EPSG:3067 clip rectangle and explicit `allowApproximateDatum`. All paths resolve relative to the config. The checked-in paths select the exact P10 network payload rather than a mutable latest pointer. Missing files require P10 acquisition/import or updated paths; this command never downloads. Distinct input/output/config paths are required. Provenance schema, payload SHA-256, byte count, source timestamp/generator and required attribution/source fields are checked before conversion. The command trusts the P10 sidecar's source declaration; a checksum is not independent proof of upstream authenticity.
+
+Graph schema v1 (JSON, camelCase):
+
+| Field | Meaning |
+|---|---|
+| `horizontalCrs`, `units`, `verticalDatum`, `datumPolicy`, `clipRegion` | Absolute double EPSG:3067 E,N metres, explicit P07 approximate WGS84 policy, configured rectangle; no heights or vertical datum inferred |
+| `sourceDocument`, `provenance` | Complete original JSON content including OSM version/changeset/user metadata, geographic geometry, timestamps; complete P10 sidecar including retrieval date/checksum/license/attribution/query/headers. JSON formatting may change; exact raw bytes stay in the hash-verified cache |
+| `sourceWays` | Unclipped source IDs, ordered node IDs, geographic geometry, raw string tags and full projected geometry; no original vertex discarded here |
+| `nodes` | Segment endpoints: `osm/<id>` or unique `cut/<way>/<fractional-source-index>`; nullable OSM ID, projected coordinates, boundary/shared-junction flags |
+| `segments` | Stable `way/<id>/segment/<ordinal>` in ascending way ID/source order; source way ID, endpoints, ordered clipped geometry and all raw tags; direction and its basis |
+| `arcs` | Segment/from/to references: two for both directions, one for forward/reverse, none for unsupported direction. Base direction only, not legal routability |
+| `components`, `isolatedSegments`, `diagnostics` | Undirected segment components; singleton components are isolated segments. Structured assumption/unsupported/degenerate/context reports |
+
+Geometry vertices record `osmNodeId` and `sourceIndex`: integer original node index, or fractional index along the original straight projected edge for a cut (null OSM ID). Geometry always follows original OSM order. `oneway=-1` reverses the arc, preserving geometry and directional tags. `yes/true/1`, `no/false/0` are supported; roundabout/motorway imply forward unless explicitly overridden. Missing ordinary-highway oneway uses a reported two-way default; unsupported values emit no arcs. All raw tags remain available, including directional speed/access and `layer`, `bridge`, `tunnel`. Layer numbers are not heights.
+
+Split points are shared or repeated OSM nodes, plus original way ends and rectangular cuts. No geometric welding occurs: distinct IDs at identical positions remain disconnected; crossing roads on different levels remain separate. Differing grade tags at a shared OSM node retain explicit connectivity and emit a transition-review diagnostic, allowing bridge approaches without inventing vertical geometry. Conditional/modal/turn restrictions and access/construction tags emit diagnostics; node tags and restriction relations are absent from the way-only input. Closed/repeated ways and excluded near-zero edges are reported. An empty clipped way is reported. Unsupported data is preserved for later review.
+
+A cut is local to its way/source position, never merged by coordinates and never flagged as a junction. An original OSM node exactly on the clip boundary retains its identity and boundary flag, with junction=false because context outside the rectangle is incomplete. Shared interior OSM endpoints are flagged as junctions even where they are only continuations between two ways; this is sample connectivity, not a claim that a physical intersection exists. Leaving/re-entering the rectangle produces separate pieces. Zero-length boundary touches are discarded. The request's geographic envelope is not the clipping rectangle; conversion clips in projected metres.
+
+Generated JSON and SVG stay under ignored `data/intermediate/p11`; they include unreviewed OSM source metadata and must not be redistributed without license review. SVG is a standalone debug plot with north up/east right, bounds, OSM node/way labels, directional arrows, orange boundary endpoints, red shared interior endpoints and a grade-tag color hint. Hover a segment for its tags. It provides inspectability, not surveyed alignment/elevation or proof of physical route suitability. No Godot import/export, game edits, AI lanes or intersection surfaces are part of P11.
+
+Checked 2026-10-04: official OSM [oneway semantics](https://wiki.openstreetmap.org/wiki/Key:oneway) (direction relative to ordered ways, reverse and implied values), [elements](https://wiki.openstreetmap.org/wiki/Elements) (node identity and ordered ways), [bridge tagging](https://wiki.openstreetmap.org/wiki/Key:bridge) (bridge sections/approaches and layer tags). Direct layer/tunnel wiki fetches failed; this task preserves those strings and does not infer elevations or introduce additional tag semantics. Projection/dependencies remain P07's verified implementation; no new packages or runtimes.
+
+Optional manual inspection: open `data/intermediate/p11/road-graph.svg` in a browser. Expect the bounded labeled Stenbäckinkatu chain, arrowheads for both base directions, and an orange endpoint at the clipped western edge. Review the JSON diagnostics beside it. Appearance/user inspection has not been performed; no manual driving acceptance is required for this data-conversion task. Next: P12, one short flat road strip.

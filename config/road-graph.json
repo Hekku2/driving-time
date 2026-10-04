@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "inputPath": "../data/raw/osm-p10/df20f1363a2a44336af47c5f7692cc97d60afa2b6dde0cf9b98618ace9ccdd6d/41616d85bf87502df9322df0b18cd74341fb116c814a38a6009723b14ab24142/raw.json",
+  "provenancePath": "../data/raw/osm-p10/df20f1363a2a44336af47c5f7692cc97d60afa2b6dde0cf9b98618ace9ccdd6d/41616d85bf87502df9322df0b18cd74341fb116c814a38a6009723b14ab24142/network-provenance.json",
+  "outputPath": "../data/intermediate/p11/road-graph.json",
+  "debugPath": "../data/intermediate/p11/road-graph.svg",
+  "region": { "minEast": 384236.0361374, "minNorth": 6674060.89320437, "maxEast": 384636.0361374, "maxNorth": 6674360.89320437 },
+  "allowApproximateDatum": true
+}

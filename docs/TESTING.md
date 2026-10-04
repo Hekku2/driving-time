@@ -391,3 +391,42 @@ Projected input rectangle is E384236.0361374..384636.0361374, N6674060.89320437.
 Way79499715 has `maxspeed:forward=30` and `maxspeed:backward=40` but no base maxspeed. Full tags and original strings are retained; no inferred defaults/direction/ground level. Raw data CRS EPSG:4326, lat/lon degrees; no elevation or vertical datum. © OpenStreetMap contributors, ODbL1.0; source licence link/check date recorded in PIPELINE.md; no distribution review or publication.
 
 P10 is **done**: its acceptance is CLI/parser evidence, without a visual criterion. Optional manual replay: run the default command again; expect "Verified offline cache", 11 ways/26 unique nodes and the same actual bounds. User replay not performed. Construction/access/physical reference, route endpoints and 100–150m ground-level segment suitability remain unverified downstream; no graph, generated roads or gate closure. Next task **P11**. Official documentation links and checked date are in [PIPELINE.md](PIPELINE.md#p10-bounded-osm-road-sample).
+
+## P11 — offline road graph
+
+Date: 2026-10-04. WSL Linux SDK 10.0.112, existing net10.0 pipeline/tests and ProjNET 2.1.0. No dependency installation/retrieval/game/editor/export or manual drive in P11.
+
+Commands and outcomes:
+
+```bash
+dotnet --info
+dotnet build pipeline/DrivingTime.Pipeline.csproj --no-restore
+dotnet test tests/DrivingTime.Pipeline.Tests/DrivingTime.Pipeline.Tests.csproj --no-restore
+dotnet build DrivingTime.sln --no-restore
+dotnet run --project pipeline --no-restore -- road-graph --config config/road-graph.json
+cp data/intermediate/p11/road-graph.json /tmp/p11-first-graph.json
+cp data/intermediate/p11/road-graph.svg /tmp/p11-first-graph.svg
+dotnet run --project pipeline --no-restore -- road-graph --config config/road-graph.json
+cmp /tmp/p11-first-graph.json data/intermediate/p11/road-graph.json
+cmp /tmp/p11-first-graph.svg data/intermediate/p11/road-graph.svg
+sha256sum data/intermediate/p11/road-graph.json data/intermediate/p11/road-graph.svg
+dotnet run --project pipeline --no-restore -- --help
+git check-ignore data/intermediate/p11/road-graph.json data/intermediate/p11/road-graph.svg
+git diff --check
+```
+
+Pipeline build passes, zero warnings/errors. First fixture compile exposed the existing object-initializer Bounds contract; corrected. Sandbox VSTest aborted on local socket permissions; approved retry outside sandbox ran tests. An initial preservation assertion incorrectly compared JSON whitespace rather than contents; changed to structural deep equality. Final test run passes all 65 tests (15 P11 cases, 50 earlier regressions), no skipped tests. Root sandbox build failed without diagnostics; approved retry passes full Debug solution, zero warnings/errors. No unsuccessful attempt is counted as a pass.
+
+P11 cases cover original/intermediate geometry/IDs/attributes/projected scale, two-way arcs, forward and reversed one-way, implied direction/explicit override, four-arm shared junction splitting/connectivity, grade-separated geometric crossing, coincident distinct IDs, outside-to-outside clipping with nonmerged synthetic cuts, original shared node exactly on boundary (identity retained, junction false), exit/reentry disconnection, unsupported/reversible/conditional directions, bridge/tunnel/grade preservation and transition warning, datum opt-in/invalid bounds, repeated/zero edges, structurally complete source preservation, deterministic offline output, valid SVG XML and checksum-tampering rejection. Tests author tiny C# fixtures using the already independently evaluated P07 projector; they are not real OSM exports.
+
+Real offline output: 11 complete source ways preserved, 12 graph endpoint nodes, 11 clipped segments, 22 directed arcs, one undirected component, zero isolated segments, twelve diagnostics. Eleven `assumed-two-way` reports (missing oneway on all source ways), one incomplete sample-context report. The original name-filtered context supplies no neighboring street connectivity. One synthetic cut `cut/78393519/0.6057237965289157` is at E=384236.0361374, N=6674209.062150154, the western clip edge; OSM ID null, boundary=true, junction=false. Original outside geometry remains in sourceWays/sourceDocument. Real sample contains no grade tags; grade separation is proved by authored fixtures, not real elevation evidence.
+
+Repeated JSON/SVG comparisons exit 0; help and ignore checks pass. SHA-256:
+
+- Raw source unchanged: `41616d85bf87502df9322df0b18cd74341fb116c814a38a6009723b14ab24142` (11930 bytes).
+- Graph JSON: `bef76ac1d78167a8f680c5e245b511adf3e327c8313ff6e3b910c96393d84d46`.
+- Debug SVG: `5d07601fdb5ef7557ed5001e212aece7c766b1e0a6cc80d3fba5d59c0bc4e006`.
+
+Provenance uses P10's network sidecar: retrieval 2026-10-04T06:08:03.6563316+00:00, OSM base 2026-10-04T06:06:51Z, ODbL source declaration/OSM attribution retained. EPSG:4326 raw input is projected to EPSG:3067 horizontal metres with explicit P07 WGS84/EUREF-FIN approximation. No vertical datum/heights introduced. Official OSM sources and failed layer/tunnel fetches are recorded in [PIPELINE.md](PIPELINE.md#p11-offline-intermediate-road-graph).
+
+Optional manual check (not run): open `data/intermediate/p11/road-graph.svg` in a browser; expect a north-up/east-right labeled bounded street chain, base-direction arrows, shared-node markers and one orange western boundary endpoint. Hover segment tags and inspect JSON diagnostics. This intermediate-data task requires an inspectable artifact rather than a manual drive/appearance gate; P11 is done, earlier visual gates remain open. Next P12.

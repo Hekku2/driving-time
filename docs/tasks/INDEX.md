@@ -1,6 +1,6 @@
 # Task index
 
-Updated: 2026-10-04. P00, P01, P02a, P06, P07, P09 and P10 are complete; P08 awaits manual inspection after automated import/export checks passed. Deferred is a backlog disposition, not a completion status: P11–P27 remain `todo`. Dependencies are copied from the plan; acceptance evidence is required before a dependency counts as complete. P01 research completion documents required installs; subsequent command evidence verifies the toolchain without closing visual gates.
+Updated: 2026-10-04. P00, P01, P02a, P06, P07, P09, P10 and P11 are complete; P08 awaits manual inspection after automated import/export checks passed. Deferred is a backlog disposition, not a completion status: P12–P27 remain `todo`. Dependencies are copied from the plan; acceptance evidence is required before a dependency counts as complete. P01 research completion documents required installs; subsequent command evidence verifies the toolchain without closing visual gates.
 
 | ID | Task | Type | Status | Dependencies | Disposition |
 |---|---|---|---|---|---|
@@ -17,7 +17,7 @@ Updated: 2026-10-04. P00, P01, P02a, P06, P07, P09 and P10 are complete; P08 awa
 | <a id="p08"></a>P08 | [Import one generated GLB and manifest](P08-synthetic-import.md) | implementation | awaiting-manual-test | [P02](#p02), [P07](#p07) | 6,664-byte GLB, versioned manifest, ignored staging and inspection scene; 33 tests/build/import/export/native Windows mesh check pass; editor/export visuals pending |
 | <a id="p09"></a>P09 | [Verify data sources and select a bounded area](P09-data-sources.md) | research | done | [P07](#p07) | Stenbäckinkatu 1km square/data-derived origin; official guidance and small building/terrain probes; JSON/hash inspection passes; OSM route/height controls remain downstream |
 | <a id="p10"></a>P10 | [Acquire and inspect a small road sample](P10-road-sample.md) | implementation | done | [P09](#p09) | Bounded HTTP200 sample cached; real offline replay/import and 50 tests/root build pass; no roads generated |
-| <a id="p11"></a>P11 | [Normalize a small road graph](../../HELSINKI_DRIVING_PLAN.md#p11--normalize-a-small-road-graph) | implementation | todo | [P10](#p10), [P07](#p07) | Deferred; expand before execution |
+| <a id="p11"></a>P11 | [Normalize a small road graph](P11-road-graph.md) | implementation | done | [P10](#p10), [P07](#p07) | Graph v1/SVG, clipping/provenance and topology tests pass; 65 tests, Debug build; next P12 |
 | <a id="p12"></a>P12 | [Generate one flat road strip](../../HELSINKI_DRIVING_PLAN.md#p12--generate-one-flat-road-strip) | implementation | todo | [P11](#p11), [P08](#p08) | Deferred; expand before execution |
 | <a id="p13"></a>P13 | [Drive on the first Helsinki road](../../HELSINKI_DRIVING_PLAN.md#p13--drive-on-the-first-helsinki-road) | implementation | todo | [P05](#p05), [P12](#p12) | Deferred; expand before execution |
 | <a id="p14"></a>P14 | [Acquire and inspect one building sample](../../HELSINKI_DRIVING_PLAN.md#p14--acquire-and-inspect-one-building-sample) | implementation | todo | [P09](#p09) | Deferred; expand before execution |
@@ -49,7 +49,7 @@ Local setup follow-up (2026-10-03): SETUP.md step 4 now documents the executable
 
 P02 implementation and command checks completed 2026-10-03; its visual acceptance remains open. The user explicitly requested P03 on 2026-10-03, authorizing implementation before that check. P03 now has automated driving evidence and a Windows export; its manual two-minute drive is pending. This does not close P02 or G0. Follow [RUN.md](../RUN.md), then select P04 after manual acceptance. P06 remains independently ready if selected. SDK 10.0.112, Godot 4.5.2 .NET, game net8.0 build/runtime and Windows cross-export are exercised (D014); P06 still plans net10.0. Execute one task per session.
 
-P10–P27 retain the plan's prompts, dependencies and completion checks; create detailed cards from actual evidence before execution. P09 has its completed research card. P16 expands P17–P19 where necessary; P20 and P23 each plan 2–6 children. P21 and P24 execute only the next ready child per session, and their parents remain open until all required child and parent checks pass.
+P12–P27 retain the plan's prompts, dependencies and completion checks; create detailed cards from actual evidence before execution. P09–P11 have completed cards. P16 expands P17–P19 where necessary; P20 and P23 each plan 2–6 children. P21 and P24 execute only the next ready child per session, and their parents remain open until all required child and parent checks pass.
 
 ## Gates
 
@@ -74,3 +74,5 @@ Current P08 outcome (2026-10-04): awaiting-manual-test. Deterministic SharpGLTF 
 Current P09 outcome (2026-10-04): [bounded source research](P09-data-sources.md) done. User-selected Stenbäckinkatu square and measured city-address/terrain origin recorded. Small CityGML/GeoJSON/GeoTIFF access and registry hashes verified; current official terms checked. OSM access failed, footprint terms conflict and terrain metadata defects have named P10/P14/P17 checks/fallbacks. No route drive or independent vertical validation; prior gates remain open. Next recommended task: P10.
 
 Current P10 outcome (2026-10-04): [bounded road retrieval/import](P10-road-sample.md) done. One HTTP200 POST returned 11930 bytes/11 ways; checksum-verified offline replay and real-file import pass. 50 tests and root Debug build pass. Missing tags/complete-way overflow reported explicitly; route/ground-level/physical construction remain unverified. No later tasks or prior visual gates closed. Next recommended task: P11.
+
+Current P11 outcome (2026-10-04): [offline projected graph](P11-road-graph.md) done. Source geometry/OSM metadata/tags/provenance, directed arcs, shared-node splits, separate boundary cuts and disconnected crossing fixtures verified. 65 tests/full Debug build pass; real 11-segment graph/SVG deterministic, one component/no isolated segments. Optional SVG appearance inspection not performed; no heights, legal routing, lane/surface/game work or gate changes. Next recommended task: P12.

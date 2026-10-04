@@ -1,6 +1,6 @@
 # Helsinki driving game: expandable Codex plan
 
-Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-04 · Status: P10 road acquisition/inspection done at Stenbäckinkatu; P08 awaits visual test; G0/G1/G2 manual evidence remains open
+Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-04 · Status: P11 projected road graph done at Stenbäckinkatu; P08 awaits visual test; G0/G1/G2 manual evidence remains open
 
 ## Goal
 
@@ -256,6 +256,8 @@ Execute P11. Convert the road sample into a minimal versioned intermediate graph
 ```
 
 Completion check: Small automated fixtures prove graph connectivity, direction and level separation. A debug plot or engine overlay makes the real graph inspectable.
+
+P11 execution evidence (2026-10-04): [task card](docs/tasks/P11-road-graph.md) done. Offline graph v1/SVG conversion, provenance validation, 65 pipeline tests and root Debug build pass. Real sample yields 11 segments/22 arcs and one component; western cut is not a junction. No lane/surface/game work; next P12.
 
 ### P12 — Generate one flat road strip
 
