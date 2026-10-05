@@ -116,7 +116,7 @@ Optional manual review: read the repository instructions, current state and task
 
 ## Verification policy
 
-SDK and engine selections are recorded in SETUP.md and D013; current build/run commands are in RUN.md and PIPELINE.md. Planned checks are not successful results. Do not install tools or create projects during a documentation update.
+SDK and engine selections are recorded in SETUP.md and the pinned SDK selection; current build/run commands are in RUN.md and PIPELINE.md. Planned checks are not successful results. Do not install tools or create projects during a documentation update.
 
 | Feature | Automated / command evidence | Manual evidence |
 |---|---|---|
@@ -165,25 +165,25 @@ Get-ChildItem "$env:APPDATA\Godot\export_templates" -ErrorAction SilentlyContinu
 
 Actual output: PowerShell 5.1.26100.9444; Windows NT 10.0.26200.0; Windows SDKs 3.0.100, 3.1.100, 5.0.102 and 5.0.200; default SDK 5.0.200; x64 host/runtime 8.0.4; Git 2.27.0.windows.1. Godot commands/templates did not appear. The combined command exited 1 after the silent missing-template lookup; earlier inventory output remains valid. OS version wording alone is not a Windows product-name measurement.
 
-Official sources and checked dates are linked in [SETUP.md](SETUP.md) and D011. Read Godot's 4.5 C# prerequisites, 4.5 Windows/general export docs, 4.5 body API docs, 4.5.2 archive, Microsoft SDK/TFM/SDK-selection/support pages. Tagged Godot project-generator source fetches failed; no generated-project source verification claimed. Archive download redirects were unavailable in the web tool; no binary retrieval claimed. The newer 4.7.2 download listing was observed, but was not enough to establish its exact framework baseline.
+Official sources and checked dates are linked in [SETUP.md](SETUP.md) and the selected toolchain. Read Godot's 4.5 C# prerequisites, 4.5 Windows/general export docs, 4.5 body API docs, 4.5.2 archive, Microsoft SDK/TFM/SDK-selection/support pages. Tagged Godot project-generator source fetches failed; no generated-project source verification claimed. Archive download redirects were unavailable in the web tool; no binary retrieval claimed. The newer 4.7.2 download listing was observed, but was not enough to establish its exact framework baseline.
 
-Agent review: setup steps contain exact selections, bounded local setup, expected outputs and missing-tool paths; the SDK pin and task ledger were reviewed. This satisfies toolchain research's document-review criterion. User execution of those steps: **not run**. Original setup check superseded by D012 on 2026-10-03. Optional local manual check: after supplying the selected Linux tools, follow SETUP.md's WSL Bash version checks; expect SDK 8.0.425, Godot 4.5.2.stable.mono and matching .NET templates. Editor launch, export and exported-app verification belong to desktop scene and remain unperformed. G0 remains open.
+Agent review: setup steps contain exact selections, bounded local setup, expected outputs and missing-tool paths; the SDK pin and task ledger were reviewed. This satisfies toolchain research's document-review criterion. User execution of those steps: **not run**. Original setup check superseded by the WSL development workflow on 2026-10-03. Optional local manual check: after supplying the selected Linux tools, follow SETUP.md's WSL Bash version checks; expect SDK 8.0.425, Godot 4.5.2.stable.mono and matching .NET templates. Editor launch, export and exported-app verification belong to desktop scene and remain unperformed. G0 remains open.
 
 ## 2026-10-03 — WSL workflow documentation update
 
 Updated setup, instructions, plan, decisions, state and affected task cards to honor WSL development and Windows runtime-only transfer. Workspace bootstrap/toolchain research remain done; desktop scene–prototype packaging remain todo. Earlier inventory is historical; no tool installation, editor launch, export, transfer or gameplay implementation was performed.
 
-Official Linux .NET archive, C# desktop/export documentation and Microsoft's WSLg guidance checked on this date; see SETUP.md and D012. The direct Microsoft Linux SDK thank-you URL and an attempted C# platform-specific documentation URL were unavailable in the browsing tool; setup links to the main SDK download page instead.
+Official Linux .NET archive, C# desktop/export documentation and Microsoft's WSLg guidance checked on this date; see SETUP.md and the WSL development workflow. The direct Microsoft Linux SDK thank-you URL and an attempted C# platform-specific documentation URL were unavailable in the browsing tool; setup links to the main SDK download page instead.
 
-Manual check for this documentation change: read SETUP.md and D012. Expect Linux tools and WSL Bash instructions, source/pipeline remaining in WSL, and only exported runtime files copied to Windows. Actual WSLg/editor and Windows export/run checks remain desktop scene acceptance work.
+Manual check for this documentation change: read SETUP.md and the WSL development workflow. Expect Linux tools and WSL Bash instructions, source/pipeline remaining in WSL, and only exported runtime files copied to Windows. Actual WSLg/editor and Windows export/run checks remain desktop scene acceptance work.
 
-Documentation validation passed: `git diff --check` exited 0; `rg` found no remaining active Windows-development/optional-WSL setup instructions; in-session assertions checked all 28 task statuses unchanged and verified desktop scene/pipeline CLI execution prompts match the revised plan. Setup and D012 were reviewed for WSL development and runtime-only transfer; no implementation acceptance criterion was marked complete.
+Documentation validation passed: `git diff --check` exited 0; `rg` found no remaining active Windows-development/optional-WSL setup instructions; in-session assertions checked all 28 task statuses unchanged and verified desktop scene/pipeline CLI execution prompts match the revised plan. Setup and the WSL development workflow were reviewed for WSL development and runtime-only transfer; no implementation acceptance criterion was marked complete.
 
 ## 2026-10-03 — .NET 10 setup update
 
-User approved .NET 10. Updated global.json to 10.0.112, setup, README, plan, decisions (D013), project state and affected task cards/index. Historical .NET 8 SDK evidence above remains a record of the earlier selection, superseded by D013. Workspace bootstrap/toolchain research remain done; desktop scene–prototype packaging remain todo. Pipeline/tests planned net10.0; Godot-generated game target and runtime/export compatibility await desktop scene.
+User approved .NET 10. Updated global.json to 10.0.112, setup, README, plan, decisions (the pinned SDK selection), project state and affected task cards/index. Historical .NET 8 SDK evidence above remains a record of the earlier selection, superseded by the pinned SDK selection. Workspace bootstrap/toolchain research remain done; desktop scene–prototype packaging remain todo. Pipeline/tests planned net10.0; Godot-generated game target and runtime/export compatibility await desktop scene.
 
-Actual checks: `dotnet --info` reconfirmed installed Linux SDK 10.0.112 and runtime 10.0.12; after the pin change, `dotnet --version` returned 10.0.112 and `dotnet --list-sdks` listed 10.0.112 at /usr/lib/dotnet/sdk. `git diff --check` passed. Official Godot 4.5 C# and Microsoft SDK/version-selection/global.json/support pages rechecked; see SETUP.md and D013. No tool installation, project creation, restore, build, export or editor launch performed.
+Actual checks: `dotnet --info` reconfirmed installed Linux SDK 10.0.112 and runtime 10.0.12; after the pin change, `dotnet --version` returned 10.0.112 and `dotnet --list-sdks` listed 10.0.112 at /usr/lib/dotnet/sdk. `git diff --check` passed. Official Godot 4.5 C# and Microsoft SDK/version-selection/global.json/support pages rechecked; see SETUP.md and the pinned SDK selection. No tool installation, project creation, restore, build, export or editor launch performed.
 
 Manual check: run `dotnet --version` from the WSL repository root and read SETUP.md; expect 10.0.112, no .NET 8 SDK download requirement, and separate Godot runtime/export verification in desktop scene. User execution: not run. Game compatibility and visual checks remain unverified; G0 remains open.
 
@@ -330,7 +330,7 @@ Manual review performed by agent: axis/units table, fixed origin requirement, ve
 
 ## Synthetic GLB import
 
-Session 2026-10-03–04, WSL2 SDK 10.0.112, Godot 4.5.2 .NET. Official sources/checked dates and format rationale: [PIPELINE.md](PIPELINE.md#synthetic-glb-staging), D018. Manual editor/Windows appearance: **unverified**.
+Session 2026-10-03–04, WSL2 SDK 10.0.112, Godot 4.5.2 .NET. Official sources/checked dates and format rationale: [PIPELINE.md](PIPELINE.md#synthetic-glb-staging), the GLB staging workflow. Manual editor/Windows appearance: **unverified**.
 
 | Actual command / check | Outcome |
 |---|---|
