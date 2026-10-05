@@ -1,21 +1,14 @@
 # driving-time
 
-A non-commercial desktop 3D driving game prototype on recognizable Helsinki streets. Start with a synthetic scene, then one real road and nearby buildings; an approximately 1 × 1 km area near Töölönlahti is provisional. C#/.NET is required for both the game and offline data pipeline. The first target is Windows desktop x64, using Godot 4.5.2 .NET and SDK 10.0.112. The game targets net8.0; the pipeline will target net10.0. All development, editing, builds, pipeline work and export run in WSL; only the exported playable game (with required runtime files) is transferred to Windows.
+A non-commercial desktop prototype for driving through recognizable Helsinki streets. The selected area is a provisional 1 × 1 km square around Stenbäckinkatu. C#/.NET is required for both the Godot game and offline data pipeline. Development, editing, builds, tests and Windows export run in WSL2; only exported runtime files transfer to Windows for playtesting.
 
-P03 adds an orange placeholder car, keyboard arcade controls, a primitive flat loop and speed in km/h. [Run and export guide](docs/RUN.md) gives controls, tuning and WSL/Windows test steps. Builds, integration checks at 30/60/144 FPS caps and Windows export pass; the manual drive remains pending. P02 native startup passed, but its visual acceptance remains open. The net8.0 game target needs review before its November 10, 2026 support end (D014). No map data or pipeline exists.
+The game has a VehicleBody3D car, chase camera, synthetic loop, obstacles, ramp and recovery. The pipeline can retrieve a bounded road sample, normalize its graph and generate a flat 100 m road strip with separate collision geometry. The real strip is not yet integrated into a playable driving scene. Automated build/import/export evidence exists; visual and driving checks remain open.
 
-Read [AGENTS.md](AGENTS.md), the [plan](HELSINKI_DRIVING_PLAN.md), [project state](docs/PROJECT_STATE.md), [decisions](docs/DECISIONS.md), [testing record](docs/TESTING.md), and [task index](docs/tasks/INDEX.md). P00–P01 are complete; P02/P03 await manual testing; P04–P27 remain todo, with P09–P27 deferred. Execute one selected task in dependency order.
+- [Setup and environment checker](docs/SETUP.md)
+- [Run, export and manual checks](docs/RUN.md)
+- [Offline pipeline](docs/PIPELINE.md)
+- [Coordinates](docs/COORDINATES.md) and [data sources](docs/DATA_SOURCES.md)
+- [Current state](docs/PROJECT_STATE.md), [decisions](docs/DECISIONS.md) and [test evidence](docs/TESTING.md)
+- [Repository instructions](AGENTS.md), [backlog](HELSINKI_DRIVING_PLAN.md) and [task ledger](docs/tasks/INDEX.md) for upcoming changes
 
-To resume in Codex, paste:
-
-```text
-Read AGENTS.md, HELSINKI_DRIVING_PLAN.md, docs/PROJECT_STATE.md,
-docs/DECISIONS.md and docs/tasks/INDEX.md. Inspect the working tree and
-relevant existing code. Summarize current evidence, open manual checks and
-blockers. Select the next ready task in dependency order and state its ID.
-Execute only that task under the execution contract. If the next task awaits
-my manual check, work only on an independent ready task; do not assume it passed.
-Update the ledger and state, and end with one recommended next task ID.
-```
-
-Next: complete the pending visual/driving checks using [RUN.md](docs/RUN.md), then select [P04](docs/tasks/P04-chase-camera.md).
+To resume work, read the repository instructions, current state, decisions and task ledger. Inspect existing code and select one ready change from the backlog. Record actual checks and preserve outstanding manual acceptance.

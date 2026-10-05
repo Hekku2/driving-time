@@ -23,6 +23,10 @@ C# for both game and pipeline is fixed by the current user instruction. The WSL-
 
 ## How to use this file with Codex
 
+Permanent project documents use feature names and current behavior rather than historical task IDs. Task IDs belong in this backlog and the task ledger/cards for proposed changes and outstanding acceptance work. Completed cards are historical records, not required usage documentation. Preserve literal paths, commands and recorded log markers; update incoming anchors when headings change. AGENTS.md defines this documentation rule.
+
+User-selected follow-up P01a (2026-10-05): [Check development environment prerequisites](docs/tasks/P01a-environment-preflight.md). One inventory command with installation guidance; no installs, gameplay or later task execution. Current missing editor/templates are recorded separately from historical export evidence.
+
 User-selected follow-up P05a (2026-10-03): [Compare VehicleBody3D driving](docs/tasks/P05a-vehicle-experiment.md). Following the built-in vehicle experiment, the user chose VehicleBody3D (D016). Keep the arcade baseline runnable. Detailed loop/ramp/turning manual evidence remains open. Status and evidence live in the card/ledger. This does not execute P06 or close G1.
 
 User-selected follow-up P02a (2026-10-03): [Script the current Windows export and transfer](docs/tasks/P02a-windows-export-script.md). Status: done. This narrow helper builds/imports/exports the existing game in WSL and copies verified runtime files to W:\projektit\driving-time. It does not execute P25 or close P02/P03 manual acceptance. Dependencies and acceptance evidence are in the task card and ledger.
@@ -53,6 +57,7 @@ P00 will copy these rules into `AGENTS.md`. Until then, include this file in Cod
 - Document data provenance, license, retrieval date, checksum, coordinate reference system, vertical datum and known limitations. Non-commercial use does not remove license obligations. Do not redistribute unreviewed source data.
 - End with: what changed, commands/tests and outcomes, a short manual test with expected result, known limitations, and one recommended next task ID.
 - Update `docs/PROJECT_STATE.md` and the task ledger. Do not mark later tasks complete simply because some scaffolding exists. Do not commit, push or publish unless requested or already authorized in repository instructions.
+- Keep permanent project documentation independent of task IDs: use feature names, current behavior and dated evidence. Tasks describe upcoming changes and outstanding acceptance work in the backlog and task ledger/cards; completed cards may remain as historical records. Reference a task in project state only for the next proposed change. Preserve literal paths, commands and historical output, and update incoming Markdown anchors when headings change.
 - Stop at the selected task boundary. Planning prompts produce plans and TODOs, not implementation. Raise a blocker only after useful independent work has been completed.
 
 ### Completion statuses
@@ -191,7 +196,7 @@ Completion check: Hit an obstacle, drive the slope, fall out of bounds and reset
 
 Type: **implementation** · Depends on: **P01**
 
-Status: **done** (2026-10-03). [Task card](docs/tasks/P06-pipeline-cli.md), [WSL workflow/restore policy](docs/PIPELINE.md), [command evidence](docs/TESTING.md#p06--offline-synthetic-manifest-cli). SDK 10.0.112, independent net10.0 CLI/tests in root solution, locked restore, Debug/ExportRelease builds and 15 tests pass. Two no-restore runs produce identical versioned manifests; invalid configuration exits 2. Synthetic CLI only; P07 now verifies its separate coordinate contract, P08 remains todo and G2 stays open.
+Status: **done** (2026-10-03). [Task card](docs/tasks/P06-pipeline-cli.md), [WSL workflow/restore policy](docs/PIPELINE.md), [command evidence](docs/TESTING.md#offline-synthetic-manifest-cli). SDK 10.0.112, independent net10.0 CLI/tests in root solution, locked restore, Debug/ExportRelease builds and 15 tests pass. Two no-restore runs produce identical versioned manifests; invalid configuration exits 2. Synthetic CLI only; P07 now verifies its separate coordinate contract, P08 remains todo and G2 stays open.
 
 ```text
 Execute P06. Create a minimal C#/.NET console CLI in pipeline/ and add it to the repository solution alongside the game when present. Use the SDK verified in P01, explicit NuGet versions and a documented restore policy. Read validated region/origin configuration and write a versioned manifest for a synthetic scene, using built-in .NET facilities where sufficient. Include one documented dotnet run command, deterministic output ordering, clear input errors and a small .NET test project for nontrivial validation. Start with no geospatial downloads. Document a WSL-development workflow that requires no Python runtime, Node.js, container or external GIS CLI; the pipeline stays in WSL and only exported game runtime files go to Windows. Add only dependencies already needed for this task.
@@ -203,7 +208,7 @@ Completion check: After the documented initial restore, run the command twice of
 
 Type: **implementation** · Depends on: **P06**
 
-Status: **done** (2026-10-03). [Task card](docs/tasks/P07-coordinates.md), [coordinate contract](docs/COORDINATES.md), [command evidence](docs/TESTING.md#p07--coordinate-contract-and-transform-evaluation). Double-precision cardinal/100 m/elevation/round-trip/tile checks and ProjNET 2.1.0 comparison with independent NLS example pass; 31 total tests, locked restore and root Debug build pass. EPSG:3067/N2000 target selected, real origin unselected. Accurate WGS84 datum/vertical conversions unsupported; explicit approximation policy documented. P08/G2 visual import remains open.
+Status: **done** (2026-10-03). [Task card](docs/tasks/P07-coordinates.md), [coordinate contract](docs/COORDINATES.md), [command evidence](docs/TESTING.md#coordinate-contract-and-transform-evaluation). Double-precision cardinal/100 m/elevation/round-trip/tile checks and ProjNET 2.1.0 comparison with independent NLS example pass; 31 total tests, locked restore and root Debug build pass. EPSG:3067/N2000 target selected, real origin unselected. Accurate WGS84 datum/vertical conversions unsupported; explicit approximation policy documented. P08/G2 visual import remains open.
 
 ```text
 Execute P07. Define an explicit coordinate contract: source axis order and units, projected east/north coordinates, vertical datum, fixed origin, engine axes, handedness and tile-local coordinates. Use projected meters and local engine coordinates; keep source coordinates in double precision. A possible mapping is X=east-originEast, Y=height-originHeight, Z=-(north-originNorth), but verify it rather than assuming source X means east. Implement and test synthetic cardinal points, a measured 100 m segment, round trips and a nonzero elevation. Record how EPSG:4326 to the chosen projected CRS will be handled in C# and how vertical data will be validated. Evaluate a .NET coordinate-transform library against a trusted reference and verify its required CRS support and axis semantics; do not assume a package name proves compatibility. Do not invent origin coordinates.
@@ -213,7 +218,7 @@ Completion check: Automated fixtures prove direction, 100 m scale, elevation and
 
 ### P08 — Import one generated GLB and manifest
 
-Status: **awaiting-manual-test** (2026-10-04). [Task card](docs/tasks/P08-synthetic-import.md), [staging/schema/workflow](docs/PIPELINE.md#p08-synthetic-glb-staging), [evidence](docs/TESTING.md#p08--synthetic-glb-import). SharpGLTF.Toolkit 1.0.7 verified with a 6,664-byte synthetic GLB; 33 tests, locked restore, builds, Godot import and native Windows exported geometry/material checks pass. Editor/Windows visual inspection remains open; G2 stays open. Next recommended task: P09.
+Status: **awaiting-manual-test** (2026-10-04). [Task card](docs/tasks/P08-synthetic-import.md), [staging/schema/workflow](docs/PIPELINE.md#synthetic-glb-staging), [evidence](docs/TESTING.md#synthetic-glb-import). SharpGLTF.Toolkit 1.0.7 verified with a 6,664-byte synthetic GLB; 33 tests, locked restore, builds, Godot import and native Windows exported geometry/material checks pass. Editor/Windows visual inspection remains open; G2 stays open. Next recommended task: P09.
 
 Type: **implementation** · Depends on: **P02, P07**
 

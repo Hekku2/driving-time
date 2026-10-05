@@ -1,10 +1,10 @@
-# P07 coordinate contract
+# Coordinate contract
 
-Version 1, checked 2026-10-03; P09 origin evidence added 2026-10-04. Implementation: `pipeline/Coordinates.cs` and `pipeline/Tm35FinProjection.cs`; fixtures: `tests/DrivingTime.Pipeline.Tests/CoordinateTests.cs`. The CLI accepts only synthetic configurations; P09's source registry is research metadata. No game or mesh import change is implied.
+Version 1, checked 2026-10-03; source research origin evidence added 2026-10-04. Implementation: `pipeline/Coordinates.cs` and `pipeline/Tm35FinProjection.cs`; fixtures: `tests/DrivingTime.Pipeline.Tests/CoordinateTests.cs`. The original synthetic configuration remains separate from the real-source registry and road conversion commands. No game or mesh import change is implied.
 
 ## Source and normalized coordinates
 
-Choose EPSG:3067 (ETRS-TM35FIN, EUREF-FIN / TM35FIN(E,N)) as the horizontal working CRS. Its current registry name is ETRS89-FIN [EUREF-FIN] / TM35FIN(E,N). Use N2000 (EPSG:3900) normal heights in metres for real elevated assets. EPSG:3067 alone is two-dimensional and specifies no vertical datum. P09 must verify actual datasets against this target; choosing this contract does not prove their compatibility.
+Choose EPSG:3067 (ETRS-TM35FIN, EUREF-FIN / TM35FIN(E,N)) as the horizontal working CRS. Its current registry name is ETRS89-FIN [EUREF-FIN] / TM35FIN(E,N). Use N2000 (EPSG:3900) normal heights in metres for real elevated assets. EPSG:3067 alone is two-dimensional and specifies no vertical datum. Verify actual datasets against this target; choosing this contract does not prove their compatibility.
 
 | Input | Source axis order and units | Adapter behavior |
 |---|---|---|
@@ -13,13 +13,13 @@ Choose EPSG:3067 (ETRS-TM35FIN, EUREF-FIN / TM35FIN(E,N)) as the horizontal work
 | EPSG:4326 native order | latitude, longitude; decimal degrees | `SourceAxes.Geographic(..., LatitudeLongitude)` |
 | RFC 7946 GeoJSON / OGC CRS84 | longitude, latitude; decimal degrees | `SourceAxes.Geographic(..., LongitudeLatitude)` |
 | EUREF-FIN geographic (EPSG:10690 native order) | latitude, longitude; decimal degrees, GRS80 | named `GeographicPoint`, then `FromEurefFin` |
-| P06 synthetic | explicitly named east, north, height; metres | synthetic frame only; no geographic datum |
+| Synthetic fixture | explicitly named east, north, height; metres | synthetic frame only; no geographic datum |
 
 The importer must check CRS metadata, format/transport axis rules, units and a known control point before selecting an adapter. A field called X or a plausible coordinate magnitude is not evidence of east. A source format may override native CRS order: record the observed order and rule, not just the EPSG code. Geographic adapters do not infer a height from a third array element. Missing, ambiguous, unsupported CRS/axis/units are conversion errors until verified. Feet, radians, other projections and datum operations require a separately verified adapter. Preserve original source coordinates and normalized coordinates as C# doubles.
 
 ## Origin, axes and precision
 
-P09 records a provisional data-derived Stenbäckinkatu origin E=384236.0361374, N=6674210.89320437 (EPSG:3067), H=13.52536678314209m (provider N2000) and a 1000m square in [source-registry.json](../config/source-registry.json). [DATA_SOURCES.md](DATA_SOURCES.md) traces the city-projected address anchor and containing terrain pixel; the anchor is not a spawn. Independent vertical controls remain P17 work. Persist the adopted origin identically for all real layers, tiles and manifests; do not recalculate per object, tile or run. `CoordinateFrame` requires a caller-supplied origin/tile size and stores immutable values. P06's (0,0,0) configuration and P07 fixtures remain synthetic; the research registry does not reconfigure them.
+The [source registry](../config/source-registry.json) records a provisional data-derived Stenbäckinkatu origin E=384236.0361374, N=6674210.89320437 (EPSG:3067), H=13.52536678314209m (provider N2000) and a 1000m square. [DATA_SOURCES.md](DATA_SOURCES.md) traces the city-projected address anchor and containing terrain pixel; the anchor is not a spawn. Independent vertical controls remain unverified. Persist the adopted origin identically for all real layers, tiles and manifests; do not recalculate per object, tile or run. `CoordinateFrame` requires a caller-supplied origin/tile size and stores immutable values. The (0,0,0) configuration and coordinate test fixtures remain synthetic; the research registry does not reconfigure them.
 
 For normalized projected east, north and validated height:
 
@@ -33,7 +33,7 @@ north  = originNorth  - Z
 height = originHeight + Y
 ```
 
-Engine units are metres: +X grid east, +Y up, -Z grid north (+Z south). These are projected grid directions, not true geodetic north/east; meridian convergence and projection scale remain. Godot uses a right-handed Y-up metre space. The matrix from ordered (east,north,up) to (X,Y,Z) is `[1,0,0; 0,0,1; 0,-1,0]`, determinant +1; east cross north maps to up. This is a rotation, so no handedness reflection is introduced. Vertex winding/normals still need P08's writer/import check.
+Engine units are metres: +X grid east, +Y up, -Z grid north (+Z south). These are projected grid directions, not true geodetic north/east; meridian convergence and projection scale remain. Godot uses a right-handed Y-up metre space. The matrix from ordered (east,north,up) to (X,Y,Z) is `[1,0,0; 0,0,1; 0,-1,0]`, determinant +1; east cross north maps to up. This is a rotation, so no handedness reflection is introduced. Vertex winding/normals require separate writer/import checks; see the synthetic asset evidence.
 
 Subtract origin in double precision before casting to engine/GLB floats. Keep projected/source coordinates out of float `Vector3`s. Tests show millimetre offsets survive localization while casting a multi-million-metre northing first loses centimetres. No floating-origin system or large-area float accuracy guarantee is added. Round-trip arithmetic tolerance is 1e-9 m horizontally for the fixtures; this is numerical precision, not survey accuracy. A known synthetic 60 m east / 80 m north segment measures 100 m in engine space. It verifies projected grid scale, not a surveyed ground/geodesic distance; no physical measurement was performed.
 
@@ -41,7 +41,7 @@ Subtract origin in double precision before casting to engine/GLB floats. Keep pr
 
 The tile grid is anchored at the same fixed projected origin; configured positive size S is in metres. Indices `(i,j)` use `floor((east-originEast)/S)` and `floor((north-originNorth)/S)` including negative values. Ownership uses half-open cells: the east/north edge belongs to the next tile. Southwest anchor is `(originEast+i*S, originNorth+j*S, originHeight)`.
 
-Tile engine translation is `(i*S,0,-j*S)`. Local vertices subtract this translation from world-local engine coordinates; Y retains the common height origin. Thus local X lies in [0,S), local Z in (-S,0] for owned points. Recompose world position by adding tile translation. Border vertices may appear in both meshes and must recompose identically. P07 tests adjacent representations, exact edges, negative indices and height preservation; tile generation/streaming remains P22–P24.
+Tile engine translation is `(i*S,0,-j*S)`. Local vertices subtract this translation from world-local engine coordinates; Y retains the common height origin. Thus local X lies in [0,S), local Z in (-S,0] for owned points. Recompose world position by adding tile translation. Border vertices may appear in both meshes and must recompose identically. Coordinate contract tests adjacent representations, exact edges, negative indices and height preservation; tile generation and streaming remain future work.
 
 ## Managed transform evaluation and EPSG:4326 policy
 
@@ -59,9 +59,9 @@ For EPSG:4326, C# normalizes source axes and calls `FromWgs84`. Default rejects 
 
 `CoordinateFrame` allows only an explicitly synthetic frame or N2000 frame; mismatched, unknown, N60 and ellipsoidal heights fail rather than silently offsetting them. Height is a separate argument and is never transformed by the horizontal adapter. N2000 metadata is a necessary input assertion, not proof that supplied values are correct.
 
-P09/P14/P17 must record height units, vertical CRS/datum, height type (normal, ellipsoidal, relative building height), NoData rules and provenance. Verify at independent known elevation controls/benchmarks, compare overlapping road/building/terrain locations, record residuals and define acceptable tolerance from source accuracy/resolution before accepting data. Missing/NaN/infinite elevations are errors; no zero-height fallback is implicit. A flat demonstration must be labeled synthetic/approximate and kept separate from validated real elevations. Building roof height above ground is a dimension, not an absolute N2000 elevation.
+Source acquisition must record height units, vertical CRS/datum, height type (normal, ellipsoidal, relative building height), NoData rules and provenance. Verify at independent known elevation controls/benchmarks, compare overlapping road/building/terrain locations, record residuals and define acceptable tolerance from source accuracy/resolution before accepting data. Missing/NaN/infinite elevations are errors; no zero-height fallback is implicit. A flat demonstration must be labeled synthetic/approximate and kept separate from validated real elevations. Building roof height above ground is a dimension, not an absolute N2000 elevation.
 
-N60 or ellipsoidal heights require a verified conversion and separately tested grid/model interpolation, units, coverage and NoData handling before use. NLS documents FIN2023N2000 for EUREF-FIN ellipsoidal to N2000 heights; WGS84 heights first require compatible realization/epoch handling. Fetch/license/checksum/model packaging remain future bounded work; no geoid grid was downloaded or height transformation validated in P07. Reject unsupported sources rather than treating N2000, N60 and ellipsoidal heights as interchangeable. A RFC 7946 third coordinate is WGS84 ellipsoidal height, not N2000.
+N60 or ellipsoidal heights require a verified conversion and separately tested grid/model interpolation, units, coverage and NoData handling before use. NLS documents FIN2023N2000 for EUREF-FIN ellipsoidal to N2000 heights; WGS84 heights first require compatible realization/epoch handling. Fetch/license/checksum/model packaging remain future bounded work; no geoid grid was downloaded or height transformation validated in coordinate contract. Reject unsupported sources rather than treating N2000, N60 and ellipsoidal heights as interchangeable. A RFC 7946 third coordinate is WGS84 ellipsoidal height, not N2000.
 
 ## Sources and review
 
@@ -73,4 +73,4 @@ Official sources checked 2026-10-03:
 - [Godot 4.5 axes and scale](https://docs.godotengine.org/en/4.5/tutorials/3d/introduction_to_3d.html).
 - [RFC 7946 positions and height semantics](https://www.rfc-editor.org/rfc/rfc7946) and [OGC CRS/encoding rules](https://docs.ogc.org/is/18-058r1/18-058r1.html). Direct EPSG:4326 registry page retrieval was unavailable; transport axis order still requires actual-source review.
 
-Manual review: read the axis table, origin rules and vertical validation checklist; expect north toward -Z and explicit rejection of unsupported heights. P07's historical review had no real origin; P09 now records a provisional measured anchor, with independent real-height validation still pending. Agent contract review completed; user replay not performed. No runtime visual check is required for P07. P08 must show cardinal markers, a 100 m scale and raised marker in Godot before G2 can pass.
+Manual review: read the axis table, origin rules and vertical validation checklist; expect north toward -Z and explicit rejection of unsupported heights. The initial contract review had no real origin; the registry now records a provisional measured anchor, with independent real-height validation still pending. Agent contract review completed; user replay not performed. Numerical coordinate checks require no runtime visual test. The separate synthetic asset inspection must demonstrate cardinal directions, the 10 m cube scale and the raised marker in Godot before G2 can pass.
