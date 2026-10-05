@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Repository-authored synthetic inspection fixture. No real building geometry or identifiers. -->
+<w:FeatureCollection xmlns:w="http://www.opengis.net/wfs/2.0"
+ xmlns:b="http://www.opengis.net/citygml/building/2.0" xmlns:c="http://www.opengis.net/citygml/2.0"
+ xmlns:g="http://www.opengis.net/gml" xmlns:x="http://www.w3.org/1999/xlink"
+ xmlns:si="http://www.w3.org/2001/XMLSchema-instance"
+ si:schemaLocation="http://www.opengis.net/citygml/building/2.0 https://schemas.opengis.net/citygml/building/2.0/building.xsd"
+ timeStamp="2026-10-01T12:00:00" numberMatched="1" numberReturned="1">
+ <w:member><b:Building g:id="synthetic-building">
+  <g:boundedBy><g:Envelope srsName="urn:ogc:def:crs,crs:EPSG::3879,crs:EPSG::3900" srsDimension="3">
+   <g:lowerCorner>25495240 6675037 12</g:lowerCorner><g:upperCorner>25495250 6675047 20</g:upperCorner>
+  </g:Envelope></g:boundedBy>
+  <c:creationDate>2026-10-01</c:creationDate>
+  <b:lod1Solid><g:Solid g:id="synthetic-solid"><g:exterior><g:CompositeSurface>
+   <g:surfaceMember><g:Polygon g:id="synthetic-polygon"><g:exterior><g:LinearRing>
+    <g:posList srsDimension="3">25495240 6675037 12 25495250 6675037 12 25495250 6675047 12 25495240 6675047 12 25495240 6675037 12</g:posList>
+   </g:LinearRing></g:exterior></g:Polygon></g:surfaceMember>
+  </g:CompositeSurface></g:exterior></g:Solid></b:lod1Solid>
+  <b:lod2Solid><g:Solid><g:exterior><g:CompositeSurface><g:surfaceMember x:href="#synthetic-roof"/></g:CompositeSurface></g:exterior></g:Solid></b:lod2Solid>
+  <b:boundedBy><b:RoofSurface><b:lod2MultiSurface><g:MultiSurface>
+   <g:surfaceMember><g:Polygon g:id="synthetic-roof"><g:exterior><g:LinearRing>
+    <g:posList srsDimension="3">25495240 6675037 20 25495250 6675037 20 25495250 6675047 20 25495240 6675047 20 25495240 6675037 20</g:posList>
+   </g:LinearRing></g:exterior></g:Polygon></g:surfaceMember>
+  </g:MultiSurface></b:lod2MultiSurface></b:RoofSurface></b:boundedBy>
+  <b:address><c:Address><c:multiPoint><g:MultiPoint><g:pointMember><g:Point><g:pos srsDimension="3">25495241 6675038 0</g:pos></g:Point></g:pointMember></g:MultiPoint></c:multiPoint></c:Address></b:address>
+  <c:externalReference><c:informationSystem>https://example.invalid/synthetic-metadata</c:informationSystem><c:externalObject><c:name>synthetic-key</c:name></c:externalObject></c:externalReference>
+ </b:Building></w:member>
+</w:FeatureCollection>

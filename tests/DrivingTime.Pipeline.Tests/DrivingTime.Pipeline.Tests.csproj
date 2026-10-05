@@ -14,6 +14,7 @@
     <ProjectReference Include="../../pipeline/DrivingTime.Pipeline.csproj" />
     <None Include="../../config/synthetic-scene.json" Link="synthetic-scene.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../tests/fixtures/osm-road-sample.json" Link="osm-road-sample.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../tests/fixtures/citygml-building.xml" Link="citygml-building.xml" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../config/road-sample.json" Link="road-sample.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

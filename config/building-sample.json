@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "region": { "minEast": 25495042, "minNorth": 6674954, "maxEast": 25495242, "maxNorth": 6675154 },
+  "count": 1,
+  "cachePath": "../data/raw/buildings",
+  "roadRegion": { "minEast": 384236.0361374, "minNorth": 6674060.89320437, "maxEast": 384636.0361374, "maxNorth": 6674360.89320437 }
+}

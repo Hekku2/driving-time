@@ -7,6 +7,7 @@ public static class Program
 {
     public static int Main(string[] args)
     {
+        if (args.Length > 0 && args[0] == "building-sample") return BuildingSampleCommand.Run(args[1..]).GetAwaiter().GetResult();
         if (args.Length > 0 && args[0] == "road-sample") return RoadSampleCommand.Run(args[1..]).GetAwaiter().GetResult();
         if (args.Length > 0 && args[0] == "road-graph") return RoadGraphCommand.Run(args[1..]);
         if (args.Length > 0 && args[0] == "road-strip") return RoadStripCommand.Run(args[1..]);
@@ -14,6 +15,7 @@ public static class Program
         if (args is ["--help"])
         {
             Console.WriteLine(usage);
+            Console.WriteLine(BuildingSampleCommand.Usage);
             return 0;
         }
         if ((args.Length != 2 && args.Length != 4) || args[0] != "--config" ||

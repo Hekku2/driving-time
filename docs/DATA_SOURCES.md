@@ -1,6 +1,6 @@
 # Data sources: Stenbäckinkatu
 
-Checked **2026-10-04 (Europe/Helsinki)**. Research only: no city-wide download, data conversion, game changes or publication. The machine-readable record is [source-registry.json](../config/source-registry.json). `providerClaims` records documentation; `observed` records bounded responses and measurements. `null` means unverified, not zero. This registry is not the synthetic pipeline configuration and does not change its origin.
+Initial source research checked **2026-10-04 (Europe/Helsinki)**; building access/terms and the bounded reader were checked again **2026-10-05**. No city-wide download or publication. The machine-readable research record is [source-registry.json](../config/source-registry.json); subsequent retrievals have their own cache provenance. `providerClaims` records documentation; `observed` records bounded responses and measurements. `null` means unverified, not zero. This registry is not the synthetic pipeline configuration and does not change its origin.
 
 ## Provisional area and measured origin
 
@@ -39,7 +39,7 @@ Measured response:
 - Building creation date 2016-05-22; surface creation dates include 2024-01-04. Neither establishes imagery/survey date. No textures were fetched.
 - An N,E bbox returned zero; physical E,N returned the building. Capabilities advertise a world bounding box: **do not interpret that as worldwide building coverage**. Paging is advertised but not transaction-safe; response cache timeout is 300 s.
 
-Before building conversion, evaluate streaming `XmlReader`, CRS conversion, xlinks and geometry against a small actual sample. No production CityGML reader or local GK25 projection is implemented. Manual fallback: open [Helsinki 3D](https://kartta.hel.fi/3d/), select a small polygon and non-textured export, capture file/terms/CRS. A single required direct 4 km² sheet is a secondary fallback only after checking its size. The HTML entry loaded; no graphical viewer/export was performed.
+The [bounded building command](BUILDINGS.md) now uses built-in streaming `XmlReader` with per-feature `XElement` inspection and managed GK25 projection. A fresh official response and its network provenance are cached; namespaces, closed rings, IDs and forward references were checked against the actual bytes. This supports the documented inspection subset, not universal CityGML conversion. Manual fallback: open [Helsinki 3D](https://kartta.hel.fi/3d/), select a small polygon and non-textured export, capture file/terms/CRS. A single required direct 4 km² sheet is a secondary fallback only after checking its size. The HTML entry loaded; no graphical viewer/export was performed.
 
 ### Simpler building fallback: footprint WFS
 
@@ -105,7 +105,7 @@ The offline C# inspector reads only cached files, checks TIFF structure/samples 
 
 Automated outcome: see [source research evidence](TESTING.md#bounded-source-research). Manual reference check: open the city map at the geographic locator, find Stenbäckinkatu, and inspect the eastern interior run between the named junctions. Expected: the square surrounds the road, and a short surface segment can be isolated without entering tram/hospital/junction structures. Verify current construction/access against the 2026 plan before treating it as a drivable route. **Not performed**; this is a future road retrieval route-validation check, not missing game acceptance for the research task.
 
-Remaining checks cover physical route access/construction and supported endpoints, footprint terms/local GK25 geometry reading and building coverage, production raster reading/NoData coverage/scan age, independent N2000 height controls and physical alignment. Cached OSM retrieval and graph conversion are implemented; no G3/G4 gate or earlier manual check is closed.
+Remaining checks cover physical route access/construction and supported endpoints, footprint terms, building selection beside the playable strip and mesh conversion, production raster reading/NoData coverage/scan age, independent N2000 height controls and physical alignment. Cached OSM retrieval/graph conversion and bounded building XML inspection are implemented; no G3/G4 gate or earlier manual check is closed.
 
 ## Verified road sample — 2026-10-04
 
