@@ -87,6 +87,16 @@ SharpGLTF.Toolkit 1.0.7 (MIT; net10.0 package inspected locally), with locked Co
 
 Run in WSL with pinned .NET 10.0.112. No new dependencies or game-service access.
 
+The download helper restores locked pipeline dependencies and then runs the bounded retrieval command below. It reuses a verified cache when present; otherwise it downloads one sample. Use `--refresh` only to explicitly request fresh data. Configuration remains in `config/road-sample.json`; the helper locates the repository from its own file and stops on failure without retries. After successful retrieval it verifies the reported payload/provenance and atomically updates only the graph input/provenance path fields, preserving other configuration values. It performs no conversion.
+
+```bash
+dotnet run --file scripts/download-road-source.cs
+```
+
+The successful output identifies the cache directory. The helper automatically selects its `raw.json` and `network-provenance.json` in `config/road-graph.json`, so readiness and offline conversion use the verified payload even when its checksum changes. Direct pipeline invocation below still requires manually selecting these paths after a fresh response. This retrieves current source data; it does not recover historical response bytes.
+
+For direct pipeline invocation after restore:
+
 ```bash
 dotnet run --project pipeline --no-restore -- road-sample --config config/road-sample.json
 ```
@@ -153,6 +163,8 @@ Optional manual inspection: open `data/intermediate/p11/road-graph.svg` in a bro
 
 ## Single flat road strip
 
+The [dedicated first-road scene](RUN.md#first-helsinki-road-drive) loads the staged manifest and imported visual/collision resources at identity. `pipeline/Coordinates.cs` is shared as linked source with the game and compiles independently for net10.0 and net8.0; no pipeline/writer/projection assembly dependency enters the game. Heights are explicitly synthetic for spawn/reference mapping. Export helper regenerates graph/strip offline before import, records `road-graph.log`/`road-strip.log` and includes road manifest/game config in resource filters. Export execution was skipped by user request; packaged road availability remains unverified.
+
 ```sh
 dotnet run --project pipeline --no-restore -- road-graph --config config/road-graph.json
 dotnet run --project pipeline --no-restore -- road-strip --config config/road-strip.json
@@ -172,4 +184,4 @@ Ignored `game/Generated/P12` contains:
 - `collision.glb`: separate low-detail triangle surface with identical geometry. Its `RoadCollision-colonly` node imports in Godot as a StaticBody3D with ConcavePolygonShape3D and no rendered mesh. Other viewers can show its blue inspection material. Static open surface only; no thickness, curbs, sides or dynamic concave body.
 - `manifest.json`: independent schema v1 `kind=flat-road-strip` (distinct from synthetic asset import fixture schema), local bounds, metre axes, origin/region, selected source references/tags, width/flat-height policy, assumptions, triangle count, relative asset roles/paths/hashes, exact configuration and graph SHA-256, upstream provenance and datum policy. No current timestamp is added, so offline replay remains deterministic. Road retrieval provenance retains raw checksum, retrieval date, source/attribution and ODbL license. Generated real assets remain local/unreviewed for redistribution.
 
-No new dependency was added; the synthetic asset import pinned SharpGLTF.Toolkit 1.0.7 remains the writer. Source checks on 2026-10-04: [Khronos glTF 2.0 specification](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html) for metre/right-handed geometry and triangle fronts; [Godot 4.5 import suffixes](https://docs.godotengine.org/en/4.5/tutorials/assets_pipeline/importing_3d_scenes/node_type_customization.html) for `-colonly` static collision generation. Actual import/physics evidence is separate in [TESTING.md](TESTING.md#single-flat-road-strip). No retrieval, playable scene, export helper changes or Windows export performed in road strip; driving integration remains future work.
+No new dependency was added; the synthetic asset import pinned SharpGLTF.Toolkit 1.0.7 remains the writer. Source checks on 2026-10-04: [Khronos glTF 2.0 specification](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html) for metre/right-handed geometry and triangle fronts; [Godot 4.5 import suffixes](https://docs.godotengine.org/en/4.5/tutorials/assets_pipeline/importing_3d_scenes/node_type_customization.html) for `-colonly` static collision generation. Actual import/physics evidence is separate in [TESTING.md](TESTING.md#single-flat-road-strip); playable integration evidence is in [the road-driving checks](TESTING.md#first-helsinki-road-integration).

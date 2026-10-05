@@ -14,7 +14,11 @@ Acceptance:
 - [x] Current inventory is recorded separately from historical toolchain evidence; no install/launch/build/export success is inferred.
 Evidence: 2026-10-05 `bash scripts/check-environment.sh`: exit 1 as expected; seven required checks pass, three Godot/editor/templates checks fail. SDK 10.0.112, Git 2.43.0, WSL2/x64 present. Godot/default templates absent; unzip missing; curl/sha256sum/display configuration present. `--help` exit 0; Bash syntax and whitespace checks pass. Initial run could not write the sandbox-restricted standard .NET file-app cache; approved retry compiled and ran successfully. See docs/TESTING.md for additional bootstrap checks. Manual GUI checks: not run or required for this inventory-only task.
 Risks / blockers: Does not scan all disks or inspect template archive provenance/completeness beyond required version/Windows x64 files. Inventory is not proof of functional GUI, restore/build/export or Windows gameplay. Compiler requires the pinned SDK; Bash bootstrap covers its absence.
-Follow-up tasks: P12 manual inspection, then P13; setup prerequisites need resolving first in this environment.
+Follow-up tasks: Restore road cache and regenerate assets, P12 manual inspection, then P13.
+
+## Road source-cache check — 2026-10-05
+
+User-requested extension: read the payload/provenance paths from `config/road-graph.json`; require nonempty files bounded to 10 MiB and verify schema v1, byte count and SHA-256. Report missing/corrupt data with the road-sample download command and path-update guidance for changed payload checksums. No download, parser/converter or generated-asset checks occur. Actual checker compiles and exits 1: all ten toolchain checks pass, only the absent configured road files fail. Manual replay: run the checker and expect missing-file paths and download guidance followed by the prompt. Status remains done; no visual gate changes.
 
 ## Terminal-preservation correction — 2026-10-05
 

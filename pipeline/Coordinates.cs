@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+
 namespace DrivingTime.Pipeline;
 
 public readonly record struct ProjectedPoint(double East, double North, double Height);

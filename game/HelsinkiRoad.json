@@ -1,0 +1,7 @@
+{
+  "manifestPath": "res://Generated/P12/manifest.json",
+  "spawnDistanceMetres": 6,
+  "spawnClearanceMetres": 0.45,
+  "groundMarginMetres": 8,
+  "groundDropMetres": 0.15
+}

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Xml.Linq;
 
@@ -63,6 +64,8 @@ try
         $"Matching Windows x64 export templates: {templates}",
         $"Install matching {engine} .NET export templates via docs/SETUP.md step 3; missing: {string.Join(", ", missing)}. Standard-edition templates do not suffice.");
 
+    CheckRoadCache();
+
     var display = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("DISPLAY"))
         || !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("WAYLAND_DISPLAY"));
     Console.WriteLine(display ? "INFO: Display configured; graphical editor/driver operation still needs a manual launch."
@@ -85,6 +88,45 @@ void Check(bool ok, string label, string remedy)
 {
     Console.WriteLine($"{(ok ? "PASS" : "FAIL")}: {label}");
     if (!ok) { failures++; Console.WriteLine($"  {remedy}"); }
+}
+void CheckRoadCache()
+{
+    const string label = "Configured road source cache (payload and provenance)";
+    const string remedy = "Run dotnet run --file scripts/download-road-source.cs; it selects the verified payload/provenance in config/road-graph.json automatically. For a corrupt cache, restore the original bytes or rerun the download script with --refresh. See docs/PIPELINE.md#bounded-osm-road-sample.";
+    try
+    {
+        var configPath = Path.Combine(repo, "config/road-graph.json");
+        using var graph = JsonDocument.Parse(File.ReadAllText(configPath));
+        string Resolve(string key)
+        {
+            var value = graph.RootElement.GetProperty(key).GetString();
+            if (string.IsNullOrWhiteSpace(value)) throw new InvalidDataException($"{key} is empty.");
+            return Path.GetFullPath(value, Path.GetDirectoryName(configPath)!);
+        }
+        var input = Resolve("inputPath");
+        var provenance = Resolve("provenancePath");
+        var absent = new[] { input, provenance }.Where(path => !File.Exists(path)).ToArray();
+        if (absent.Length > 0)
+            throw new FileNotFoundException($"Missing: {string.Join(", ", absent)}.");
+        const long maxBytes = 10 * 1024 * 1024;
+        foreach (var path in new[] { input, provenance })
+            if (new FileInfo(path).Length is <= 0 or > maxBytes)
+                throw new InvalidDataException($"Cache file must be nonempty and at most 10 MiB: {path}.");
+        using var metadata = JsonDocument.Parse(File.ReadAllText(provenance));
+        var p = metadata.RootElement;
+        using var raw = File.OpenRead(input);
+        var hash = Convert.ToHexString(SHA256.HashData(raw)).ToLowerInvariant();
+        if (p.GetProperty("schemaVersion").GetInt32() != 1 ||
+            p.GetProperty("byteCount").GetInt64() != raw.Length ||
+            p.GetProperty("payloadSha256").GetString() != hash)
+            throw new InvalidDataException("Payload checksum, size or provenance schema mismatch.");
+        Check(true, label, remedy);
+        Console.WriteLine("INFO: Cache integrity checked; road parsing, conversion and generated assets are not checked here.");
+    }
+    catch (Exception error)
+    {
+        Check(false, label, $"{error.Message} {remedy}");
+    }
 }
 string? Find(string name)
 {

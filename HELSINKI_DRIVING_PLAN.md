@@ -1,6 +1,6 @@
 # Helsinki driving game: expandable Codex plan
 
-Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-04 · Status: P12 single Stenbäckinkatu strip implemented, awaiting visual test; P08 and G0/G1/G2 manual evidence remain open
+Version: 1.2 · Created: 2026-10-01 · Updated: 2026-10-05 · Status: P13 first Helsinki road scene implemented, awaiting manual drive; P08/P12 and G0/G1/G2 manual evidence remain open
 
 ## Goal
 
@@ -285,6 +285,8 @@ Execute P13. Create a dedicated Helsinki prototype scene that loads the generate
 ```
 
 Completion check: The car spawns correctly and drives the segment; reference positions align with the pipeline output. Real elevation remains explicitly deferred.
+
+2026-10-05: [P13 card](docs/tasks/P13-first-road-drive.md) awaiting-manual-test. Manifest-based spawn/reference markers, existing vehicle/camera, temporary ground and default dedicated scene. Debug build/78 tests/import and 1,376-tick drive/collision/recovery check pass; maximum lateral error 0.200 m. Windows export skipped at user request. Prior manual gates stay open; next P14 after manual feedback.
 
 ### P14 — Acquire and inspect one building sample
 

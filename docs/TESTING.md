@@ -1,5 +1,20 @@
 # Testing and evidence
 
+## First Helsinki road integration
+
+Checked 2026-10-05 in WSL2 with SDK 10.0.112/Godot 4.5.2 .NET. Manual appearance/driving: **not run**. Windows export: **skipped at user request**; no new export process/artifact or Windows transfer occurred. Prior visual gates remain open.
+
+- `bash scripts/check-environment.sh`: approved execution exits 0; all eleven checks pass.
+- `dotnet build DrivingTime.sln --no-restore`: sandbox invocation returned a blank build failure; approved retry passes with zero warnings/errors, including linked coordinate source in net8.0 game and net10.0 pipeline. Final build including integration checks also passes.
+- `dotnet test tests/DrivingTime.Pipeline.Tests --no-build --no-restore`: 78 passed, none failed/skipped.
+- `dotnet run --project pipeline --no-build --no-restore -- road-graph --config config/road-graph.json`: exit 0; 11 source ways, 12 nodes, 11 segments, 22 arcs, one component, no isolated segments, twelve diagnostics.
+- `dotnet run --project pipeline --no-build --no-restore -- road-strip --config config/road-strip.json`: exit 0; 100 m/8.8 m strip, fourteen triangles, synthetic Y=0, no duplicate points or capped joins. Generated assets remain ignored.
+- `"$GODOT4" --headless --path game --editor --import`: sandbox run exited 0 with socket/settings permission errors, so did not count as a pass; approved retry exits 0 without errors. Initial sandbox runtime could not write its user log and crashed; approved runtime works.
+- `"$GODOT4" --headless --path game res://Checks/HelsinkiRoadChecks.tscn --fixed-fps 60`: exit 0, `HELSINKI ROAD CHECK PASS: ticks=1376, route=6..90m, max lateral error=0.200m, recoveries=2; road wheel contact, markers, braking and camera.` Independently checks manifest localization, identity asset transforms, spawn/heading, references, imported road contact for every wheel, bounded route, braking, held R reset and fall recovery. The test limits propulsion to 5 m/s for its feedback-driven route; this is test input, not gameplay autopilot or a native FPS result.
+- `"$GODOT4" --headless --path game res://Checks/RoadAssetChecks.tscn`: exit 0; fourteen visual/collision triangles, identity/bounds/winding and centreline collision rays pass after regeneration.
+
+Official sources checked 2026-10-05: [Node3D transforms and look direction](https://docs.godotengine.org/en/4.5/classes/class_node3d.html), [VehicleWheel3D contact-body inspection](https://docs.godotengine.org/en/4.5/classes/class_vehiclewheel3d.html) and [command-line scene/import workflow](https://docs.godotengine.org/en/4.5/tutorials/editor/command_line_tutorial.html). Contact-body checks establish imported road support rather than temporary-ground support. Flat elevation/OSM width and physical access remain unvalidated. Manual route: [run guide](RUN.md#first-helsinki-road-drive).
+
 ## Documentation structure — 2026-10-05
 
 Permanent documents now describe features directly; planning IDs remain in the backlog/task ledger, except the next proposed change in current state. Existing artifact paths, command/schema identifiers, log output, dates, licensing/source evidence and open manual checks are preserved. README, setup and current state were rewritten around actual implemented capabilities; other guides use descriptive headings and incoming links.
@@ -461,6 +476,12 @@ dotnet run --project pipeline --no-build -- road-strip --config config/road-stri
 
 Manual appearance/collision gizmo inspection: **not run**, [steps](RUN.md#road-strip-inspection). No editor graphical inspection, Windows export/native playtest or car scene integration performed. Road strip awaits manual testing; prior gates remain open. Sources/checked dates and schema: [PIPELINE.md](PIPELINE.md#single-flat-road-strip).
 ## Development environment preflight (2026-10-05)
+
+Latest cache-selection correction: `dotnet run --file scripts/download-road-source.cs` exited 0 after locked restore reported up-to-date dependencies and retrieval reported `Verified offline cache:` for payload `841e51cb828b2182e1bb0e4fe0e056848dd6a0a6f619e30866ad71607b0d9a4a` (11 ways, 26 unique nodes). Helper verified payload/provenance and updated the graph's obsolete checksum paths, preserving other configuration values. `bash scripts/check-environment.sh` then exited 0 with all eleven required checks passing, including configured source cache. Commands used approved standard .NET cache access. No new source request, offline conversion, generated assets or manual visuals performed; this supersedes missing-cache results below.
+
+Road download helper: `dotnet run --file scripts/download-road-source.cs -- --help` compiled and exited 0 using approved access to the standard file-app cache. Usage describes locked restore, cache reuse, bounded download, explicit refresh and graph path updates. No live retrieval/restore/conversion was performed through this helper; those execution paths remain unverified. Missing-cache preflight guidance now points to the helper.
+
+Latest source-cache extension: `bash scripts/check-environment.sh` compiled and ran with approved access to the standard .NET file-app cache; exit 1. All ten toolchain checks pass (including complete Godot 4.5.2 .NET and matching templates); only configured road payload/provenance are missing. Output identifies both exact missing paths, prints restore/download commands and explains graph path updates after a changed payload checksum. No source data downloaded; checksum success/corruption branches and GUI operation were not exercised in this run. This latest installed-tool inventory supersedes earlier absence reports below.
 
 Terminal-preservation correction: removed launcher `exec` and wrapped execution in a subshell. `bash -c` probes sourced both the missing-SDK branch (restricted PATH) and the actual full checker, then asserted exit 1, unchanged cwd/options and printed a shell-alive marker; both passed. Another `bash -c` probe executed `bash scripts/check-environment.sh --help` and printed its parent-shell marker after exit 0. Full checker required approved access to its standard .NET file-app cache. `bash -n scripts/check-environment.sh` and `git diff --check` pass. GUI terminal-window replay not performed. In this recheck unzip is now available; Godot/templates remain absent from checked locations. No installation performed by the agent. Manual replay: run in an existing terminal and expect the prompt back; explicit caller `set -e` or terminal single-command auto-close settings can still require handling by the caller.
 

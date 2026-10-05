@@ -1,5 +1,9 @@
 # P10: Acquire and inspect a small road sample
 
+Cache-selection correction (2026-10-05): the helper now observes the existing retrieval command's verified-cache output, independently verifies schema/size/SHA-256 and atomically selects its raw/provenance paths in graph configuration, preserving other values. Offline replay passed using the user's new payload; readiness exits 0. Fresh-download and failure paths remain unexercised in this correction. No generated-asset or gate changes.
+
+Download-helper follow-up (2026-10-05): user requested `scripts/download-road-source.cs`. This C# wrapper locates the repository, restores locked pipeline dependencies and invokes the existing bounded cache-aware retrieval command, forwarding `--refresh` and child failures. It does not convert or rewrite graph configuration. Compile/help succeeds; live retrieval through the helper remains unverified. The environment checker now directs missing-cache users to it. Historical task acceptance/status is unchanged.
+
 Status: done
 Type: implementation
 Dependencies: [P09](P09-data-sources.md)

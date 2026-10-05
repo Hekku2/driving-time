@@ -1,6 +1,12 @@
 # Task index
 
-Updated: 2026-10-05. P00, P01, P01a, P02a, P06, P07, P09, P10 and P11 are complete; P08 and P12 await manual inspection after automated checks passed. Deferred is a backlog disposition, not a completion status: P13–P27 remain `todo`. Dependencies are copied from the plan; acceptance evidence is required before a dependency counts as complete. P01a records current missing editor/templates separately from historical toolchain evidence; no visual gates are closed.
+Cache-selection correction (2026-10-05): download helper now verifies and selects the successful retrieval's payload/provenance in the graph configuration automatically. Actual offline replay of the user's new cache passed; readiness exits 0 with all eleven checks passing. No conversion, new source request or visual acceptance performed; next task P12 manual inspection after regenerating assets.
+
+Road-download helper follow-up (2026-10-05): user requested `scripts/download-road-source.cs` for the existing P10 retrieval workflow. It restores locked pipeline dependencies and invokes bounded cache-aware retrieval, with optional explicit refresh and failure exit propagation. Preflight links it; compilation/help verified, live download not run. P10 remains done; P12 manual inspection and P13 implementation remain open.
+
+Environment-checker follow-up (2026-10-05): P01a now checks the configured road payload/provenance files, bounded sizes and SHA-256/byte count/schema. Latest run exits 1 solely for missing road cache; all ten toolchain checks, including editor/templates, pass. Earlier missing-tool inventories below are historical. Restore/download cache and update graph paths if necessary; generated assets and visual gates remain unchecked.
+
+Updated: 2026-10-05. P00, P01, P01a, P02a, P06, P07, P09, P10 and P11 are complete; P08/P12 await manual inspection and P13 awaits a manual drive after automated checks passed. Deferred is a backlog disposition, not a completion status: P14–P27 remain `todo`. Dependencies are copied from the plan; acceptance evidence is required before a dependency counts as complete. Latest preflight passes all eleven checks; no visual gates are closed.
 
 | ID | Task | Type | Status | Dependencies | Disposition |
 |---|---|---|---|---|---|
@@ -21,7 +27,7 @@ Updated: 2026-10-05. P00, P01, P01a, P02a, P06, P07, P09, P10 and P11 are comple
 | <a id="p10"></a>P10 | [Acquire and inspect a small road sample](P10-road-sample.md) | implementation | done | [P09](#p09) | Bounded HTTP200 sample cached; real offline replay/import and 50 tests/root build pass; no roads generated |
 | <a id="p11"></a>P11 | [Normalize a small road graph](P11-road-graph.md) | implementation | done | [P10](#p10), [P07](#p07) | Graph v1/SVG, clipping/provenance and topology tests pass; 65 tests, Debug build; next P12 |
 | <a id="p12"></a>P12 | [Generate one flat road strip](P12-road-strip.md) | implementation | awaiting-manual-test | [P11](#p11), [P08](#p08) implemented writer/staging | One 100 m real strip, separate collision GLB/assumption manifest; 78 tests, Debug build, deterministic replay and Godot import/rays pass; visual inspection pending |
-| <a id="p13"></a>P13 | [Drive on the first Helsinki road](../../HELSINKI_DRIVING_PLAN.md#p13--drive-on-the-first-helsinki-road) | implementation | todo | [P05](#p05), [P12](#p12) | Deferred; expand before execution |
+| <a id="p13"></a>P13 | [Drive on the first Helsinki road](P13-first-road-drive.md) | implementation | awaiting-manual-test | [P05](#p05), [P12](#p12) implemented; manual checks open, user authorized | Default road scene/spawn/markers; 78 tests/build/import and 1,376-tick road drive/recovery pass; export skipped; manual route pending |
 | <a id="p14"></a>P14 | [Acquire and inspect one building sample](../../HELSINKI_DRIVING_PLAN.md#p14--acquire-and-inspect-one-building-sample) | implementation | todo | [P09](#p09) | Deferred; expand before execution |
 | <a id="p15"></a>P15 | [Convert and display a few real buildings](../../HELSINKI_DRIVING_PLAN.md#p15--convert-and-display-a-few-real-buildings) | implementation | todo | [P14](#p14), [P13](#p13) | Deferred; expand before execution |
 | <a id="p16"></a>P16 | [Plan the terrain and elevation increment](../../HELSINKI_DRIVING_PLAN.md#p16--plan-the-terrain-and-elevation-increment) | planning | todo | [P15](#p15) | Deferred; expand before execution |
@@ -51,7 +57,7 @@ Local setup follow-up (2026-10-03): SETUP.md step 4 now documents the executable
 
 P02 implementation and command checks completed 2026-10-03; its visual acceptance remains open. The user explicitly requested P03 on 2026-10-03, authorizing implementation before that check. P03 now has automated driving evidence and a Windows export; its manual two-minute drive is pending. This does not close P02 or G0. Follow [RUN.md](../RUN.md), then select P04 after manual acceptance. P06 remains independently ready if selected. SDK 10.0.112, Godot 4.5.2 .NET, game net8.0 build/runtime and Windows cross-export are exercised (D014); P06 still plans net10.0. Execute one task per session.
 
-P13–P27 retain the plan's prompts, dependencies and completion checks; create detailed cards from actual evidence before execution. P09–P11 have completed cards; P12 has an implemented card awaiting visual inspection. P16 expands P17–P19 where necessary; P20 and P23 each plan 2–6 children. P21 and P24 execute only the next ready child per session, and their parents remain open until all required child and parent checks pass.
+P14–P27 retain the plan's prompts, dependencies and completion checks; create detailed cards from actual evidence before execution. P09–P11 have completed cards; P12/P13 have implemented cards awaiting visual inspection/manual driving. P16 expands P17–P19 where necessary; P20 and P23 each plan 2–6 children. P21 and P24 execute only the next ready child per session, and their parents remain open until all required child and parent checks pass.
 
 ## Gates
 

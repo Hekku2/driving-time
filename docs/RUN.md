@@ -1,8 +1,29 @@
 # Run and export the driving prototype
 
-The default scene is now `VehicleExperiment.tscn`. The HUD identifies **VehicleBody3D experiment**; the original `Main.tscn` shows **CharacterBody3D baseline**. Use the same loop, camera, controls, obstacles and ramp for comparison. Both scenes retain R and fall recovery. The user reported slight jitter in the baseline on 2026-10-03; the cause and improvement remain unverified.
+The default scene is `HelsinkiRoad.tscn`; follow [the first-road route](#first-helsinki-road-drive). `VehicleExperiment.tscn` retains the synthetic **VehicleBody3D experiment**; `Main.tscn` retains the **CharacterBody3D baseline**. These comparison scenes use the same loop, camera, controls, obstacles and ramp. All scenes retain R and fall recovery. The user reported slight jitter in the baseline on 2026-10-03; the cause and improvement remain unverified.
 
-Current Windows artifact: **20261003-184950-a7195a8f**, exported/transferred successfully (188 files, SHA-256 verified) to `W:\projektit\driving-time`. Native startup and visual comparison remain pending.
+Historical vehicle Windows artifact: **20261003-184950-a7195a8f**, exported/transferred successfully (188 files, SHA-256 verified) to `W:\projektit\driving-time`. Do not assume it remains at the destination. No Windows export of the first-road scene was performed; export was explicitly skipped by request. Native startup and visual comparison remain pending.
+
+## First Helsinki road drive
+
+From the repository root in WSL, regenerate offline and build before starting the editor:
+
+```bash
+dotnet run --project pipeline --no-restore -- road-graph --config config/road-graph.json
+dotnet run --project pipeline --no-restore -- road-strip --config config/road-strip.json
+dotnet build DrivingTime.sln --no-restore
+bash scripts/launch-godot-wsl.sh --path game --editor
+```
+
+If the source cache is missing, first run `dotnet run --file scripts/download-road-source.cs`; it selects the verified source files. Let Godot finish importing, then press **F5**. The scene creates its nodes on startup; its empty editor root is expected. Expect the orange car near START, facing along one continuous dark asphalt strip; MID and END labels sit beside the road, with green temporary ground below it. There are no buildings or lane markings.
+
+1. Drive slowly from START toward MID using W/Up, with A/D or Left/Right for the gentle bends. Spawn is 6 m along the centreline, at local (58.86814, 0.45, −53.80392) m for the current asset; the nose faces northeast along the strip. Expect stable support with no fall-through or sideways placement jump.
+2. Continue toward END (100 m). Brake with Space before the end, around 90 m; this is an open surface with no end barrier. Reverse briefly with S/Down. Expect the chase camera to remain behind the car and asphalt/collision to stay continuous across bends. Note jitter, clipping or steering problems.
+3. Press R while stopped or moving. Expect return to the same spawn/heading, cleared motion and camera reset. The suspension settles briefly. Driving onto the surrounding ground intentionally drops about 0.15 m; driving beyond that bounded ground eventually recovers below Y=−10 m.
+
+Report scene/platform, whether spawn/START/MID/END align, road continuity/wheel support, steering/braking/camera/reset observations and console errors. This manual drive remains unverified. Height Y=0 is synthetic; the 8.8 m width comes from an OSM tag, not a survey. Physical access/construction is unverified. Temporary ground extends only 8 m beyond the existing mesh bounds.
+
+`game/HelsinkiRoad.json` controls manifest path, spawn distance/clearance and ground margin/drop. Road path, region and origin remain in [the road-strip configuration](PIPELINE.md#single-flat-road-strip); runtime reads the staged manifest's origin/centreline, applies the shared double-precision coordinate contract and casts only after localization. START/MID/END reference nodes sit on the centreline at 0/50/100 m; their non-colliding labels/poles are offset outside the road edge.
 
 ## Vehicle driving comparison
 
@@ -11,7 +32,7 @@ Current Windows artifact: **20261003-184950-a7195a8f**, exported/transferred suc
 3. Press R while moving/turning or after tipping. Expect return facing -Z at the start stripe, cleared linear/angular motion and controls, and camera reset. The body then settles briefly onto its suspension. Holding driving keys resumes acceleration on the next tick. Drive off an open floor edge, release input and expect automatic recovery below Y=-10 m.
 4. Close the game and compare the baseline in Windows PowerShell: `.\DrivingTime.exe res://Main.tscn`. Launch the experiment explicitly with `.\DrivingTime.exe res://VehicleExperiment.tscn`. Repeat each at `--max-fps 30 --disable-vsync`, 60 and 144 if useful. Keep platform, caps and route alike; report jitter while straight, turning and on the ramp, braking/steering feel, and preferred version. Caps do not prove achieved FPS. No smoothness improvement or native visual pass is claimed yet.
 
-WSL equivalents: `"$GODOT4" --path game res://VehicleExperiment.tscn` and `"$GODOT4" --path game res://Main.tscn`. F5 launches the experiment; F6 runs the selected scene. Inspector tuning on the experiment Car: DriveForce 2800 per driven rear wheel, BrakeForce 55, forward/reverse force cutoffs 12/4 m/s, steering 28 degrees with 3 rad/s response, suspension stiffness 30, mass 1000 kg. These are provisional values, not a validated realistic model; the speed cutoffs taper propulsion rather than clamping momentum. Vehicle suspension/wheel geometry is created by C# on startup. The baseline tuning and arcade driving and recovery guides below remain specific to `Main.tscn`.
+WSL equivalents: `"$GODOT4" --path game res://VehicleExperiment.tscn` and `"$GODOT4" --path game res://Main.tscn`. F5 launches the first-road scene; F6 runs the selected comparison scene. Inspector tuning on the experiment Car: DriveForce 2800 per driven rear wheel, BrakeForce 55, forward/reverse force cutoffs 12/4 m/s, steering 28 degrees with 3 rad/s response, suspension stiffness 30, mass 1000 kg. These are provisional values, not a validated realistic model; the speed cutoffs taper propulsion rather than clamping momentum. Vehicle suspension/wheel geometry is created by C# on startup. The baseline tuning and arcade driving and recovery guides below remain specific to `Main.tscn`.
 
 The chassis uses -Z as its nose, so the engine-force sign is reversed from Godot's documented +Z vehicle front. Normal motion is engine-integrated; reset teleports through `_IntegrateForces`. The experiment's spawn is (14,0.45,8), providing suspension clearance. The existing camera parameters and global 60 Hz interpolation remain unchanged for comparison. This experiment does not diagnose camera/rendering jitter.
 
@@ -143,4 +164,4 @@ Use Left/Right arrows to orbit. Expect a solid orange 10 × 10 × 10 m cube on a
 
 Generate the assets using [the offline road strip commands](PIPELINE.md#single-flat-road-strip), then open the existing Godot project in the WSL editor. In a temporary unsaved 3D scene, drag `Generated/P12/road.glb` from the FileSystem dock, select its mesh and press F to frame it. Inspect from above and at an oblique angle: expect one plain dark asphalt strip, 100 m along its gently bending centreline, 8.8 m nominal width, flat Y=0, no holes, inverted faces or spikes. Its local bounds are X=51.4614..138.0052, Z=−111.1080..−46.5271 metres, preserving the configured origin.
 
-Add `Generated/P12/collision.glb` separately at identity transform. Enable editable children on the instance and select its CollisionShape3D child with editor gizmos visible. Expect a StaticBody3D and a concave flat shape tracing the same strip, with no second rendered asphalt mesh. Inspect it separately by temporarily hiding the visual instance. Do not save a new gameplay scene for this check. Report visual/collision results; the headless import/ray check does not establish appearance or driving feel. Integrating the car, spawn and temporary ground for a native Windows drive remains future work.
+Add `Generated/P12/collision.glb` separately at identity transform. Enable editable children on the instance and select its CollisionShape3D child with editor gizmos visible. Expect a StaticBody3D and a concave flat shape tracing the same strip, with no second rendered asphalt mesh. Inspect it separately by temporarily hiding the visual instance. Do not save a new gameplay scene for this check. Report visual/collision results; the headless import/ray check does not establish appearance or driving feel. The [dedicated driving scene](#first-helsinki-road-drive) integrates car/spawn/ground; native export/playtesting remains unverified.

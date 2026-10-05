@@ -3,4 +3,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../pipeline/Coordinates.cs" Link="Coordinates.cs" />
+  </ItemGroup>
 </Project>

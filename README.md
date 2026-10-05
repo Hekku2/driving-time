@@ -2,7 +2,7 @@
 
 A non-commercial desktop prototype for driving through recognizable Helsinki streets. The selected area is a provisional 1 × 1 km square around Stenbäckinkatu. C#/.NET is required for both the Godot game and offline data pipeline. Development, editing, builds, tests and Windows export run in WSL2; only exported runtime files transfer to Windows for playtesting.
 
-The game has a VehicleBody3D car, chase camera, synthetic loop, obstacles, ramp and recovery. The pipeline can retrieve a bounded road sample, normalize its graph and generate a flat 100 m road strip with separate collision geometry. The real strip is not yet integrated into a playable driving scene. Automated build/import/export evidence exists; visual and driving checks remain open.
+The default game scene drives a VehicleBody3D car on a flat 100 m Stenbäckinkatu strip, with a chase camera, reference markers, temporary ground and recovery. Separate synthetic loop/obstacle/ramp scenes remain available. The offline pipeline retrieves a bounded road sample, normalizes its graph and stages separate visual/collision assets. Automated road driving and build/import checks pass; manual appearance/driving and the new scene's Windows export remain unverified.
 
 - [Setup and environment checker](docs/SETUP.md)
 - [Run, export and manual checks](docs/RUN.md)
